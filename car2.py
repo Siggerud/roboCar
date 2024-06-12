@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import time
 import pygame
 
+# define GPIO pins
 leftBackward = 16
 leftForward = 18
 rightBackward = 22
