@@ -11,8 +11,7 @@ enA = 11
 enB = 13
 
 latestTurnValue = "straight"
-latestForwardValue = -1.0
-latestReverseValue = -1.0
+lastDirection = "forward"
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(leftBackward, GPIO.OUT)
@@ -47,7 +46,6 @@ pygame.init()
 pygame.joystick.init()
 
 num_joysticks = pygame.joystick.get_count()
-print(num_joysticks)
 if num_joysticks > 0:
 	controller = pygame.joystick.Joystick(0)
 	controller.init()
@@ -71,23 +69,21 @@ try:
 				latestTurnValue = turnDirection
 
 			elif event.type == pygame.JOYAXISMOTION:
-				buttonPressForward = controller.get_axis(4)
-				buttonPressBackward = controller.get_axis(5)
-				print(event.axis)
-				if buttonPressForward != -1.0:
-					value = buttonPressForward
-					latestForwardValue = value
-				elif buttonPressBackward != -1.0:
-					value = buttonPressBackward
-					latestReverseValue = value
-				speed = convert_button_press_to_speed(value)
-				print(speed)
+				axis = event.axis
+
+				if axis == 4:
+					direction = "forward"
+				elif axis == 5:
+					direction = "reverse"
+				buttonPressValue = controller.get_axis(axis)
+				speed = convert_button_press_to_speed(buttonPressValue)
+
 				pwmA.ChangeDutyCycle(speed)
 				pwmB.ChangeDutyCycle(speed)
 
+				lastDirection = direction
 
-
-			if latestForwardValue != -1.0:
+			if lastDirection == "forward":
 				if latestTurnValue == "straight":
 					GPIO.output(leftForward, GPIO.HIGH)
 					GPIO.output(rightForward, GPIO.HIGH)
@@ -103,7 +99,7 @@ try:
 					GPIO.output(rightForward, GPIO.LOW)
 					GPIO.output(leftBackward, GPIO.LOW)
 					GPIO.output(rightBackward, GPIO.LOW)
-			elif latestReverseValue != -1.0:
+			elif lastDirection == "reverse":
 				if latestTurnValue == "straight":
 					GPIO.output(leftForward, GPIO.LOW)
 					GPIO.output(rightForward, GPIO.LOW)
@@ -119,6 +115,7 @@ try:
 					GPIO.output(rightForward, GPIO.LOW)
 					GPIO.output(leftBackward, GPIO.HIGH)
 					GPIO.output(rightBackward, GPIO.LOW)
+			"""
 			elif latestReverseValue == -1.0 and latestForwardValue == -1.0:
 				pwmA.ChangeDutyCycle(100)
 				pwmB.ChangeDutyCycle(100)
@@ -133,7 +130,7 @@ try:
 					GPIO.output(rightForward, GPIO.LOW)
 					GPIO.output(leftBackward, GPIO.LOW)
 					GPIO.output(rightBackward, GPIO.HIGH)
-
+			"""
 
 
 except KeyboardInterrupt:
