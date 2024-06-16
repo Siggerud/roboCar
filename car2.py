@@ -10,6 +10,7 @@ rightForward = 15
 enA = 11
 enB = 13
 
+pwmTreshold = 30
 latestTurnValue = "straight"
 lastDirection = "forward"
 
@@ -81,9 +82,9 @@ try:
 				speed = convert_button_press_to_speed(buttonPressValue)
 				print(speed)
 			
-				
-				pwmA.ChangeDutyCycle(speed)
-				pwmB.ChangeDutyCycle(speed)
+				if speed > pwmTreshold:
+					pwmA.ChangeDutyCycle(speed)
+					pwmB.ChangeDutyCycle(speed)
 			
 			if controller.get_axis(4) == -1.0 and controller.get_axis(5) == -1.0:
 				pwmA.ChangeDutyCycle(70)
