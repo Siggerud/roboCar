@@ -80,15 +80,20 @@ try:
 					lastDirection = "reverse"
 				buttonPressValue = controller.get_axis(axis)
 				speed = convert_button_press_to_speed(buttonPressValue)
-				print(speed)
+				#print(speed)
 			
 				if speed > pwmTreshold:
 					pwmA.ChangeDutyCycle(speed)
 					pwmB.ChangeDutyCycle(speed)
-			
+					print("Duty cycled changed to ", speed)
+				
+				else:
+					pwmA.ChangeDutyCycle(0)
+					pwmB.ChangeDutyCycle(0)
+					print("Duty cycle changed to 0")
 			if controller.get_axis(4) == -1.0 and controller.get_axis(5) == -1.0:
-				pwmA.ChangeDutyCycle(70)
-				pwmB.ChangeDutyCycle(70)
+				#pwmA.ChangeDutyCycle(70)
+				#pwmB.ChangeDutyCycle(70)
 				
 				if latestTurnValue == "left":
 					GPIO.output(leftForward, GPIO.LOW)
@@ -103,6 +108,8 @@ try:
 
 			elif lastDirection == "forward":
 				if latestTurnValue == "straight":
+					#attr = dir(pwmA)
+				#	print(attr)
 					GPIO.output(leftForward, GPIO.HIGH)
 					GPIO.output(rightForward, GPIO.HIGH)
 					GPIO.output(leftBackward, GPIO.LOW)
