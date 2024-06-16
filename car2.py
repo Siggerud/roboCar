@@ -71,7 +71,6 @@ try:
 			elif event.type == pygame.JOYAXISMOTION:
 				axis = event.axis
 
-
 				if axis == 4:
 					lastDirection = "forward"
 				elif axis == 5:
@@ -82,7 +81,22 @@ try:
 				pwmA.ChangeDutyCycle(speed)
 				pwmB.ChangeDutyCycle(speed)
 
-			if lastDirection == "forward":
+			if controller.get_axis(4) == 1.0 and controller.get_axis(5) == 1.0:
+				pwmA.ChangeDutyCycle(70)
+				pwmB.ChangeDutyCycle(70)
+
+				if latestTurnValue == "left":
+					GPIO.output(leftForward, GPIO.LOW)
+					GPIO.output(rightForward, GPIO.HIGH)
+					GPIO.output(leftBackward, GPIO.HIGH)
+					GPIO.output(rightBackward, GPIO.LOW)
+				elif latestTurnValue == "right":
+					GPIO.output(leftForward, GPIO.HIGH)
+					GPIO.output(rightForward, GPIO.LOW)
+					GPIO.output(leftBackward, GPIO.LOW)
+					GPIO.output(rightBackward, GPIO.HIGH)
+
+			elif lastDirection == "forward":
 				if latestTurnValue == "straight":
 					GPIO.output(leftForward, GPIO.HIGH)
 					GPIO.output(rightForward, GPIO.HIGH)
@@ -114,22 +128,7 @@ try:
 					GPIO.output(rightForward, GPIO.LOW)
 					GPIO.output(leftBackward, GPIO.HIGH)
 					GPIO.output(rightBackward, GPIO.LOW)
-			"""
-			elif latestReverseValue == -1.0 and latestForwardValue == -1.0:
-				pwmA.ChangeDutyCycle(100)
-				pwmB.ChangeDutyCycle(100)
 
-				if latestTurnValue == "left":
-					GPIO.output(leftForward, GPIO.LOW)
-					GPIO.output(rightForward, GPIO.HIGH)
-					GPIO.output(leftBackward, GPIO.HIGH)
-					GPIO.output(rightBackward, GPIO.LOW)
-				elif latestTurnValue == "right":
-					GPIO.output(leftForward, GPIO.HIGH)
-					GPIO.output(rightForward, GPIO.LOW)
-					GPIO.output(leftBackward, GPIO.LOW)
-					GPIO.output(rightBackward, GPIO.HIGH)
-			"""
 
 
 except KeyboardInterrupt:
