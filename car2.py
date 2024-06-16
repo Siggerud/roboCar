@@ -56,7 +56,9 @@ else:
 
 try:
 	while True:	
+		time.sleep(0.1)
 		for event in pygame.event.get():
+			#print(event)
 			if event.type == pygame.JOYHATMOTION:
 				turnValue = controller.get_hat(0)[0]
 				if turnValue == -1:
@@ -77,14 +79,16 @@ try:
 					lastDirection = "reverse"
 				buttonPressValue = controller.get_axis(axis)
 				speed = convert_button_press_to_speed(buttonPressValue)
-
+				print(speed)
+			
+				
 				pwmA.ChangeDutyCycle(speed)
 				pwmB.ChangeDutyCycle(speed)
-
-			if controller.get_axis(4) == 1.0 and controller.get_axis(5) == 1.0:
+			
+			if controller.get_axis(4) == -1.0 and controller.get_axis(5) == -1.0:
 				pwmA.ChangeDutyCycle(70)
 				pwmB.ChangeDutyCycle(70)
-
+				
 				if latestTurnValue == "left":
 					GPIO.output(leftForward, GPIO.LOW)
 					GPIO.output(rightForward, GPIO.HIGH)
@@ -129,7 +133,7 @@ try:
 					GPIO.output(leftBackward, GPIO.HIGH)
 					GPIO.output(rightBackward, GPIO.LOW)
 
-
+				
 
 except KeyboardInterrupt:
 	print("Exiting")
