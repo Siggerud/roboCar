@@ -53,87 +53,87 @@ if num_joysticks > 0:
 else: 
 	print("No controls found")
 	exit(0)
-    
+
 try:
 	while True:	
 		for event in pygame.event.get():
-            if event.type == pygame.JOYHATMOTION:
-                turnValue = self._myJoystick.get_hat(0)[0]
-                if turnValue == -1:
-                    turnDirection = "left"
-                elif turnValue == 1:
-                    turnDirection = "right"
-                elif turnValue == 0:
-                    turnDirection = "straight"
-                    
-                latestTurnValue = turnDirection
-        
+			if event.type == pygame.JOYHATMOTION:
+				turnValue = controller.get_hat(0)[0]
+				if turnValue == -1:
+					turnDirection = "left"
+				elif turnValue == 1:
+					turnDirection = "right"
+				elif turnValue == 0:
+					turnDirection = "straight"
+
+				latestTurnValue = turnDirection
+
 			elif event.type == pygame.JOYAXISMOTION:
 				buttonPressForward = controller.get_axis(4)
 				buttonPressBackward = controller.get_axis(5)
 
 				if buttonPressForward != -1:
 					value = buttonPressForward
-                    latestForwardValue = value
+					latestForwardValue = value
 				elif buttonPressBackward != -1:
 					value = buttonPressBackward
-                    latestReverseValue = value
+					latestReverseValue = value
 				speed = convert_button_press_to_speed(value)
 				#print(speed)
 				pwmA.ChangeDutyCycle(speed)
 				pwmB.ChangeDutyCycle(speed)
-                
-            
 
-            if latestForwardValue != -1:
-                if latestTurnValue == "straight":
-                    GPIO.output(leftForward, GPIO.HIGH)
-                    GPIO.output(rightForward, GPIO.HIGH)
-                    GPIO.output(leftBackward, GPIO.LOW)
-                    GPIO.output(rightBackward, GPIO.LOW)
-                elif latestTurnValue == "left":
-                    GPIO.output(leftForward, GPIO.LOW)
-                    GPIO.output(rightForward, GPIO.HIGH)
-                    GPIO.output(leftBackward, GPIO.LOW)
-                    GPIO.output(rightBackward, GPIO.LOW)
-                elif latestTurnValue == "right":
-                    GPIO.output(leftForward, GPIO.HIGH)
-                    GPIO.output(rightForward, GPIO.LOW)
-                    GPIO.output(leftBackward, GPIO.LOW)
-                    GPIO.output(rightBackward, GPIO.LOW)
-            elif latestReverseValue != -1:
-                if latestTurnValue == "straight":
-                    GPIO.output(leftForward, GPIO.LOW)
-                    GPIO.output(rightForward, GPIO.LOW)
-                    GPIO.output(leftBackward, GPIO.HIGH)
-                    GPIO.output(rightBackward, GPIO.HIGH)
-                elif latestTurnValue == "left":
-                    GPIO.output(leftForward, GPIO.LOW)
-                    GPIO.output(rightForward, GPIO.LOW)
-                    GPIO.output(leftBackward, GPIO.LOW)
-                    GPIO.output(rightBackward, GPIO.HIGH)
-                elif latestTurnValue == "right":
-                    GPIO.output(leftForward, GPIO.LOW)
-                    GPIO.output(rightForward, GPIO.LOW)
-                    GPIO.output(leftBackward, GPIO.HIGH)
-                    GPIO.output(rightBackward, GPIO.LOW)
-            elif latestReverseValue == -1 and latestForwardValue == -1:
-                pwmA.ChangeDutyCycle(100)
+
+
+			if latestForwardValue != -1:
+				if latestTurnValue == "straight":
+					GPIO.output(leftForward, GPIO.HIGH)
+					GPIO.output(rightForward, GPIO.HIGH)
+					GPIO.output(leftBackward, GPIO.LOW)
+					GPIO.output(rightBackward, GPIO.LOW)
+				elif latestTurnValue == "left":
+					GPIO.output(leftForward, GPIO.LOW)
+					GPIO.output(rightForward, GPIO.HIGH)
+					GPIO.output(leftBackward, GPIO.LOW)
+					GPIO.output(rightBackward, GPIO.LOW)
+				elif latestTurnValue == "right":
+					GPIO.output(leftForward, GPIO.HIGH)
+					GPIO.output(rightForward, GPIO.LOW)
+					GPIO.output(leftBackward, GPIO.LOW)
+					GPIO.output(rightBackward, GPIO.LOW)
+			elif latestReverseValue != -1:
+				if latestTurnValue == "straight":
+					GPIO.output(leftForward, GPIO.LOW)
+					GPIO.output(rightForward, GPIO.LOW)
+					GPIO.output(leftBackward, GPIO.HIGH)
+					GPIO.output(rightBackward, GPIO.HIGH)
+				elif latestTurnValue == "left":
+					GPIO.output(leftForward, GPIO.LOW)
+					GPIO.output(rightForward, GPIO.LOW)
+					GPIO.output(leftBackward, GPIO.LOW)
+					GPIO.output(rightBackward, GPIO.HIGH)
+				elif latestTurnValue == "right":
+					GPIO.output(leftForward, GPIO.LOW)
+					GPIO.output(rightForward, GPIO.LOW)
+					GPIO.output(leftBackward, GPIO.HIGH)
+					GPIO.output(rightBackward, GPIO.LOW)
+			elif latestReverseValue == -1 and latestForwardValue == -1:
+				pwmA.ChangeDutyCycle(100)
 				pwmB.ChangeDutyCycle(100)
-                
-                if latestTurnValue == "left":
-                    GPIO.output(leftForward, GPIO.LOW)
-                    GPIO.output(rightForward, GPIO.HIGH)
-                    GPIO.output(leftBackward, GPIO.HIGH)
-                    GPIO.output(rightBackward, GPIO.LOW)
-                elif latestTurnValue == "right":
-                    GPIO.output(leftForward, GPIO.HIGH)
-                    GPIO.output(rightForward, GPIO.LOW)
-                    GPIO.output(leftBackward, GPIO.LOW)
-                    GPIO.output(rightBackward, GPIO.HIGH)
-                    
-                    
-                
+
+				if latestTurnValue == "left":
+					GPIO.output(leftForward, GPIO.LOW)
+					GPIO.output(rightForward, GPIO.HIGH)
+					GPIO.output(leftBackward, GPIO.HIGH)
+					GPIO.output(rightBackward, GPIO.LOW)
+				elif latestTurnValue == "right":
+					GPIO.output(leftForward, GPIO.HIGH)
+					GPIO.output(rightForward, GPIO.LOW)
+					GPIO.output(leftBackward, GPIO.LOW)
+					GPIO.output(rightBackward, GPIO.HIGH)
+
+
+
 except KeyboardInterrupt:
 	print("Exiting")
 
