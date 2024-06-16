@@ -47,7 +47,7 @@ class CarHandling:
 
         return controller
 
-    def _convert_button_press_to_speed(pressValue):
+    def _convert_button_press_to_speed(self, pressValue):
         buttonMinValue = -1
         buttonMaxValue = 1
         pwmMinValue = 0
@@ -79,18 +79,15 @@ class CarHandling:
 
     def _handle_axis_values(self, event):
         axis = event.axis
-	
+        print(axis)
         buttonPressValue = self._controller.get_axis(axis)
-        speed = self._convert_button_press_to_speed(buttonPressValue)
-        if speed > self._pwmTreshold:
-            self._change_duty_cycle(speed)
 
-            if axis == 4:
-                self._goForward = True
-                self._goReverse = False
-            elif axis == 5:
-                self._goReverse = True
-                self._goReverse = False
+        if axis == 4:
+            self._goForward = True
+            self._goReverse = False
+        elif axis == 5:
+            self._goReverse = True
+            self._goReverse = False
         else:
             self._change_duty_cycle(0)
 
@@ -111,6 +108,7 @@ class CarHandling:
 
                     if self._goForward:
                         if self._latestTurnDirection == "straight":
+                            print("drive")
                             GPIO.output(self._leftForward, GPIO.HIGH)
                             GPIO.output(self._rightForward, GPIO.HIGH)
                             GPIO.output(self._leftBackward, GPIO.LOW)
