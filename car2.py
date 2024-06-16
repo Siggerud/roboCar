@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import pygame
-# testcomment
+
 # define GPIO pins
 leftBackward = 16
 leftForward = 18
@@ -11,8 +11,8 @@ enA = 11
 enB = 13
 
 latestTurnValue = "straight"
-latestForwardValue = -1
-latestReverseValue = -1
+latestForwardValue = -1.0
+latestReverseValue = -1.0
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(leftBackward, GPIO.OUT)
@@ -32,20 +32,22 @@ def convert_button_press_to_speed(pressValue):
 	buttonMinValue = -1
 	buttonMaxValue = 1
 	pwmMinValue = 0
-	pwmMaxValue = 100
-
-	buttonSpan = buttonMaxValue - buttonMinValue
+	pwmMaxValue = 70
+	
 	pwmSpan = pwmMaxValue - pwmMinValue
+	buttonSpan = buttonMaxValue - buttonMinValue
 
 	valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
+	
+	valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), 2)
 
-	return pwmMinValue + (valueScaled * pwmMaxValue)
+	return valueMapped
 
 pygame.init()
 pygame.joystick.init()
 
 num_joysticks = pygame.joystick.get_count()
-
+print(num_joysticks)
 if num_joysticks > 0:
 	controller = pygame.joystick.Joystick(0)
 	controller.init()
@@ -71,21 +73,21 @@ try:
 			elif event.type == pygame.JOYAXISMOTION:
 				buttonPressForward = controller.get_axis(4)
 				buttonPressBackward = controller.get_axis(5)
-
-				if buttonPressForward != -1:
+				print(event.axis)
+				if buttonPressForward != -1.0:
 					value = buttonPressForward
 					latestForwardValue = value
-				elif buttonPressBackward != -1:
+				elif buttonPressBackward != -1.0:
 					value = buttonPressBackward
 					latestReverseValue = value
 				speed = convert_button_press_to_speed(value)
-				#print(speed)
+				print(speed)
 				pwmA.ChangeDutyCycle(speed)
 				pwmB.ChangeDutyCycle(speed)
 
 
 
-			if latestForwardValue != -1:
+			if latestForwardValue != -1.0:
 				if latestTurnValue == "straight":
 					GPIO.output(leftForward, GPIO.HIGH)
 					GPIO.output(rightForward, GPIO.HIGH)
@@ -101,7 +103,7 @@ try:
 					GPIO.output(rightForward, GPIO.LOW)
 					GPIO.output(leftBackward, GPIO.LOW)
 					GPIO.output(rightBackward, GPIO.LOW)
-			elif latestReverseValue != -1:
+			elif latestReverseValue != -1.0:
 				if latestTurnValue == "straight":
 					GPIO.output(leftForward, GPIO.LOW)
 					GPIO.output(rightForward, GPIO.LOW)
@@ -117,7 +119,7 @@ try:
 					GPIO.output(rightForward, GPIO.LOW)
 					GPIO.output(leftBackward, GPIO.HIGH)
 					GPIO.output(rightBackward, GPIO.LOW)
-			elif latestReverseValue == -1 and latestForwardValue == -1:
+			elif latestReverseValue == -1.0 and latestForwardValue == -1.0:
 				pwmA.ChangeDutyCycle(100)
 				pwmB.ChangeDutyCycle(100)
 
