@@ -77,9 +77,9 @@ class CarHandling:
         self._pwmA.ChangeDutyCycle(speed)
         self._pwmB.ChangeDutyCycle(speed)
 
-    def _handle_axis_values(self):
+    def _handle_axis_values(self, event):
         axis = event.axis
-
+	
         buttonPressValue = self._controller.get_axis(axis)
         speed = self._convert_button_press_to_speed(buttonPressValue)
         if speed > self._pwmTreshold:
@@ -107,7 +107,7 @@ class CarHandling:
                     if eventType == pygame.JOYHATMOTION:
                         self._handle_turn_values()
                     elif eventType == pygame.JOYAXISMOTION:
-                        self._handle_axis_values()
+                        self._handle_axis_values(event)
 
                     if self._goForward:
                         if self._latestTurnDirection == "straight":
