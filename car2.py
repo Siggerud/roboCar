@@ -71,17 +71,16 @@ try:
 			elif event.type == pygame.JOYAXISMOTION:
 				axis = event.axis
 
+
 				if axis == 4:
-					direction = "forward"
+					lastDirection = "forward"
 				elif axis == 5:
-					direction = "reverse"
+					lastDirection = "reverse"
 				buttonPressValue = controller.get_axis(axis)
 				speed = convert_button_press_to_speed(buttonPressValue)
 
 				pwmA.ChangeDutyCycle(speed)
 				pwmB.ChangeDutyCycle(speed)
-
-				lastDirection = direction
 
 			if lastDirection == "forward":
 				if latestTurnValue == "straight":
