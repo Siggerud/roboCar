@@ -5,9 +5,9 @@ GPIO.setmode(GPIO.BOARD)
 
 # define GPIO pins
 leftBackward = 16
-leftForward = 18
+leftForward = 15
 rightBackward = 22
-rightForward = 15
+rightForward = 18
 enA = 11
 enB = 13
 
