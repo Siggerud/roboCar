@@ -104,9 +104,11 @@ class CarHandling:
 			self._goReverse = False
 			
 
-	def handle_xbox_input(self):
+	def handle_xbox_input(self, threadEvent):
 		try:
 			while True:
+				print(threadEvent.is_set())
+
 				for event in pygame.event.get():
 					eventType = event.type
 
