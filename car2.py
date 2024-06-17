@@ -1,6 +1,7 @@
 from CarHandling import CarHandling
 import RPi.GPIO as GPIO
 from threading import Thread, Event
+import time
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -19,3 +20,8 @@ def handle_car(event):
 myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
 thread1.start()
+
+time.sleep(5)
+myEvent.set()
+
+
