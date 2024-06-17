@@ -24,4 +24,6 @@ thread1.start()
 time.sleep(5)
 myEvent.set()
 
+thread1.join()
+
 

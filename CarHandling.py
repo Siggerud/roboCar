@@ -107,7 +107,8 @@ class CarHandling:
 	def handle_xbox_input(self, threadEvent):
 		try:
 			while True:
-				print(threadEvent.is_set())
+				if threadEvent.set():
+					break
 
 				for event in pygame.event.get():
 					eventType = event.type
