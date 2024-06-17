@@ -168,8 +168,8 @@ class CarHandling:
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.HIGH)
 
-		except KeyboardInterrupt:
-			print("Exiting")
+		#except KeyboardInterrupt:
+		#	print("Exiting")
 
 		finally:
 			GPIO.cleanup()
