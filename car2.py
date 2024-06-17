@@ -22,15 +22,11 @@ def get_serial_data(event):
     ser = serial.Serial('/dev/ttyACM0', 9600)  # serial connection to USB port
     time.sleep(2)
 
-    try:
-        while True:
-            if event.is_set():
-                break
+    while not event.is_set():
+        if ser.in_waiting > 0:
+            print(ser.readline().decode('utf-8').rstrip())
 
-            if ser.in_waiting > 0:
-                print(ser.readline().decode('utf-8').rstrip())
-    finally:
-        ser.close()
+    ser.close()
 
 
 myEvent = Event()

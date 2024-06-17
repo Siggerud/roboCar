@@ -105,68 +105,69 @@ class CarHandling:
 			
 
 	def handle_xbox_input(self, threadEvent):
-		try:
-			while not threadEvent.is_set():
+		while not threadEvent.is_set():
 
-				for event in pygame.event.get():
-					eventType = event.type
+			for event in pygame.event.get():
+				eventType = event.type
 
-					if eventType == pygame.JOYHATMOTION:
-						self._handle_turn_values()
-					elif eventType == pygame.JOYAXISMOTION:
-						self._handle_axis_values(event)
+				if eventType == pygame.JOYHATMOTION:
+					self._handle_turn_values()
+				elif eventType == pygame.JOYAXISMOTION:
+					self._handle_axis_values(event)
 
-					if self._goForward:
-						if not self._turnLeft and not self._turnRight:
-							GPIO.output(self._leftForward, GPIO.HIGH)
-							GPIO.output(self._rightForward, GPIO.HIGH)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnLeft:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.HIGH)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnRight:
-							GPIO.output(self._leftForward, GPIO.HIGH)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
+				if self._goForward:
+					if not self._turnLeft and not self._turnRight:
+						GPIO.output(self._leftForward, GPIO.HIGH)
+						GPIO.output(self._rightForward, GPIO.HIGH)
+						GPIO.output(self._leftBackward, GPIO.LOW)
+						GPIO.output(self._rightBackward, GPIO.LOW)
+					elif self._turnLeft:
+						GPIO.output(self._leftForward, GPIO.LOW)
+						GPIO.output(self._rightForward, GPIO.HIGH)
+						GPIO.output(self._leftBackward, GPIO.LOW)
+						GPIO.output(self._rightBackward, GPIO.LOW)
+					elif self._turnRight:
+						GPIO.output(self._leftForward, GPIO.HIGH)
+						GPIO.output(self._rightForward, GPIO.LOW)
+						GPIO.output(self._leftBackward, GPIO.LOW)
+						GPIO.output(self._rightBackward, GPIO.LOW)
 
-					elif self._goReverse:
-						if not self._turnLeft and not self._turnRight:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.HIGH)
-							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._turnLeft:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._turnRight:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.HIGH)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-					elif not self._goReverse and not self._goForward:
-						if not self._turnLeft and not self._turnRight:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnLeft:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.HIGH)
-							GPIO.output(self._leftBackward, GPIO.HIGH)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnRight:
-							GPIO.output(self._leftForward, GPIO.HIGH)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.HIGH)
+				elif self._goReverse:
+					if not self._turnLeft and not self._turnRight:
+						GPIO.output(self._leftForward, GPIO.LOW)
+						GPIO.output(self._rightForward, GPIO.LOW)
+						GPIO.output(self._leftBackward, GPIO.HIGH)
+						GPIO.output(self._rightBackward, GPIO.HIGH)
+					elif self._turnLeft:
+						GPIO.output(self._leftForward, GPIO.LOW)
+						GPIO.output(self._rightForward, GPIO.LOW)
+						GPIO.output(self._leftBackward, GPIO.LOW)
+						GPIO.output(self._rightBackward, GPIO.HIGH)
+					elif self._turnRight:
+						GPIO.output(self._leftForward, GPIO.LOW)
+						GPIO.output(self._rightForward, GPIO.LOW)
+						GPIO.output(self._leftBackward, GPIO.HIGH)
+						GPIO.output(self._rightBackward, GPIO.LOW)
+				elif not self._goReverse and not self._goForward:
+					if not self._turnLeft and not self._turnRight:
+						GPIO.output(self._leftForward, GPIO.LOW)
+						GPIO.output(self._rightForward, GPIO.LOW)
+						GPIO.output(self._leftBackward, GPIO.LOW)
+						GPIO.output(self._rightBackward, GPIO.LOW)
+					elif self._turnLeft:
+						GPIO.output(self._leftForward, GPIO.LOW)
+						GPIO.output(self._rightForward, GPIO.HIGH)
+						GPIO.output(self._leftBackward, GPIO.HIGH)
+						GPIO.output(self._rightBackward, GPIO.LOW)
+					elif self._turnRight:
+						GPIO.output(self._leftForward, GPIO.HIGH)
+						GPIO.output(self._rightForward, GPIO.LOW)
+						GPIO.output(self._leftBackward, GPIO.LOW)
+						GPIO.output(self._rightBackward, GPIO.HIGH)
 
-		finally:
-			GPIO.cleanup()
-			self._pwmA.stop()
-			self._pwmB.stop()
+		self._cleanup()
+
+	def _cleanup(self):
+		GPIO.cleanup()
+		self._pwmA.stop()
+		self._pwmB.stop()
