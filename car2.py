@@ -29,8 +29,6 @@ def get_serial_data(event):
 
             if ser.in_waiting > 0:
                 print(ser.readline().decode('utf-8').rstrip())
-    #except KeyboardInterrupt:
-    #    print("Exiting")
     finally:
         ser.close()
 
@@ -42,8 +40,6 @@ thread1.start()
 thread2 = Thread(target=get_serial_data, args=(myEvent,))
 thread2.start()
 
-#time.sleep(5)
-#myEvent.set()
 
 try:
     while True:

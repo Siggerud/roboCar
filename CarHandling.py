@@ -106,9 +106,7 @@ class CarHandling:
 
 	def handle_xbox_input(self, threadEvent):
 		try:
-			while True:
-				if threadEvent.is_set():
-					break
+			while not threadEvent.is_set():
 
 				for event in pygame.event.get():
 					eventType = event.type
@@ -167,9 +165,6 @@ class CarHandling:
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.HIGH)
-
-		#except KeyboardInterrupt:
-		#	print("Exiting")
 
 		finally:
 			GPIO.cleanup()
