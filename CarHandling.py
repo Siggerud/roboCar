@@ -102,6 +102,7 @@ class CarHandling:
 
 			self._goForward = False
 			self._goReverse = False
+			
 
 	def handle_xbox_input(self):
 		try:
