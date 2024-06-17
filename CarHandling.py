@@ -71,24 +71,29 @@ class CarHandling:
         elif turnValue == 0:
             turnDirection = "straight"
 
-        self._lastTurnDirection = turnDirection
+        self._latestTurnDirection = turnDirection
 
     def _change_duty_cycle(self, speed):
+        print(speed)
         self._pwmA.ChangeDutyCycle(speed)
         self._pwmB.ChangeDutyCycle(speed)
 
     def _handle_axis_values(self, event):
         axis = event.axis
-        print(axis)
         buttonPressValue = self._controller.get_axis(axis)
-
-        if axis == 4:
-            self._goForward = True
-            self._goReverse = False
-        elif axis == 5:
-            self._goReverse = True
-            self._goReverse = False
+        
+        speed = self._convert_button_press_to_speed(buttonPressValue)
+        if speed > self._pwmTreshold:
+            self._change_duty_cycle(speed)
+            if axis == 4:
+                self._goForward = True
+                self._goReverse = False
+            elif axis == 5:
+                self._goForward = False
+                self._goReverse = True
         else:
+            self._goForward = False
+            self._goReverse = False
             self._change_duty_cycle(0)
 
             self._goReverse = False
