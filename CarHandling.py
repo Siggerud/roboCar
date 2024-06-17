@@ -105,6 +105,7 @@ class CarHandling:
 			while True:
 				for event in pygame.event.get():
 					eventType = event.type
+					print("start of loop")
 
 					if eventType == pygame.JOYHATMOTION:
 						self._handle_turn_values()
@@ -147,6 +148,7 @@ class CarHandling:
 							GPIO.output(self._rightBackward, GPIO.LOW)
 					elif not self._goReverse and not self._goForward:
 						if self._latestTurnDirection == "left":
+							print("left")
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.HIGH)
 							GPIO.output(self._leftBackward, GPIO.HIGH)
