@@ -12,7 +12,7 @@ rightForward = 18
 enA = 11
 enB = 13
 
-def handle_car():
+def handle_car(event):
     handler = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
     handler.handle_xbox_input(event)
 
