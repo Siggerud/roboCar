@@ -73,6 +73,9 @@ class CarHandling:
 
 		self._latestTurnDirection = turnDirection
 
+		if not self._goForward and not self._goReverse:
+			self._change_duty_cycle(70)
+
 	def _change_duty_cycle(self, speed):
 		print(speed)
 		self._pwmA.ChangeDutyCycle(speed)
