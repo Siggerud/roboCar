@@ -11,8 +11,10 @@ class CarHandling:
 		self._enB = enB
 
 		self._pwmTreshold = 30
-		self._latestTurnDirection = "straight"
-		self._lastDirection = "forward"
+		self._pwmMax = 70
+
+		self._turnLeft = False
+		self._turnRight = False
 
 		self._goForward = False
 		self._goReverse = False
@@ -51,7 +53,7 @@ class CarHandling:
 		buttonMinValue = -1
 		buttonMaxValue = 1
 		pwmMinValue = 0
-		pwmMaxValue = 70
+		pwmMaxValue = self._pwmMax
 
 		pwmSpan = pwmMaxValue - pwmMinValue
 		buttonSpan = buttonMaxValue - buttonMinValue
@@ -65,16 +67,17 @@ class CarHandling:
 	def _handle_turn_values(self):
 		turnValue = self._controller.get_hat(0)[0] # only handle the horizontal value
 		if turnValue == -1:
-			turnDirection = "left"
+			self._turnLeft = True
+			self._turnRight = False
 		elif turnValue == 1:
-			turnDirection = "right"
+			self._turnLeft = False
+			self._turnRight = True
 		elif turnValue == 0:
-			turnDirection = "straight"
-
-		self._latestTurnDirection = turnDirection
+			self._turnLeft = False
+			self._turnRight = False
 
 		if not self._goForward and not self._goReverse:
-			self._change_duty_cycle(70)
+			self._change_duty_cycle(self._pwmMax)
 
 	def _change_duty_cycle(self, speed):
 		print(speed)
@@ -86,7 +89,7 @@ class CarHandling:
 		buttonPressValue = self._controller.get_axis(axis)
 
 		speed = self._convert_button_press_to_speed(buttonPressValue)
-		if speed > self._pwmTreshold:
+		if speed > self._pwmTreshold: # only change speed if over the treshold
 			self._change_duty_cycle(speed)
 			if axis == 4:
 				self._goForward = True
@@ -95,20 +98,16 @@ class CarHandling:
 				self._goForward = False
 				self._goReverse = True
 		else:
-			self._goForward = False
-			self._goReverse = False
 			self._change_duty_cycle(0)
 
-			self._goReverse = False
 			self._goForward = False
-
+			self._goReverse = False
 
 	def handle_xbox_input(self):
 		try:
 			while True:
 				for event in pygame.event.get():
 					eventType = event.type
-					print("start of loop")
 
 					if eventType == pygame.JOYHATMOTION:
 						self._handle_turn_values()
@@ -116,55 +115,54 @@ class CarHandling:
 						self._handle_axis_values(event)
 
 					if self._goForward:
-						if self._latestTurnDirection == "straight":
-							print("drive")
+						if not self._turnLeft and not self._turnRight:
 							GPIO.output(self._leftForward, GPIO.HIGH)
 							GPIO.output(self._rightForward, GPIO.HIGH)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._latestTurnDirection == "left":
+						elif self._turnLeft:
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.HIGH)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._latestTurnDirection == "right":
+						elif self._turnRight:
 							GPIO.output(self._leftForward, GPIO.HIGH)
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.LOW)
 
 					elif self._goReverse:
-						if (self._latestTurnDirection== "straight"):
+						if not self._turnLeft and not self._turnRight:
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.HIGH)
 							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._latestTurnDirection == "left":
+						elif self._turnLeft:
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._latestTurnDirection == "right":
+						elif self._turnRight:
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.HIGH)
 							GPIO.output(self._rightBackward, GPIO.LOW)
 					elif not self._goReverse and not self._goForward:
-						if self._latestTurnDirection == "left":
+						if not self._turnLeft and not self._turnRight:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.LOW)
+						elif self._turnLeft:
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.HIGH)
 							GPIO.output(self._leftBackward, GPIO.HIGH)
 							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._latestTurnDirection == "right":
+						elif self._turnRight:
 							GPIO.output(self._leftForward, GPIO.HIGH)
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._latestTurnDirection == "straight":
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
 
 		except KeyboardInterrupt:
 			print("Exiting")
