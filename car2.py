@@ -25,8 +25,10 @@ def get_serial_data(event):
     try:
         while True:
             if event.is_set():
-                if ser.in_waiting > 0:
-                    print(ser.readline().decode('utf-8').rstrip())
+                break
+
+            if ser.in_waiting > 0:
+                print(ser.readline().decode('utf-8').rstrip())
     except KeyboardInterrupt:
         print("Exiting")
     finally:
