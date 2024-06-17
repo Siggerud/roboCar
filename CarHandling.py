@@ -151,7 +151,6 @@ class CarHandling:
 							GPIO.output(self._rightBackward, GPIO.LOW)
 					elif not self._goReverse and not self._goForward:
 						if self._latestTurnDirection == "left":
-							print("left")
 							GPIO.output(self._leftForward, GPIO.LOW)
 							GPIO.output(self._rightForward, GPIO.HIGH)
 							GPIO.output(self._leftBackward, GPIO.HIGH)
@@ -161,6 +160,11 @@ class CarHandling:
 							GPIO.output(self._rightForward, GPIO.LOW)
 							GPIO.output(self._leftBackward, GPIO.LOW)
 							GPIO.output(self._rightBackward, GPIO.HIGH)
+						elif self._latestTurnDirection == "straight":
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.LOW)
 
 		except KeyboardInterrupt:
 			print("Exiting")
