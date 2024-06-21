@@ -7,10 +7,10 @@ from time import sleep
 GPIO.setmode(GPIO.BOARD)
 
 # define GPIO pins
-leftBackward = 22
-leftForward = 18
-rightBackward = 16
-rightForward = 15
+leftBackward = 22 # IN2 
+leftForward = 18 # IN1
+rightBackward = 16 # IN4
+rightForward = 15 # IN3
 enA = 11
 enB = 13
 
