@@ -34,11 +34,11 @@ class CarHandling:
 		self._pwmB.start(0)
 
 		self._controller = self._get_controller()
-        
-    def handle_xbox_input(self, threadEvent):
-        if not self._controller:
-            threadEvent.set()
-    
+
+	def handle_xbox_input(self, threadEvent):
+		if not self._controller:
+			threadEvent.set()
+
 		while not threadEvent.is_set():
 
 			for event in pygame.event.get():
@@ -102,8 +102,8 @@ class CarHandling:
 		self._cleanup()
 
 	def _get_controller(self):
-        controller = None
-    
+		controller = None
+
 		pygame.init()
 		pygame.joystick.init()
 
