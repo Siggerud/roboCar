@@ -31,7 +31,7 @@ thread2.start()
 
 
 try:
-    while True:
+    while not myEvent.is_set(): # listen for any threads setting the event
         sleep(0.5)
 except KeyboardInterrupt:
     myEvent.set()
