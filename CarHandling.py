@@ -37,6 +37,7 @@ class CarHandling:
 
 	def handle_xbox_input(self, threadEvent):
 		if not self._controller:
+			self._cleanup()
 			return
 
 		while not threadEvent.is_set():
