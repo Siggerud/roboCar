@@ -104,23 +104,20 @@ class CarHandling:
 
 	def _get_controller(self):
 		controller = None
-		pygameInitSuccess = True
 
-		try:
-			pygame.init()
-			pygame.joystick.init()
-		except pygame.error as e:
-			print(f"Feil {e}")
-			pygameInitSuccess = False
+		pygame.init()
+		pygame.joystick.init()
 
-		if pygameInitSuccess:
-			num_joysticks = pygame.joystick.get_count()
-			if num_joysticks > 0:
+		num_joysticks = pygame.joystick.get_count()
+		if num_joysticks > 0:
+			try:
 				controller = pygame.joystick.Joystick(0)
 				controller.init()
 				print("Controller connected: ", controller.get_name())
-			else:
-				print("No controls found. Turn on the controller")
+			except pygame.error as e:
+				print(f"Feil {e}")
+		else:
+			print("No controls found. Turn on the controller")
 
 		return controller
 
