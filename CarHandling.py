@@ -109,7 +109,7 @@ class CarHandling:
 		try:
 			pygame.init()
 			pygame.joystick.init()
-		except Exception as e:
+		except pygame.error as e:
 			print(f"Feil {e}")
 			pygameInitSuccess = False
 
