@@ -119,6 +119,9 @@ class CarHandling:
 		result = subprocess.run(["xset", "q"], capture_output = True, text = True)
 		returnCode = result.returncode
 
+		if not returnCode:
+			print("Succesful connection to forwarded X11 server")
+
 		return not returnCode
 
 	def _get_controller(self):
