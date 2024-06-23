@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import pygame
+import subprocess
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -33,10 +34,17 @@ class CarHandling:
 		self._pwmA.start(0)
 		self._pwmB.start(0)
 
+		self._x11Connected = self._check_if_X11_connected()
 		self._controller = self._get_controller()
 
 	def handle_xbox_input(self, threadEvent):
 		if not self._controller:
+			print("No controls found. Turn on the controller")
+			self._cleanup()
+			return
+
+		if not self._x11Connected:
+			print("Unable to connect to forwarded X server. Start VcXSrc.")
 			self._cleanup()
 			return
 
@@ -102,6 +110,11 @@ class CarHandling:
 
 		self._cleanup()
 
+	def _check_if_X11_connected(self):
+		result = subprocess.run(["xset", "q"], capture_output = True, text = True)
+
+		return not result
+
 	def _get_controller(self):
 		controller = None
 
@@ -110,14 +123,9 @@ class CarHandling:
 
 		num_joysticks = pygame.joystick.get_count()
 		if num_joysticks > 0:
-			try:
-				controller = pygame.joystick.Joystick(0)
-				controller.init()
-				print("Controller connected: ", controller.get_name())
-			except pygame.error as e:
-				print(f"Feil {e}")
-		else:
-			print("No controls found. Turn on the controller")
+			controller = pygame.joystick.Joystick(0)
+			controller.init()
+			print("Controller connected: ", controller.get_name())
 
 		return controller
 
