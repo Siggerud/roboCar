@@ -4,6 +4,16 @@ import subprocess
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
+		self._x11Connected = self._check_if_X11_connected()
+		if not self._x11Connected:
+			print("Unable to connect to forwarded X server. Start VcXSrc.")
+			return
+
+		self._controller = self._get_controller()
+		if not self._controller:
+			print("No controls found. Turn on the controller")
+			return
+
 		self._leftBackward = leftBackward
 		self._leftForward = leftForward
 		self._rightBackward = rightBackward
@@ -34,17 +44,12 @@ class CarHandling:
 		self._pwmA.start(0)
 		self._pwmB.start(0)
 
-		self._x11Connected = self._check_if_X11_connected()
-		self._controller = self._get_controller()
-
 	def handle_xbox_input(self, threadEvent):
 		if not self._controller:
-			print("No controls found. Turn on the controller")
 			self._cleanup()
 			return
 
 		if not self._x11Connected:
-			print("Unable to connect to forwarded X server. Start VcXSrc.")
 			self._cleanup()
 			return
 
