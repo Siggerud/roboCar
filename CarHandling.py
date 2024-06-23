@@ -45,11 +45,11 @@ class CarHandling:
 		self._pwmB.start(0)
 
 	def handle_xbox_input(self, threadEvent):
-		if not self._controller:
+		if not self._x11Connected:
 			self._cleanup()
 			return
 
-		if not self._x11Connected:
+		if not self._controller:
 			self._cleanup()
 			return
 
