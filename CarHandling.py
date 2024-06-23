@@ -117,8 +117,9 @@ class CarHandling:
 
 	def _check_if_X11_connected(self):
 		result = subprocess.run(["xset", "q"], capture_output = True, text = True)
+		returnCode = result.returncode
 
-		return not result
+		return not returnCode
 
 	def _get_controller(self):
 		controller = None
