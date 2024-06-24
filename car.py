@@ -13,9 +13,11 @@ rightBackward = 16 # IN4
 rightForward = 15 # IN3
 enA = 11
 enB = 13
+servoPin = 37
 
 def handle_car(event):
     handler = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
+    handler.add_servo(servoPin)
     handler.handle_xbox_input(event)
 
 def get_serial_data(event):
