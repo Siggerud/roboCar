@@ -213,7 +213,7 @@ class CarHandling:
 		else:
 			self._servoValueChanged = True
 			servoValue = self._convert_button_press_to_servo_value(stickValue)
-			self._change_duty_cycle([self._pwmServo, servoValue])
+			self._change_duty_cycle([self._pwmServo], servoValue)
 
 	def _handle_axis_values(self, event, axis):
 		buttonPressValue = self._controller.get_axis(axis)
