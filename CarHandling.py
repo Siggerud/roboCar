@@ -123,6 +123,7 @@ class CarHandling:
 	def add_servo(self, servoPin):
 		self._servoSet = True
 
+		GPIO.setup(servoPin, GPIO.OUT)
 		self._pwmServo = GPIO.PWM(servoPin, 100)
 		self._pwmServo.start(0)
 
