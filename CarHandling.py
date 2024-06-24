@@ -206,7 +206,7 @@ class CarHandling:
 
 	def _handle_servo_values(self, event):
 		buttonPressValue = self._controller.get_axis(2)
-
+		print(buttonPressValue)
 		stickValue = round(buttonPressValue, 1)
 		if stickValue == self._lastServoStickValue:
 			self._servoValueChanged = False
