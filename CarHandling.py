@@ -170,35 +170,6 @@ class CarHandling:
 
 		return valueMapped
 
-	def _convert_button_press_to_servo_value(self, pressValue):
-		buttonMinValue = -1
-		buttonMaxValue = 1
-		pwmMinValue = 1.4
-		pwmMaxValue = 12.7
-
-		pwmSpan = pwmMaxValue - pwmMinValue
-		buttonSpan = buttonMaxValue - buttonMinValue
-
-		valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
-		valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), 2)
-
-		return valueMapped
-
-	def _convert_button_press_to_speed(self, pressValue):
-		buttonMinValue = -1
-		buttonMaxValue = 1
-		pwmMinValue = 0
-		pwmMaxValue = self._pwmMax
-
-		pwmSpan = pwmMaxValue - pwmMinValue
-		buttonSpan = buttonMaxValue - buttonMinValue
-
-		valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
-
-		valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), 2)
-
-		return valueMapped
-
 	def _handle_turn_values(self):
 		turnValue = self._controller.get_hat(0)[0] # only handle the horizontal value
 		if turnValue == -1:
