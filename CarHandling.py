@@ -36,6 +36,9 @@ class CarHandling:
 		self._pwmA.start(0)
 		self._pwmB.start(0)
 
+		self._servoSet = False
+		self._pwmServo = None
+
 		self._x11Connected = self._check_if_X11_connected()
 		if not self._x11Connected:
 			print("Unable to connect to forwarded X server. Start VcXSrc.")
@@ -116,6 +119,12 @@ class CarHandling:
 						GPIO.output(self._rightBackward, GPIO.HIGH)
 
 		self._cleanup()
+
+	def add_servo(self, servoPin):
+		self._servoSet = True
+
+		self._pwmServo = GPIO.PWM(servoPin, 100)
+		self._pwmServo.start(0)
 
 	def _check_if_X11_connected(self):
 		result = subprocess.run(["xset", "q"], capture_output = True, text = True)
@@ -198,3 +207,6 @@ class CarHandling:
 		GPIO.cleanup()
 		self._pwmA.stop()
 		self._pwmB.stop()
+
+		if self._servoSet:
+			self._pwmServo.stop()
