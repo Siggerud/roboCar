@@ -38,6 +38,8 @@ class CarHandling:
 
 		self._servoSet = False
 		self._pwmServo = None
+		self._lastServoStickValue = 0
+		self._servoValueChanged = False
 
 		self._x11Connected = self._check_if_X11_connected()
 		if not self._x11Connected:
@@ -66,7 +68,11 @@ class CarHandling:
 				if eventType == pygame.JOYHATMOTION:
 					self._handle_turn_values()
 				elif eventType == pygame.JOYAXISMOTION:
-					self._handle_axis_values(event)
+					axis = event.axis
+					if axis == 4 or axis == 5:
+						self._handle_axis_values(event, axis)
+					elif axis == 2:
+						self._handle_servo_values(event)
 
 				if self._goForward:
 					if not self._turnLeft and not self._turnRight:
@@ -124,7 +130,7 @@ class CarHandling:
 		self._servoSet = True
 
 		GPIO.setup(servoPin, GPIO.OUT)
-		self._pwmServo = GPIO.PWM(servoPin, 100)
+		self._pwmServo = GPIO.PWM(servoPin, 50)
 		self._pwmServo.start(0)
 
 	def _check_if_X11_connected(self):
@@ -149,6 +155,20 @@ class CarHandling:
 			print("Controller connected: ", controller.get_name())
 
 		return controller
+
+	def _convert_button_press_to_servo_value(self, pressValue):
+		buttonMinValue = -1
+		buttonMaxValue = 1
+		pwmMinValue = 1.4
+		pwmMaxValue = 12.7
+
+		pwmSpan = pwmMaxValue - pwmMinValue
+		buttonSpan = buttonMaxValue - buttonMinValue
+
+		valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
+		valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), 2)
+
+		return valueMapped
 
 	def _convert_button_press_to_speed(self, pressValue):
 		buttonMinValue = -1
@@ -180,18 +200,27 @@ class CarHandling:
 		if not self._goForward and not self._goReverse:
 			self._change_duty_cycle(self._pwmMax)
 
-	def _change_duty_cycle(self, speed):
-		print(speed)
-		self._pwmA.ChangeDutyCycle(speed)
-		self._pwmB.ChangeDutyCycle(speed)
+	def _change_duty_cycle(self, pwms, speed):
+		for pwm in pwms:
+			pwm.ChangeDutyCycle(speed)
 
-	def _handle_axis_values(self, event):
-		axis = event.axis
+	def _handle_servo_values(self, event):
+		buttonPressValue = self._controller.get_axis(2)
+
+		stickValue = round(buttonPressValue, 1)
+		if stickValue == self._lastServoStickValue:
+			self._servoValueChanged = False
+		else:
+			self._servoValueChanged = True
+			servoValue = self._convert_button_press_to_servo_value(stickValue)
+			self._change_duty_cycle([self._pwmServo, servoValue])
+
+	def _handle_axis_values(self, event, axis):
 		buttonPressValue = self._controller.get_axis(axis)
 
 		speed = self._convert_button_press_to_speed(buttonPressValue)
 		if speed > self._pwmTreshold: # only change speed if over the treshold
-			self._change_duty_cycle(speed)
+			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 			if axis == 4:
 				self._goForward = True
 				self._goReverse = False
@@ -199,7 +228,7 @@ class CarHandling:
 				self._goForward = False
 				self._goReverse = True
 		else:
-			self._change_duty_cycle(0)
+			self._change_duty_cycle([self._pwmA, self._pwmB], 0)
 
 			self._goForward = False
 			self._goReverse = False
