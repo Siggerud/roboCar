@@ -212,7 +212,7 @@ class CarHandling:
 			self._turnRight = False
 
 		if not self._goForward and not self._goReverse:
-			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMax)
+			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
 
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
