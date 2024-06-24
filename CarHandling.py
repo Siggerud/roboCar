@@ -14,14 +14,14 @@ class CarHandling:
 		self._enB = enB
 
 		self._pwmTreshold = 30
-		self._pwmMax = 70
+		self._pwmMinTT = 0
+		self._pwmMaxTT = 70
 
 		self._turnLeft = False
 		self._turnRight = False
 
 		self._goForward = False
 		self._goReverse = False
-
 
 		GPIO.setup(leftBackward, GPIO.OUT)
 		GPIO.setup(leftForward, GPIO.OUT)
@@ -40,6 +40,8 @@ class CarHandling:
 		self._pwmServo = None
 		self._lastServoStickValue = 0
 		self._servoValueChanged = False
+		self._pwmMinServo = 1.4
+		self._pwmMaxServo = 12.7
 
 		self._x11Connected = self._check_if_X11_connected()
 		if not self._x11Connected:
@@ -156,6 +158,18 @@ class CarHandling:
 
 		return controller
 
+	def _convert_button_press_to_pwm_value(self, pressValue, pwmMinValue, pwmMaxValue, valuePrecision):
+		buttonMinValue = -1
+		buttonMaxValue = 1
+
+		pwmSpan = pwmMaxValue - pwmMinValue
+		buttonSpan = buttonMaxValue - buttonMinValue
+
+		valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
+		valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), valuePrecision)
+
+		return valueMapped
+
 	def _convert_button_press_to_servo_value(self, pressValue):
 		buttonMinValue = -1
 		buttonMaxValue = 1
@@ -206,19 +220,19 @@ class CarHandling:
 
 	def _handle_servo_values(self, event):
 		buttonPressValue = self._controller.get_axis(2)
-		print(buttonPressValue)
 		stickValue = round(buttonPressValue, 1)
+
 		if stickValue == self._lastServoStickValue:
 			self._servoValueChanged = False
 		else:
 			self._servoValueChanged = True
-			servoValue = self._convert_button_press_to_servo_value(stickValue)
+			servoValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
 			self._change_duty_cycle([self._pwmServo], servoValue)
 
 	def _handle_axis_values(self, event, axis):
 		buttonPressValue = self._controller.get_axis(axis)
 
-		speed = self._convert_button_press_to_speed(buttonPressValue)
+		speed = self._convert_button_press_to_pwm_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		if speed > self._pwmTreshold: # only change speed if over the treshold
 			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 			if axis == 4:
