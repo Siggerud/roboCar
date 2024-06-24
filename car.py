@@ -28,8 +28,8 @@ myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
 thread1.start()
 
-thread2 = Thread(target=get_serial_data, args=(myEvent,))
-thread2.start()
+#thread2 = Thread(target=get_serial_data, args=(myEvent,))
+#thread2.start()
 
 
 try:
@@ -38,6 +38,6 @@ try:
 except KeyboardInterrupt:
     myEvent.set()
     thread1.join()
-    thread2.join()
+    #thread2.join()
 
 
