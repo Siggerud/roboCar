@@ -164,6 +164,8 @@ class CarHandling:
 			self._servoValueChanged = False
 		else:
 			self._servoValueChanged = True
+			print(stickValue)
+			print(self._lastServoStickValue)
 			self._servoPwmValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
 			self._lastServoStickValue = stickValue
 
