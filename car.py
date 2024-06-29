@@ -25,16 +25,6 @@ def get_serial_data(event):
     serialObj = SerialCommunicator('/dev/ttyACM0', 9600)  # serial connection to USB port
     serialObj.open_communication(event)
 
-myEvent = Event()
-thread1 = Thread(target=handle_car, args=(myEvent,))
-thread1.start()
-
-#thread2 = Thread(target=get_serial_data, args=(myEvent,))
-#thread2.start()
-
-thread3 = Thread(target=start_camera, args=(myEvent,))
-thread3.start()
-
 def start_camera(event):
     # initialize object
     picam2 = Picamera2()
@@ -49,6 +39,15 @@ def start_camera(event):
         sleep(0.5)
     picam2.close()
 
+myEvent = Event()
+thread1 = Thread(target=handle_car, args=(myEvent,))
+thread1.start()
+
+#thread2 = Thread(target=get_serial_data, args=(myEvent,))
+#thread2.start()
+
+thread3 = Thread(target=start_camera, args=(myEvent,))
+thread3.start()
 
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
