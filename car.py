@@ -1,9 +1,9 @@
 from CarHandling import CarHandling
 from SerialCommunicator import SerialCommunicator
+from Camera import Camera
 import RPi.GPIO as GPIO
 from threading import Thread, Event
 from time import sleep
-from picamera2 import Picamera2, Preview
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -26,18 +26,9 @@ def get_serial_data(event):
     serialObj.open_communication(event)
 
 def start_camera(event):
-    # initialize object
-    picam2 = Picamera2()
-
-    # lowering resolution to 60% to increase framerate
-    camera_config = picam2.create_preview_configuration(main={"size": (384, 288)})
-    picam2.configure(camera_config)
-    picam2.start_preview(Preview.QT)  # must use this preview to run over ssh
-    picam2.start()  # start camera
-
-    while not event.is_set():
-        sleep(0.5)
-    picam2.close()
+    resolution = (384, 288)
+    camera = Camera(resolution)
+    camera.start_preview(event)
 
 myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
