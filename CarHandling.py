@@ -17,6 +17,8 @@ class CarHandling:
 		self._pwmMinTT = 0
 		self._pwmMaxTT = 70
 
+		self._moveCar = False
+
 		self._turnLeft = False
 		self._turnRight = False
 
@@ -40,8 +42,10 @@ class CarHandling:
 		self._pwmServo = None
 		self._lastServoStickValue = 0
 		self._servoValueChanged = False
+		self._servoPwmValue = 0
 		self._pwmMinServo = 12.7
 		self._pwmMaxServo = 1.4
+		self._moveServo = False
 
 		self._x11Connected = self._check_if_X11_connected()
 		if not self._x11Connected:
@@ -68,63 +72,72 @@ class CarHandling:
 				eventType = event.type
 
 				if eventType == pygame.JOYHATMOTION:
-					self._handle_turn_values()
+					self._prepare_car_for_turning()
+					self._moveCar = True
+					self._moveServo = False
 				elif eventType == pygame.JOYAXISMOTION:
 					axis = event.axis
 					if axis == 4 or axis == 5:
-						self._handle_axis_values(event, axis)
+						self._prepare_car_for_throttle(axis)
+						self._moveCar = True
+						self._moveServo = False
 					elif axis == 2:
-						self._handle_servo_values(event)
+						self._prepare_for_servo_movement()
+						self._moveCar = False
+						self._moveServo = True
 
-				if self._goForward:
-					if not self._turnLeft and not self._turnRight:
-						GPIO.output(self._leftForward, GPIO.HIGH)
-						GPIO.output(self._rightForward, GPIO.HIGH)
-						GPIO.output(self._leftBackward, GPIO.LOW)
-						GPIO.output(self._rightBackward, GPIO.LOW)
-					elif self._turnLeft:
-						GPIO.output(self._leftForward, GPIO.LOW)
-						GPIO.output(self._rightForward, GPIO.HIGH)
-						GPIO.output(self._leftBackward, GPIO.LOW)
-						GPIO.output(self._rightBackward, GPIO.LOW)
-					elif self._turnRight:
-						GPIO.output(self._leftForward, GPIO.HIGH)
-						GPIO.output(self._rightForward, GPIO.LOW)
-						GPIO.output(self._leftBackward, GPIO.LOW)
-						GPIO.output(self._rightBackward, GPIO.LOW)
+				if self._moveCar:
+					if self._goForward:
+						if not self._turnLeft and not self._turnRight:
+							GPIO.output(self._leftForward, GPIO.HIGH)
+							GPIO.output(self._rightForward, GPIO.HIGH)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.LOW)
+						elif self._turnLeft:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.HIGH)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.LOW)
+						elif self._turnRight:
+							GPIO.output(self._leftForward, GPIO.HIGH)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.LOW)
 
-				elif self._goReverse:
-					if not self._turnLeft and not self._turnRight:
-						GPIO.output(self._leftForward, GPIO.LOW)
-						GPIO.output(self._rightForward, GPIO.LOW)
-						GPIO.output(self._leftBackward, GPIO.HIGH)
-						GPIO.output(self._rightBackward, GPIO.HIGH)
-					elif self._turnLeft:
-						GPIO.output(self._leftForward, GPIO.LOW)
-						GPIO.output(self._rightForward, GPIO.LOW)
-						GPIO.output(self._leftBackward, GPIO.LOW)
-						GPIO.output(self._rightBackward, GPIO.HIGH)
-					elif self._turnRight:
-						GPIO.output(self._leftForward, GPIO.LOW)
-						GPIO.output(self._rightForward, GPIO.LOW)
-						GPIO.output(self._leftBackward, GPIO.HIGH)
-						GPIO.output(self._rightBackward, GPIO.LOW)
-				elif not self._goReverse and not self._goForward:
-					if not self._turnLeft and not self._turnRight:
-						GPIO.output(self._leftForward, GPIO.LOW)
-						GPIO.output(self._rightForward, GPIO.LOW)
-						GPIO.output(self._leftBackward, GPIO.LOW)
-						GPIO.output(self._rightBackward, GPIO.LOW)
-					elif self._turnLeft:
-						GPIO.output(self._leftForward, GPIO.LOW)
-						GPIO.output(self._rightForward, GPIO.HIGH)
-						GPIO.output(self._leftBackward, GPIO.HIGH)
-						GPIO.output(self._rightBackward, GPIO.LOW)
-					elif self._turnRight:
-						GPIO.output(self._leftForward, GPIO.HIGH)
-						GPIO.output(self._rightForward, GPIO.LOW)
-						GPIO.output(self._leftBackward, GPIO.LOW)
-						GPIO.output(self._rightBackward, GPIO.HIGH)
+					elif self._goReverse:
+						if not self._turnLeft and not self._turnRight:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.HIGH)
+							GPIO.output(self._rightBackward, GPIO.HIGH)
+						elif self._turnLeft:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.HIGH)
+						elif self._turnRight:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.HIGH)
+							GPIO.output(self._rightBackward, GPIO.LOW)
+					elif not self._goReverse and not self._goForward:
+						if not self._turnLeft and not self._turnRight:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.LOW)
+						elif self._turnLeft:
+							GPIO.output(self._leftForward, GPIO.LOW)
+							GPIO.output(self._rightForward, GPIO.HIGH)
+							GPIO.output(self._leftBackward, GPIO.HIGH)
+							GPIO.output(self._rightBackward, GPIO.LOW)
+						elif self._turnRight:
+							GPIO.output(self._leftForward, GPIO.HIGH)
+							GPIO.output(self._rightForward, GPIO.LOW)
+							GPIO.output(self._leftBackward, GPIO.LOW)
+							GPIO.output(self._rightBackward, GPIO.HIGH)
+				elif self._moveServo:
+					self._move_servo()
 
 		self._cleanup()
 
@@ -170,7 +183,7 @@ class CarHandling:
 
 		return valueMapped
 
-	def _handle_turn_values(self):
+	def _prepare_car_for_turning(self):
 		turnValue = self._controller.get_hat(0)[0] # only handle the horizontal value
 		if turnValue == -1:
 			self._turnLeft = True
@@ -189,7 +202,7 @@ class CarHandling:
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)
 
-	def _handle_servo_values(self, event):
+	def _prepare_for_servo_movement(self):
 		buttonPressValue = self._controller.get_axis(2)
 		stickValue = round(buttonPressValue, 1)
 
@@ -197,10 +210,14 @@ class CarHandling:
 			self._servoValueChanged = False
 		else:
 			self._servoValueChanged = True
-			servoValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
-			self._change_duty_cycle([self._pwmServo], servoValue)
+			self._servoPwmValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
+			self._lastServoStickValue = stickValue
 
-	def _handle_axis_values(self, event, axis):
+	def _move_servo(self):
+		if self._servoValueChanged:
+			self._change_duty_cycle([self._pwmServo], self._servoPwmValue)
+
+	def _prepare_car_for_throttle(self, axis):
 		buttonPressValue = self._controller.get_axis(axis)
 
 		speed = self._convert_button_press_to_pwm_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
