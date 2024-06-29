@@ -25,6 +25,8 @@ class CarHandling:
 		self._goForward = False
 		self._goReverse = False
 
+		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
+
 		GPIO.setup(leftBackward, GPIO.OUT)
 		GPIO.setup(leftForward, GPIO.OUT)
 		GPIO.setup(rightBackward, GPIO.OUT)
@@ -87,55 +89,7 @@ class CarHandling:
 						self._moveServo = True
 
 				if self._moveCar:
-					if self._goForward:
-						if not self._turnLeft and not self._turnRight:
-							GPIO.output(self._leftForward, GPIO.HIGH)
-							GPIO.output(self._rightForward, GPIO.HIGH)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnLeft:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.HIGH)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnRight:
-							GPIO.output(self._leftForward, GPIO.HIGH)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-
-					elif self._goReverse:
-						if not self._turnLeft and not self._turnRight:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.HIGH)
-							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._turnLeft:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.HIGH)
-						elif self._turnRight:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.HIGH)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-					elif not self._goReverse and not self._goForward:
-						if not self._turnLeft and not self._turnRight:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnLeft:
-							GPIO.output(self._leftForward, GPIO.LOW)
-							GPIO.output(self._rightForward, GPIO.HIGH)
-							GPIO.output(self._leftBackward, GPIO.HIGH)
-							GPIO.output(self._rightBackward, GPIO.LOW)
-						elif self._turnRight:
-							GPIO.output(self._leftForward, GPIO.HIGH)
-							GPIO.output(self._rightForward, GPIO.LOW)
-							GPIO.output(self._leftBackward, GPIO.LOW)
-							GPIO.output(self._rightBackward, GPIO.HIGH)
+					self._move_car()
 				elif self._moveServo:
 					self._move_servo()
 
@@ -216,6 +170,39 @@ class CarHandling:
 	def _move_servo(self):
 		if self._servoValueChanged:
 			self._change_duty_cycle([self._pwmServo], self._servoPwmValue)
+
+	def _adjust_gpio_values(self, gpioValues):
+		leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
+
+		GPIO.output(self._leftForward, self._gpioThrottle[leftForwardValue])
+		GPIO.output(self._rightForward, self._gpioThrottle[rightForwardValue])
+		GPIO.output(self._leftBackward, self._gpioThrottle[leftBackwardValue])
+		GPIO.output(self._rightBackward, self._gpioThrottle[rightBackwardValue])
+
+	def _move_car(self):
+		if self._goForward:
+			if not self._turnLeft and not self._turnRight:
+				gpioValues = [True, True, False, False]
+			elif self._turnLeft:
+				gpioValues = [False, True, False, False]
+			elif self._turnRight:
+				gpioValues = [True, False, False, False]
+		elif self._goReverse:
+			if not self._turnLeft and not self._turnRight:
+				gpioValues = [False, False, True, True]
+			elif self._turnLeft:
+				gpioValues = [False, False, False, True]
+			elif self._turnRight:
+				gpioValues = [False, False, True, False]
+		elif not self._goReverse and not self._goForward:
+			if not self._turnLeft and not self._turnRight:
+				gpioValues = [False, False, False, False]
+			elif self._turnLeft:
+				gpioValues = [False, True, True, False]
+			elif self._turnRight:
+				gpioValues = [True, False, False, True]
+
+		self._adjust_gpio_values(gpioValues)
 
 	def _prepare_car_for_throttle(self, axis):
 		buttonPressValue = self._controller.get_axis(axis)
