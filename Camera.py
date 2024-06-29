@@ -17,6 +17,7 @@ class Camera:
     def start_preview(self, event):
         self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
         self._cam.start()  # start camera
+        print("Starting camera preview")
 
         while not event.is_set():
             sleep(0.5)
