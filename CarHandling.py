@@ -40,8 +40,8 @@ class CarHandling:
 		self._pwmServo = None
 		self._lastServoStickValue = 0
 		self._servoValueChanged = False
-		self._pwmMinServo = 1.4
-		self._pwmMaxServo = 12.7
+		self._pwmMinServo = 12.7
+		self._pwmMaxServo = 1.4
 
 		self._x11Connected = self._check_if_X11_connected()
 		if not self._x11Connected:
@@ -197,7 +197,7 @@ class CarHandling:
 			self._servoValueChanged = False
 		else:
 			self._servoValueChanged = True
-			servoValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMaxServo, self._pwmMinServo, 1)
+			servoValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
 			self._change_duty_cycle([self._pwmServo], servoValue)
 
 	def _handle_axis_values(self, event, axis):
