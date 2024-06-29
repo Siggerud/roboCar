@@ -4,7 +4,7 @@ from time import sleep
 
 class Camera:
     def __init__(self, resolution, rotation=True):
-        self._cam = Picamera2
+        self._cam = Picamera2()
 
         if rotation:
             camera_config = self._cam.create_preview_configuration(main={"size": resolution}, transform=Transform(hflip=1, vflip=1))
