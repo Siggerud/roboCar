@@ -3,6 +3,7 @@ from SerialCommunicator import SerialCommunicator
 import RPi.GPIO as GPIO
 from threading import Thread, Event
 from time import sleep
+from picamera2 import Picamera2, Preview
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -31,6 +32,23 @@ thread1.start()
 #thread2 = Thread(target=get_serial_data, args=(myEvent,))
 #thread2.start()
 
+thread3 = Thread(target=start_camera, args=(myEvent,))
+thread3.start()
+
+def start_camera(event):
+    # initialize object
+    picam2 = Picamera2()
+
+    # lowering resolution to 60% to increase framerate
+    camera_config = picam2.create_preview_configuration(main={"size": (384, 288)})
+    picam2.configure(camera_config)
+    picam2.start_preview(Preview.QT)  # must use this preview to run over ssh
+    picam2.start()  # start camera
+
+    while not event.is_set():
+        sleep(0.5)
+    picam2.close()
+
 
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
@@ -39,5 +57,6 @@ except KeyboardInterrupt:
     myEvent.set()
     thread1.join()
     #thread2.join()
+    thread3.join()
 
 
