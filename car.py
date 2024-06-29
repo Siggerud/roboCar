@@ -14,7 +14,7 @@ rightBackward = 16 # IN4
 rightForward = 15 # IN3
 enA = 11
 enB = 13
-servoPin = 37
+servoPin = 26 # BCM value
 
 def handle_car(event):
     handler = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
@@ -34,11 +34,11 @@ myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
 thread1.start()
 
-thread2 = Thread(target=get_serial_data, args=(myEvent,))
-thread2.start()
-pyt
-thread3 = Thread(target=start_camera, args=(myEvent,))
-thread3.start()
+#thread2 = Thread(target=get_serial_data, args=(myEvent,))
+#thread2.start()
+
+#thread3 = Thread(target=start_camera, args=(myEvent,))
+#thread3.start()
 
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
@@ -47,6 +47,6 @@ except KeyboardInterrupt:
     myEvent.set()
     thread1.join()
     #thread2.join()
-    thread3.join()
+   # thread3.join()
 
 
