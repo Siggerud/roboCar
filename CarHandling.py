@@ -4,13 +4,15 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
+from BoardTool import BoardTool
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
-		self._leftBackward = leftBackward
-		self._leftForward = leftForward
-		self._rightBackward = rightBackward
-		self._rightForward = rightForward
+		self._boardTool = BoardTool()
+		self._leftBackward = self._boardTool.board_to_BCM(leftBackward)
+		self._leftForward = self._boardTool.board_to_BCM(leftForward)
+		self._rightBackward = self._boardTool.board_to_BCM(rightBackward)
+		self._rightForward = self._boardTool.board_to_BCM(rightForward)
 		self._enA = enA
 		self._enB = enB
 
@@ -28,6 +30,7 @@ class CarHandling:
 
 		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
 
+		GPIO.set_mode(GPIO.BCM)
 		GPIO.setup(leftBackward, GPIO.OUT)
 		GPIO.setup(leftForward, GPIO.OUT)
 		GPIO.setup(rightBackward, GPIO.OUT)
@@ -43,11 +46,12 @@ class CarHandling:
 
 		self._servoSet = False
 		self._pwmServo = None
+		self._servoPin = None
 		self._lastServoStickValue = 0
 		self._servoValueChanged = False
 		self._servoPwmValue = 0
-		self._pwmMinServo = 500
-		self._pwmMaxServo = 2500
+		self._pwmMinServo = 2500
+		self._pwmMaxServo = 500
 		self._moveServo = False
 
 		self._x11Connected = self._check_if_X11_connected()
@@ -98,9 +102,9 @@ class CarHandling:
 
 	def add_servo(self, servoPin):
 		self._servoSet = True
-
+		self._servoPin = self._boardTool.board_to_BCM(servoPin)
 		self._pwmServo = pigpio.pi()
-		self._pwmServo.set_mode(servoPin, pigpio.OUTPUT)
+		self._pwmServo.set_mode(self._servoPin, pigpio.OUTPUT)
 		self._pwmServo.set_PWM_frequency(servoPin, 50)
 
 	def _check_if_X11_connected(self):
@@ -170,7 +174,7 @@ class CarHandling:
 
 	def _move_servo(self):
 		if self._servoValueChanged:
-			self._pwmServo.set_servo_pulsewidth(26, self._servoPwmValue)
+			self._pwmServo.set_servo_pulsewidth(self._servoPin, self._servoPwmValue)
 
 	def _adjust_gpio_values(self, gpioValues):
 		leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
@@ -229,5 +233,5 @@ class CarHandling:
 		self._pwmB.stop()
 
 		if self._servoSet:
-			self._pwmServo.set_PWM_dutycycle(26, 0)
-			self._pwmServo.set_PWM_frequency(26, 0)
+			self._pwmServo.set_PWM_dutycycle(self._servoPin, 0)
+			self._pwmServo.set_PWM_frequency(self._servoPin, 0)
