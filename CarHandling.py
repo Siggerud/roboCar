@@ -30,7 +30,7 @@ class CarHandling:
 
 		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
 
-		GPIO.set_mode(GPIO.BCM)
+		GPIO.setmode(GPIO.BCM)
 		GPIO.setup(leftBackward, GPIO.OUT)
 		GPIO.setup(leftForward, GPIO.OUT)
 		GPIO.setup(rightBackward, GPIO.OUT)
