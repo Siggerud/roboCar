@@ -102,7 +102,6 @@ class CarHandling:
 		self._pwmServo = pigpio.pi()
 		self._pwmServo.set_mode(servoPin, pigpio.OUTPUT)
 		self._pwmServo.set_PWM_frequency(servoPin, 50)
-		self._pwmServo.start(0)
 
 	def _check_if_X11_connected(self):
 		result = subprocess.run(["xset", "q"], capture_output = True, text = True)
