@@ -36,7 +36,7 @@ thread1.start()
 
 thread2 = Thread(target=get_serial_data, args=(myEvent,))
 thread2.start()
-
+pyt
 thread3 = Thread(target=start_camera, args=(myEvent,))
 thread3.start()
 

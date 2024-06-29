@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import pigpio
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
@@ -45,8 +46,8 @@ class CarHandling:
 		self._lastServoStickValue = 0
 		self._servoValueChanged = False
 		self._servoPwmValue = 0
-		self._pwmMinServo = 12.7
-		self._pwmMaxServo = 1.4
+		self._pwmMinServo = 500
+		self._pwmMaxServo = 2500
 		self._moveServo = False
 
 		self._x11Connected = self._check_if_X11_connected()
@@ -98,8 +99,9 @@ class CarHandling:
 	def add_servo(self, servoPin):
 		self._servoSet = True
 
-		GPIO.setup(servoPin, GPIO.OUT)
-		self._pwmServo = GPIO.PWM(servoPin, 50)
+		self._pwmServo = pigpio.pi()
+		self._pwmServo(servoPin, pigpio.OUTPUT)
+		self._pwmServo.set_PWM_frequency(servoPin, 50)
 		self._pwmServo.start(0)
 
 	def _check_if_X11_connected(self):
@@ -164,14 +166,12 @@ class CarHandling:
 			self._servoValueChanged = False
 		else:
 			self._servoValueChanged = True
-			print(stickValue)
-			print(self._lastServoStickValue)
 			self._servoPwmValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
 			self._lastServoStickValue = stickValue
 
 	def _move_servo(self):
 		if self._servoValueChanged:
-			self._change_duty_cycle([self._pwmServo], self._servoPwmValue)
+			self._pwmServo.set_servo_pulsewidth(26, self._servoPwmValue)
 
 	def _adjust_gpio_values(self, gpioValues):
 		leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
@@ -230,4 +230,5 @@ class CarHandling:
 		self._pwmB.stop()
 
 		if self._servoSet:
-			self._pwmServo.stop()
+			self._pwmServo.set_PWM_dutycycle(26, 0)
+			self._pwmServo.set_PWM_frequency(26, 0)
