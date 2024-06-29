@@ -1,4 +1,6 @@
 from picamera2 import Picamera2, Preview
+import os
+os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
 from time import sleep
 
