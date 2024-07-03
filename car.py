@@ -1,6 +1,7 @@
 from CarHandling import CarHandling
 from SerialCommunicator import SerialCommunicator
 from Camera import Camera
+from xboxControl import XboxControl
 import RPi.GPIO as GPIO
 from threading import Thread, Event
 from time import sleep
@@ -16,8 +17,10 @@ enA = 11
 enB = 13
 servoPin = 37
 
+xboxControl = XboxControl().get_controller()
+
 def handle_car(event):
-    handler = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
+    handler = CarHandling(xboxControl, leftForward, rightBackward, rightForward, enA, enB)
     handler.add_servo(servoPin)
     handler.handle_xbox_input(event)
 
@@ -27,7 +30,7 @@ def get_serial_data(event):
 
 def start_camera(event):
     resolution = (384, 288)
-    camera = Camera(resolution)
+    camera = Camera(xboxControl, resolution)
     camera.start_preview(event)
 
 myEvent = Event()

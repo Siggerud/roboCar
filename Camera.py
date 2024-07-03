@@ -1,13 +1,10 @@
 from picamera2 import Picamera2, Preview
-import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 from libcamera import Transform
 from time import sleep, time
-import pygame
 
 class Camera:
-	def __init__(self, resolution, rotation=True):
+	def __init__(self, controller, resolution, rotation=True):
 		self._cam = Picamera2()
 
 		if rotation:
@@ -22,10 +19,7 @@ class Camera:
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
 
-		self._controller = self._get_controller()
-		if not self._controller:
-			print("No controls found. Turn on the controller")
-			return
+		self._controller = controller
 
 
 	def start_preview(self, threadEvent):
@@ -72,21 +66,6 @@ class Camera:
 
 	def _round_nearest(self, x, a):
 		return round(x / a) * a
-
-	def _get_controller(self):
-		controller = None
-
-		pygame.init()
-		pygame.joystick.init()
-
-		num_joysticks = pygame.joystick.get_count()
-		if num_joysticks > 0:
-			controller = pygame.joystick.Joystick(0)
-			controller.init()
-			print("Controller connected: ", controller.get_name())
-
-		return controller
-
 
 	def _convert_button_press_to_pwm_value(self, pressValue, pwmMinValue, pwmMaxValue, valuePrecision):
 		buttonMinValue = 0
