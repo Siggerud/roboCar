@@ -25,26 +25,19 @@ def handle_car(event):
     xboxControl = XboxControl()
     xboxControl.add_car(car)
     xboxControl.add_camera(camera)
-
+    xboxControl.start_controller(event)
 
 def get_serial_data(event):
     serialObj = SerialCommunicator('/dev/ttyACM0', 9600)  # serial connection to USB port
     serialObj.open_communication(event)
 
-def start_camera(event):
-    resolution = (384, 288)
-    camera = Camera(xboxControl, resolution)
-    camera.start_preview(event)
 
 myEvent = Event()
-#thread1 = Thread(target=handle_car, args=(myEvent,))
-#thread1.start()
+thread1 = Thread(target=handle_car, args=(myEvent,))
+thread1.start()
 
 #thread2 = Thread(target=get_serial_data, args=(myEvent,))
 #thread2.start()
-
-thread3 = Thread(target=start_camera, args=(myEvent,))
-thread3.start()
 
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
