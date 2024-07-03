@@ -21,7 +21,7 @@ class Camera:
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
 
-	def start_preview(self, threadEvent):
+	def start_preview(self):
 		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
 		self._cam.start()  # start camera
 
