@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 
