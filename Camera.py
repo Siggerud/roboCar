@@ -2,6 +2,8 @@ from picamera2 import Picamera2, Preview
 import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
+import pygame
 from time import sleep, time
 
 class Camera:
@@ -16,7 +18,6 @@ class Camera:
 
 
 		self._lastStickValue = 0
-		self._stickValueChanged = False
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
 
@@ -34,28 +35,24 @@ class Camera:
 
 		sleep(2)
 
-		while not threadEvent.is_set():
-			for event in pygame.event.get():
-				eventType = event.type
+	def handle_xbox_input(self, event):
+		eventType = event.type
 
-				if eventType == pygame.JOYAXISMOTION:
-					axis = event.axis
-					if axis == 1:
-						buttonPressValue = self._controller.get_axis(axis)
-						if buttonPressValue >= -1 and buttonPressValue <= 0:
-							stickValue = self._round_nearest(buttonPressValue, 0.05)
+		if eventType == pygame.JOYAXISMOTION:
+			axis = event.axis
+			if axis == 1:
+				buttonPressValue = self._controller.get_axis(axis)
+				if buttonPressValue >= -1 and buttonPressValue <= 0:
+					stickValue = self._round_nearest(buttonPressValue, 0.05)
 
-							if stickValue == self._lastStickValue:
-								self._stickValueChanged = False
-							else:
-								self._stickValueChanged = True
-								self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
-								print(self._zoomValue)
-								self._lastServoStickValue = stickValue
+					if stickValue != self._lastStickValue:
+						self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
+						self._lastServoStickValue = stickValue
+						self._zoom()
 
-			if self._stickValueChanged:
-				self._zoom()
 
+
+	def cleanup(self):
 		self._cam.close()
 
 	def _zoom(self):

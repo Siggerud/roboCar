@@ -17,12 +17,15 @@ enA = 11
 enB = 13
 servoPin = 37
 
-xboxControl = XboxControl().get_controller()
+car = CarHandling(leftForward, rightBackward, rightForward, enA, enB)
+resolution = (384, 288)
+camera = Camera(resolution)
 
 def handle_car(event):
-    handler = CarHandling(xboxControl, leftForward, rightBackward, rightForward, enA, enB)
-    handler.add_servo(servoPin)
-    handler.handle_xbox_input(event)
+    xboxControl = XboxControl()
+    xboxControl.add_car(car)
+    xboxControl.add_camera(camera)
+
 
 def get_serial_data(event):
     serialObj = SerialCommunicator('/dev/ttyACM0', 9600)  # serial connection to USB port

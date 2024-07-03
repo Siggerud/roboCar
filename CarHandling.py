@@ -1,7 +1,9 @@
 import RPi.GPIO as GPIO
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
+import pygame
 
 class CarHandling:
-	def __init__(self, controller, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
+	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
 		self._leftBackward = leftBackward
 		self._leftForward = leftForward
 		self._rightBackward = rightBackward
@@ -45,43 +47,27 @@ class CarHandling:
 		self._pwmMaxServo = 1.4
 		self._moveServo = False
 
-		self._controller = controller
+	def handle_xbox_input(self, event, controller):
+		eventType = event.type
+		if eventType == pygame.JOYHATMOTION:
+			self._prepare_car_for_turning(controller)
+			self._moveCar = True
+			self._moveServo = False
+		elif eventType == pygame.JOYAXISMOTION:
+			axis = event.axis
+			if axis == 4 or axis == 5:
+				self._prepare_car_for_throttle(controller, axis)
+				self._moveCar = True
+				self._moveServo = False
+			elif axis == 2:
+				self._prepare_for_servo_movement(controller)
+				self._moveCar = False
+				self._moveServo = True
 
-	def handle_xbox_input(self, threadEvent):
-		if not self._x11Connected:
-			self._cleanup()
-			return
-
-		if not self._controller:
-			self._cleanup()
-			return
-
-		while not threadEvent.is_set():
-
-			for event in pygame.event.get():
-				eventType = event.type
-
-				if eventType == pygame.JOYHATMOTION:
-					self._prepare_car_for_turning()
-					self._moveCar = True
-					self._moveServo = False
-				elif eventType == pygame.JOYAXISMOTION:
-					axis = event.axis
-					if axis == 4 or axis == 5:
-						self._prepare_car_for_throttle(axis)
-						self._moveCar = True
-						self._moveServo = False
-					elif axis == 2:
-						self._prepare_for_servo_movement()
-						self._moveCar = False
-						self._moveServo = True
-
-				if self._moveCar:
-					self._move_car()
-				elif self._moveServo:
-					self._move_servo()
-
-		self._cleanup()
+		if self._moveCar:
+			self._move_car()
+		elif self._moveServo:
+			self._move_servo()
 
 	def add_servo(self, servoPin):
 		self._servoSet = True
@@ -90,28 +76,6 @@ class CarHandling:
 		self._pwmServo = GPIO.PWM(servoPin, 50)
 		self._pwmServo.start(0)
 
-	def _check_if_X11_connected(self):
-		result = subprocess.run(["xset", "q"], capture_output = True, text = True)
-		returnCode = result.returncode
-
-		if not returnCode:
-			print("Succesful connection to forwarded X11 server")
-
-		return not returnCode
-
-	def _get_controller(self):
-		controller = None
-
-		pygame.init()
-		pygame.joystick.init()
-
-		num_joysticks = pygame.joystick.get_count()
-		if num_joysticks > 0:
-			controller = pygame.joystick.Joystick(0)
-			controller.init()
-			print("Controller connected: ", controller.get_name())
-
-		return controller
 
 	def _convert_button_press_to_pwm_value(self, pressValue, pwmMinValue, pwmMaxValue, valuePrecision):
 		buttonMinValue = -1
@@ -125,8 +89,8 @@ class CarHandling:
 
 		return valueMapped
 
-	def _prepare_car_for_turning(self):
-		turnValue = self._controller.get_hat(0)[0] # only handle the horizontal value
+	def _prepare_car_for_turning(self, controller):
+		turnValue = controller.get_hat(0)[0] # only handle the horizontal value
 		if turnValue == -1:
 			self._turnLeft = True
 			self._turnRight = False
@@ -144,8 +108,8 @@ class CarHandling:
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)
 
-	def _prepare_for_servo_movement(self):
-		buttonPressValue = self._controller.get_axis(2)
+	def _prepare_for_servo_movement(self, controller):
+		buttonPressValue = controller.get_axis(2)
 		stickValue = round(buttonPressValue, 1)
 
 		if stickValue == self._lastServoStickValue:
@@ -192,8 +156,8 @@ class CarHandling:
 
 		self._adjust_gpio_values(gpioValues)
 
-	def _prepare_car_for_throttle(self, axis):
-		buttonPressValue = self._controller.get_axis(axis)
+	def _prepare_car_for_throttle(self, controller, axis):
+		buttonPressValue = controller.get_axis(axis)
 
 		speed = self._convert_button_press_to_pwm_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		if speed > self._pwmTreshold: # only change speed if over the treshold
@@ -210,7 +174,7 @@ class CarHandling:
 			self._goForward = False
 			self._goReverse = False
 
-	def _cleanup(self):
+	def cleanup(self):
 		GPIO.cleanup()
 		self._pwmA.stop()
 		self._pwmB.stop()
