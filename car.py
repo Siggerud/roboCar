@@ -17,7 +17,7 @@ enA = 11
 enB = 13
 servoPin = 37
 
-car = CarHandling(leftForward, rightBackward, rightForward, enA, enB)
+car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 resolution = (384, 288)
 camera = Camera(resolution)
 
