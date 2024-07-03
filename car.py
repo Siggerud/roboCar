@@ -44,8 +44,8 @@ try:
         sleep(0.5)
 except KeyboardInterrupt:
     myEvent.set()
-    #thread1.join()
+    thread1.join()
     #thread2.join()
-    thread3.join()
+    #thread3.join()
 
 
