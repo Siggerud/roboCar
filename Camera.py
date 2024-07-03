@@ -45,6 +45,7 @@ class Camera:
                     axis = event.axis
                     if axis == 1:
                         buttonPressValue = self._controller.get_axis(axis)
+                        print(buttonPressValue)
                         if buttonPressValue >= -1 and buttonPressValue <= 0:
                             stickValue = self._round_nearest(buttonPressValue, 0.05)
 
@@ -59,7 +60,7 @@ class Camera:
                                 self._lastServoStickValue = stickValue
 
             if self._stickValueChanged:
-                print(self._zoomValue)
+                #print(self._zoomValue)
                 self._zoom()
 
         self._cam.close()
