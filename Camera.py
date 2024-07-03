@@ -42,12 +42,14 @@ class Camera:
 				print("ButtonpressValue:", buttonPressValue)
 				if buttonPressValue >= -1 and buttonPressValue <= 0:
 					stickValue = round(buttonPressValue, 1)
-					print("Stickvalue: ", stickValue)
-					if stickValue != self._lastStickValue:
-						self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
-						print("Zoom value", self._zoomValue)
-						self._lastServoStickValue = stickValue
-						self._zoom()
+				else:
+					stickValue = 0
+				print("Stickvalue: ", stickValue)
+				if stickValue != self._lastStickValue:
+					self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
+					print("Zoom value", self._zoomValue)
+					self._lastServoStickValue = stickValue
+					self._zoom()
 
 
 	def cleanup(self):
