@@ -39,6 +39,7 @@ class Camera:
 			axis = event.axis
 			if axis == 1:
 				buttonPressValue = controller.get_axis(axis)
+				print("ButtonpressValue:", buttonPressValue)
 				if buttonPressValue >= -1 and buttonPressValue <= 0:
 					stickValue = round(buttonPressValue, 1)
 					print("Stickvalue: ", stickValue)
