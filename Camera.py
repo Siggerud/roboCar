@@ -59,6 +59,7 @@ class Camera:
                                 self._lastServoStickValue = stickValue
 
             if self._stickValueChanged:
+                print(self._zoomValue)
                 self._zoom()
 
         self._cam.close()
