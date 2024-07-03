@@ -48,7 +48,7 @@ class Camera:
 				if stickValue != self._lastStickValue:
 					self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
 					print("Zoom value", self._zoomValue)
-					self._lastServoStickValue = stickValue
+					self._lastStickValue = stickValue
 					self._zoom()
 
 
