@@ -18,6 +18,8 @@ enB = 13
 servoPin = 37
 
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
+car.add_servo(servoPin)
+
 resolution = (384, 288)
 camera = Camera(resolution)
 
