@@ -34,8 +34,8 @@ myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
 thread1.start()
 
-thread2 = Thread(target=get_serial_data, args=(myEvent,))
-thread2.start()
+#thread2 = Thread(target=get_serial_data, args=(myEvent,))
+#thread2.start()
 
 thread3 = Thread(target=start_camera, args=(myEvent,))
 thread3.start()
