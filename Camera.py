@@ -39,6 +39,7 @@ class Camera:
 			axis = event.axis
 			if axis == 1:
 				buttonPressValue = controller.get_axis(axis)
+				print(buttonPressValue)
 				if buttonPressValue >= -1 and buttonPressValue <= 0:
 					stickValue = self._round_nearest(buttonPressValue, 0.05)
 
@@ -46,7 +47,6 @@ class Camera:
 						self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
 						self._lastServoStickValue = stickValue
 						self._zoom()
-
 
 
 	def cleanup(self):
