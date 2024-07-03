@@ -31,8 +31,8 @@ def start_camera(event):
     camera.start_preview(event)
 
 myEvent = Event()
-thread1 = Thread(target=handle_car, args=(myEvent,))
-thread1.start()
+#thread1 = Thread(target=handle_car, args=(myEvent,))
+#thread1.start()
 
 #thread2 = Thread(target=get_serial_data, args=(myEvent,))
 #thread2.start()
@@ -45,7 +45,7 @@ try:
         sleep(0.5)
 except KeyboardInterrupt:
     myEvent.set()
-    thread1.join()
+    #thread1.join()
     #thread2.join()
     thread3.join()
 
