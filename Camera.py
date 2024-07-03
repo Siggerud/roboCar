@@ -21,12 +21,12 @@ class Camera:
             print("No controls found. Turn on the controller")
             return
 
-    def start_preview(self, event):
+    def start_preview(self, threadEvent):
         self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
         self._cam.start()  # start camera
         print("Starting camera preview")
 
-        while not event.is_set():
+        while not threadEvent.is_set():
             for event in pygame.event.get():
                 print(event)
         self._cam.close()
