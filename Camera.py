@@ -7,7 +7,7 @@ import pygame
 from time import sleep, time
 
 class Camera:
-	def __init__(self, controller, resolution, rotation=True):
+	def __init__(self, resolution, rotation=True):
 		self._cam = Picamera2()
 
 		if rotation:
