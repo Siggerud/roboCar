@@ -12,7 +12,7 @@ class XboxControl:
         self._controller = self._set_controller()
 
     def get_controller(self):
-        return self._controller()
+        return self._controller
 
     def _set_controller(self):
         controller = None
