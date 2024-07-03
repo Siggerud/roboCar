@@ -26,7 +26,7 @@ class Camera:
         self._cam.start()  # start camera
         print("Starting camera preview")
 
-        while not event.is_set():
+        while not event.is_set:
             for event in pygame.event.get():
                 eventType = event.type
                 print(event)
