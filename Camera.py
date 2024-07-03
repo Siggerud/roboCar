@@ -32,13 +32,13 @@ class Camera:
 
 		sleep(2)
 
-	def handle_xbox_input(self, event):
+	def handle_xbox_input(self, event, controller):
 		eventType = event.type
 
 		if eventType == pygame.JOYAXISMOTION:
 			axis = event.axis
 			if axis == 1:
-				buttonPressValue = self._controller.get_axis(axis)
+				buttonPressValue = controller.get_axis(axis)
 				if buttonPressValue >= -1 and buttonPressValue <= 0:
 					stickValue = self._round_nearest(buttonPressValue, 0.05)
 
