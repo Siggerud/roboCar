@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+from roboCarHelper import scale_button_press_value
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -87,19 +88,6 @@ class CarHandling:
 		self._pwmServo = GPIO.PWM(servoPin, 50)
 		self._pwmServo.start(0)
 
-
-	def _convert_button_press_to_pwm_value(self, pressValue, pwmMinValue, pwmMaxValue, valuePrecision):
-		buttonMinValue = -1
-		buttonMaxValue = 1
-
-		pwmSpan = pwmMaxValue - pwmMinValue
-		buttonSpan = buttonMaxValue - buttonMinValue
-
-		valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
-		valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), valuePrecision)
-
-		return valueMapped
-
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)
@@ -148,7 +136,7 @@ class CarHandling:
 			self._servoValueChanged = False
 		else:
 			self._servoValueChanged = True
-			self._servoPwmValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
+			self._servoPwmValue = scale_button_press_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
 			self._lastServoStickValue = stickValue
 
 	def _prepare_car_for_turning(self, button):
@@ -166,7 +154,7 @@ class CarHandling:
 			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
 
 	def _prepare_car_for_throttle(self, button, buttonPressValue):
-		speed = self._convert_button_press_to_pwm_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
+		speed = scale_button_press_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		if speed > self._pwmTreshold: # only change speed if over the treshold
 			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 			if button == "RT":

@@ -3,6 +3,7 @@ import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
 from time import sleep
+from roboCarHelper import scale_button_press_value
 
 class Camera:
 	def __init__(self, resolution, rotation=True):
@@ -18,6 +19,9 @@ class Camera:
 		self._lastStickValue = 0
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
+
+		self._zoomButtonMinValue = 0
+		self._zoomButtonMaxValue = -1
 
 		self._zoomButtons = [
 			"LSB vertical"
@@ -44,7 +48,7 @@ class Camera:
 				stickValue = 0
 			print("Stickvalue: ", stickValue)
 			if stickValue != self._lastStickValue:
-				self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
+				self._zoomValue = scale_button_press_value(stickValue, self._minZoomValue, self._maxZoomValue, 2, self._zoomButtonMinValue, self._zoomButtonMaxValue)
 				print("Zoom value", self._zoomValue)
 				self._lastStickValue = stickValue
 				self._zoom()
@@ -63,14 +67,3 @@ class Camera:
 	def _round_nearest(self, x, a):
 		return round(x / a) * a
 
-	def _convert_button_press_to_pwm_value(self, pressValue, pwmMinValue, pwmMaxValue, valuePrecision):
-		buttonMinValue = 0
-		buttonMaxValue = -1
-
-		pwmSpan = pwmMaxValue - pwmMinValue
-		buttonSpan = buttonMaxValue - buttonMinValue
-
-		valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
-		valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), valuePrecision)
-
-		return valueMapped
