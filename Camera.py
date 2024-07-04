@@ -43,8 +43,7 @@ class Camera:
 	def handle_xbox_input(self, buttonAndValue):
 		button, buttonPressValue = buttonAndValue
 		if button in self._zoomButtons:
-			if self._check_if_button_press_within_valid_range(buttonPressValue)
-				self._prepare_for_zooming(buttonPressValue)
+			self._prepare_for_zooming(buttonPressValue)
 
 			if self._zoomCamera:
 				self._zoom()
@@ -61,7 +60,7 @@ class Camera:
 		self._cam.capture_metadata()  # this zooms in
 
 	def _prepare_for_zooming(self, buttonPressValue):
-		if self._check_if_button_press_within_valid_range(buttonPressValue)
+		if self._check_if_button_press_within_valid_range(buttonPressValue):
 			stickValue = round(buttonPressValue, 1)
 		else:
 			stickValue = self._zoomButtonMinValue
