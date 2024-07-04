@@ -6,3 +6,6 @@ def scale_button_press_value(pressValue, pwmMinValue, pwmMaxValue, valuePrecisio
     valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), valuePrecision)
 
     return valueMapped
+
+def _round_nearest(self, x, a):
+    return round(x / a) * a

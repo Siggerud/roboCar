@@ -19,6 +19,8 @@ class Camera:
 		self._lastStickValue = 0
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
+		self._zoomValue = None
+		self._zoomCamera = False
 
 		self._zoomButtonMinValue = 0
 		self._zoomButtonMaxValue = -1
@@ -41,16 +43,10 @@ class Camera:
 	def handle_xbox_input(self, buttonAndValue):
 		button, buttonPressValue = buttonAndValue
 		if button in self._zoomButtons:
-			print("ButtonpressValue:", buttonPressValue)
-			if buttonPressValue >= -1 and buttonPressValue <= 0:
-				stickValue = round(buttonPressValue, 1)
-			else:
-				stickValue = 0
-			print("Stickvalue: ", stickValue)
-			if stickValue != self._lastStickValue:
-				self._zoomValue = scale_button_press_value(stickValue, self._minZoomValue, self._maxZoomValue, 2, self._zoomButtonMinValue, self._zoomButtonMaxValue)
-				print("Zoom value", self._zoomValue)
-				self._lastStickValue = stickValue
+			if self._check_if_button_press_within_valid_range(buttonPressValue)
+				self._prepare_for_zooming(buttonPressValue)
+
+			if self._zoomCamera:
 				self._zoom()
 
 
@@ -64,6 +60,25 @@ class Camera:
 
 		self._cam.capture_metadata()  # this zooms in
 
-	def _round_nearest(self, x, a):
-		return round(x / a) * a
+	def _prepare_for_zooming(self, buttonPressValue):
+		if self._check_if_button_press_within_valid_range(buttonPressValue)
+			stickValue = round(buttonPressValue, 1)
+		else:
+			stickValue = self._zoomButtonMinValue
+
+		if stickValue != self._lastStickValue:
+			self._zoomCamera = True
+			self._zoomValue = scale_button_press_value(stickValue, self._minZoomValue, self._maxZoomValue, 2,
+													   self._zoomButtonMinValue, self._zoomButtonMaxValue)
+			self._lastStickValue = stickValue
+		else:
+			self._zoomCamera = False
+
+	def _check_if_button_press_within_valid_range(self, buttonPressValue):
+		if buttonPressValue >= self._zoomButtonMaxValue and buttonPressValue <= self._zoomButtonMinValue:
+			return True
+		return False
+
+
+
 
