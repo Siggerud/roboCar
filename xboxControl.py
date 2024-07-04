@@ -51,6 +51,7 @@ class XboxControl:
         self._camera.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
+        button = None
         buttonPressValue = None
 
         eventType = event.type
