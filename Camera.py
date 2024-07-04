@@ -2,9 +2,7 @@ from picamera2 import Picamera2, Preview
 import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
-import pygame
-from time import sleep, time
+from time import sleep
 
 class Camera:
 	def __init__(self, resolution, rotation=True):
@@ -21,6 +19,10 @@ class Camera:
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
 
+		self._zoomButtons = [
+			"LSB vertical"
+		]
+
 	def start_preview(self):
 		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
 		self._cam.start()  # start camera
@@ -32,24 +34,20 @@ class Camera:
 
 		sleep(2)
 
-	def handle_xbox_input(self, event, controller):
-		eventType = event.type
-
-		if eventType == pygame.JOYAXISMOTION:
-			axis = event.axis
-			if axis == 1:
-				buttonPressValue = controller.get_axis(axis)
-				print("ButtonpressValue:", buttonPressValue)
-				if buttonPressValue >= -1 and buttonPressValue <= 0:
-					stickValue = round(buttonPressValue, 1)
-				else:
-					stickValue = 0
-				print("Stickvalue: ", stickValue)
-				if stickValue != self._lastStickValue:
-					self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
-					print("Zoom value", self._zoomValue)
-					self._lastStickValue = stickValue
-					self._zoom()
+	def handle_xbox_input(self, buttonAndValue):
+		button, buttonPressValue = buttonAndValue
+		if button in self._zoomButtons:
+			print("ButtonpressValue:", buttonPressValue)
+			if buttonPressValue >= -1 and buttonPressValue <= 0:
+				stickValue = round(buttonPressValue, 1)
+			else:
+				stickValue = 0
+			print("Stickvalue: ", stickValue)
+			if stickValue != self._lastStickValue:
+				self._zoomValue = self._convert_button_press_to_pwm_value(stickValue, self._minZoomValue, self._maxZoomValue, 2)
+				print("Zoom value", self._zoomValue)
+				self._lastStickValue = stickValue
+				self._zoom()
 
 
 	def cleanup(self):

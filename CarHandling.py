@@ -1,7 +1,4 @@
 import RPi.GPIO as GPIO
-import os
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
-import pygame
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -48,20 +45,33 @@ class CarHandling:
 		self._pwmMaxServo = 1.4
 		self._moveServo = False
 
-	def handle_xbox_input(self, event, controller):
-		eventType = event.type
-		if eventType == pygame.JOYHATMOTION:
-			self._prepare_car_for_turning(controller)
+		self._turnButtons = [
+			"D-PAD left",
+			"D-PAD right",
+			"D-PAD released"
+		]
+
+		self._gasAndReverseButtons = [
+			"RT",
+			"LT",
+		]
+
+		self._moveServoButtons = [
+			"RSB horizontal"
+		]
+
+	def handle_xbox_input(self, buttonAndPressValue):
+		button, buttonPressValue = buttonAndPressValue
+		if button in self._turnButtons:
+			self._prepare_car_for_turning(button)
 			self._moveCar = True
 			self._moveServo = False
-		elif eventType == pygame.JOYAXISMOTION:
-			axis = event.axis
-			if axis == 4 or axis == 5:
-				self._prepare_car_for_throttle(controller, axis)
+		elif button in self._gasAndReverseButtons:
+				self._prepare_car_for_throttle(button, buttonPressValue)
 				self._moveCar = True
 				self._moveServo = False
-			elif axis == 2:
-				self._prepare_for_servo_movement(controller)
+		elif button in self._moveServoButtons:
+				self._prepare_for_servo_movement(buttonPressValue)
 				self._moveCar = False
 				self._moveServo = True
 
@@ -90,35 +100,9 @@ class CarHandling:
 
 		return valueMapped
 
-	def _prepare_car_for_turning(self, controller):
-		turnValue = controller.get_hat(0)[0] # only handle the horizontal value
-		if turnValue == -1:
-			self._turnLeft = True
-			self._turnRight = False
-		elif turnValue == 1:
-			self._turnLeft = False
-			self._turnRight = True
-		elif turnValue == 0:
-			self._turnLeft = False
-			self._turnRight = False
-
-		if not self._goForward and not self._goReverse:
-			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
-
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)
-
-	def _prepare_for_servo_movement(self, controller):
-		buttonPressValue = controller.get_axis(2)
-		stickValue = round(buttonPressValue, 1)
-
-		if stickValue == self._lastServoStickValue:
-			self._servoValueChanged = False
-		else:
-			self._servoValueChanged = True
-			self._servoPwmValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
-			self._lastServoStickValue = stickValue
 
 	def _move_servo(self):
 		if self._servoValueChanged:
@@ -157,16 +141,38 @@ class CarHandling:
 
 		self._adjust_gpio_values(gpioValues)
 
-	def _prepare_car_for_throttle(self, controller, axis):
-		buttonPressValue = controller.get_axis(axis)
+	def _prepare_for_servo_movement(self, buttonPressValue):
+		stickValue = round(buttonPressValue, 1)
 
+		if stickValue == self._lastServoStickValue:
+			self._servoValueChanged = False
+		else:
+			self._servoValueChanged = True
+			self._servoPwmValue = self._convert_button_press_to_pwm_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
+			self._lastServoStickValue = stickValue
+
+	def _prepare_car_for_turning(self, button):
+		if button == "D-PAD left":
+			self._turnLeft = True
+			self._turnRight = False
+		elif button == "D-PAD right":
+			self._turnLeft = False
+			self._turnRight = True
+		elif button == "D-PAD released":
+			self._turnLeft = False
+			self._turnRight = False
+
+		if not self._goForward and not self._goReverse:
+			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
+
+	def _prepare_car_for_throttle(self, button, buttonPressValue):
 		speed = self._convert_button_press_to_pwm_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		if speed > self._pwmTreshold: # only change speed if over the treshold
 			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
-			if axis == 4:
+			if button == "RT":
 				self._goForward = True
 				self._goReverse = False
-			elif axis == 5:
+			elif button == "LT":
 				self._goForward = False
 				self._goReverse = True
 		else:
