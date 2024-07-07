@@ -31,7 +31,9 @@ def handle_car(event):
 
 def get_serial_data(event):
     serialObj = SerialCommunicator('/dev/ttyACM0', 9600)  # serial connection to USB port
-    serialObj.open_communication(event)
+    serialObj.activate_back_distance_sensor()
+    serialObj.activate_front_distance_sensor()
+    serialObj.listen_for_incoming_arduino_data(event)
 
 
 myEvent = Event()
