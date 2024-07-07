@@ -27,10 +27,16 @@ class SerialCommunicator:
         self._connection.close()
 
     def activate_back_distance_sensor(self):
+        if not self._port_valid:
+            return
+
         print("Activating back distance sensor...")
         self._connection.write(b"back\n")
 
     def activate_front_distance_sensor(self):
+        if not self._port_valid:
+            return
+
         print("Activating front distance sensor...")
         self._connection.write(b"front\n")
 
