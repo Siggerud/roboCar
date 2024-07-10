@@ -15,7 +15,7 @@ rightBackward = 16 # IN4
 rightForward = 15 # IN3
 enA = 11
 enB = 13
-servoPin = 37
+servoPin = 26 # BCM
 
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 car.add_servo(servoPin)

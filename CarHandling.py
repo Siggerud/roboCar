@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 from roboCarHelper import scale_button_press_value
+import pigpio
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -38,13 +39,17 @@ class CarHandling:
 		self._pwmB.start(0)
 
 		self._servoSet = False
-		self._pwmServo = None
+		self._pwmServoPin = None
 		self._lastServoStickValue = 0
 		self._servoValueChanged = False
 		self._servoPwmValue = 0
-		self._pwmMinServo = 12.7
-		self._pwmMaxServo = 1.4
+		#self._pwmMinServo = 12.7
+		#self._pwmMaxServo = 1.4
+		self._pwmMinServo = 2500
+		self._pwmMaxServo = 500
 		self._moveServo = False
+
+		self._pigpioPwm = None
 
 		self._turnButtons = [
 			"D-PAD left",
@@ -84,9 +89,13 @@ class CarHandling:
 	def add_servo(self, servoPin):
 		self._servoSet = True
 
-		GPIO.setup(servoPin, GPIO.OUT)
-		self._pwmServo = GPIO.PWM(servoPin, 50)
-		self._pwmServo.start(0)
+		#GPIO.setup(servoPin, GPIO.OUT)
+		#self._pwmServo = GPIO.PWM(servoPin, 50)
+		#self._pwmServo.start(0)
+
+		self._pïgpioPwm = pigpio.pi()
+		self._pigpioPwm.set_mode(self._pwmServoPin, pigpio.OUTPUT)
+		self._pigpioPwm.set_PWM_frequency(self._pwmServoPin, 50)
 
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
@@ -94,7 +103,8 @@ class CarHandling:
 
 	def _move_servo(self):
 		if self._servoValueChanged:
-			self._change_duty_cycle([self._pwmServo], self._servoPwmValue)
+			#self._change_duty_cycle([self._pwmServo], self._servoPwmValue)
+			self._pigpioPwm.set_servo_pulsewidth(self._pwmServoPin, self._servoPwmValue)
 
 	def _adjust_gpio_values(self, gpioValues):
 		leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
@@ -175,4 +185,6 @@ class CarHandling:
 		self._pwmB.stop()
 
 		if self._servoSet:
-			self._pwmServo.stop()
+			#self._pwmServoPin.stop()
+			self._pigpioPwm.set_PWM_dutycycle(self._pwmServoPin, 0)
+			self._pigpioPwm.set_PWM_frequency(self._pwmServoPin, 0)
