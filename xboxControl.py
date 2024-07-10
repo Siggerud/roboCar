@@ -7,6 +7,7 @@ class XboxControl:
     def __init__(self):
         self._car = None
         self._camera = None
+        self._servo = None
 
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
@@ -47,8 +48,14 @@ class XboxControl:
                 if self._camera:
                     self._camera.handle_xbox_input(buttonAndPressValue)
 
-        self._car.cleanup()
-        self._camera.cleanup()
+        if self._car:
+            self._car.cleanup()
+
+        if self._servo:
+            self._servo.cleanup()
+
+        if self._camera:
+            self._camera.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
@@ -94,3 +101,6 @@ class XboxControl:
     def add_camera(self, camera):
         self._camera = camera
         self._camera.start_preview()
+
+    def add_servo(self, servo):
+        self._servo = servo

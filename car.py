@@ -1,6 +1,7 @@
 from CarHandling import CarHandling
 from SerialCommunicator import SerialCommunicator
 from Camera import Camera
+from ServoHandling import ServoHandling
 from xboxControl import XboxControl
 import RPi.GPIO as GPIO
 from threading import Thread, Event
@@ -18,7 +19,7 @@ enB = 13
 servoPin = 26 # BCM
 
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
-car.add_servo(servoPin)
+servo = ServoHandling(servoPin)
 
 resolution = (384, 288)
 camera = Camera(resolution)
@@ -26,6 +27,7 @@ camera = Camera(resolution)
 def handle_car(event):
     xboxControl = XboxControl()
     xboxControl.add_car(car)
+    xboxControl.add_servo(servo)
     xboxControl.add_camera(camera)
     xboxControl.start_controller(event)
 

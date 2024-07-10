@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 from roboCarHelper import scale_button_press_value
-import pigpio
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -14,8 +13,6 @@ class CarHandling:
 		self._pwmTreshold = 30
 		self._pwmMinTT = 0
 		self._pwmMaxTT = 70
-
-		self._moveCar = False
 
 		self._turnLeft = False
 		self._turnRight = False
@@ -38,19 +35,6 @@ class CarHandling:
 		self._pwmA.start(0)
 		self._pwmB.start(0)
 
-		self._servoSet = False
-		self._pwmServoPin = None
-		self._lastServoStickValue = 0
-		self._servoValueChanged = False
-		self._servoPwmValue = 0
-		#self._pwmMinServo = 12.7
-		#self._pwmMaxServo = 1.4
-		self._pwmMinServo = 2500
-		self._pwmMaxServo = 500
-		self._moveServo = False
-
-		self._pigpioPwm = None
-
 		self._turnButtons = [
 			"D-PAD left",
 			"D-PAD right",
@@ -62,50 +46,18 @@ class CarHandling:
 			"LT",
 		]
 
-		self._moveServoButtons = [
-			"RSB horizontal"
-		]
-
 	def handle_xbox_input(self, buttonAndPressValue):
 		button, buttonPressValue = buttonAndPressValue
 		if button in self._turnButtons:
 			self._prepare_car_for_turning(button)
-			self._moveCar = True
-			self._moveServo = False
-		elif button in self._gasAndReverseButtons:
-				self._prepare_car_for_throttle(button, buttonPressValue)
-				self._moveCar = True
-				self._moveServo = False
-		elif button in self._moveServoButtons:
-				self._prepare_for_servo_movement(buttonPressValue)
-				self._moveCar = False
-				self._moveServo = True
-
-		if self._moveCar:
 			self._move_car()
-		elif self._moveServo:
-			self._move_servo()
-
-	def add_servo(self, servoPin):
-		self._servoSet = True
-
-		#GPIO.setup(servoPin, GPIO.OUT)
-		#self._pwmServo = GPIO.PWM(servoPin, 50)
-		#self._pwmServo.start(0)
-
-		self._pwmServoPin = servoPin
-		self._pigpioPwm = pigpio.pi()
-		self._pigpioPwm.set_mode(self._pwmServoPin, pigpio.OUTPUT)
-		self._pigpioPwm.set_PWM_frequency(self._pwmServoPin, 50)
+		elif button in self._gasAndReverseButtons:
+			self._prepare_car_for_throttle(button, buttonPressValue)
+			self._move_car()
 
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)
-
-	def _move_servo(self):
-		if self._servoValueChanged:
-			#self._change_duty_cycle([self._pwmServo], self._servoPwmValue)
-			self._pigpioPwm.set_servo_pulsewidth(self._pwmServoPin, self._servoPwmValue)
 
 	def _adjust_gpio_values(self, gpioValues):
 		leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
@@ -140,15 +92,6 @@ class CarHandling:
 
 		self._adjust_gpio_values(gpioValues)
 
-	def _prepare_for_servo_movement(self, buttonPressValue):
-		stickValue = round(buttonPressValue, 1)
-
-		if stickValue == self._lastServoStickValue:
-			self._servoValueChanged = False
-		else:
-			self._servoValueChanged = True
-			self._servoPwmValue = scale_button_press_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
-			self._lastServoStickValue = stickValue
 
 	def _prepare_car_for_turning(self, button):
 		if button == "D-PAD left":
@@ -184,8 +127,3 @@ class CarHandling:
 		GPIO.cleanup()
 		self._pwmA.stop()
 		self._pwmB.stop()
-
-		if self._servoSet:
-			#self._pwmServoPin.stop()
-			self._pigpioPwm.set_PWM_dutycycle(self._pwmServoPin, 0)
-			self._pigpioPwm.set_PWM_frequency(self._pwmServoPin, 0)
