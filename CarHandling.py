@@ -93,6 +93,7 @@ class CarHandling:
 		#self._pwmServo = GPIO.PWM(servoPin, 50)
 		#self._pwmServo.start(0)
 
+		self._pwmServoPin = servoPin
 		self._pigpioPwm = pigpio.pi()
 		self._pigpioPwm.set_mode(self._pwmServoPin, pigpio.OUTPUT)
 		self._pigpioPwm.set_PWM_frequency(self._pwmServoPin, 50)
