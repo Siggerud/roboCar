@@ -21,6 +21,7 @@ class ServoHandling:
     def handle_xbox_input(self, buttonAndPressValue):
         button, buttonPressValue = buttonAndPressValue
         if button in self._moveServoButtons:
+            print("ye")
             self._prepare_for_servo_movement(buttonPressValue)
             self._move_servo()
 
