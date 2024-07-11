@@ -32,8 +32,6 @@ class XboxControl:
             return
 
         self._controller = self._set_controller()
-        if self._controller:
-            self._print_battery_status_of_controller()
 
     def start_controller(self, threadEvent):
         if not self._x11Connected:
@@ -102,11 +100,6 @@ class XboxControl:
             print("Succesful connection to forwarded X11 server")
 
         return not returnCode
-
-    def _print_battery_status_of_controller(self):
-        self._controller.rumble()
-        sleep(0.5)
-        self._controller.stop_rumble()
 
     def add_distance_warner(self, distanceWarner):
         self._distanceWarner = distanceWarner
