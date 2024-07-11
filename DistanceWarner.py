@@ -14,11 +14,13 @@ class DistanceWarner:
 
     def _activate_back_distance_sensor(self):
         print("Activating back distance sensor...")
-        self._serialConnection.write(b"back\n")
+        command = b"back\n"
+        self._serialConnection.send_command(command)
 
     def _activate_front_distance_sensor(self):
         print("Activating front distance sensor...")
-        self._serialConnection.write(b"front\n")
+        command = b"front\n"
+        self._serialConnection.send_command(command)
 
     def listen_for_incoming_sensor_data(self):
         if self._connection.in_waiting > 0:

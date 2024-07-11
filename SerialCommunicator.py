@@ -16,5 +16,8 @@ class SerialCommunicator:
 
             print("No port found. Check connections.")
 
+    def send_command(self, command):
+        self._connection.write(command)
+
     def _port_exists(self, port):
         return os.path.exists(port)
