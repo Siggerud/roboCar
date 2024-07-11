@@ -85,6 +85,7 @@ class XboxControl:
             controller = pygame.joystick.Joystick(0)
             controller.init()
             print("Controller connected: ", controller.get_name())
+            self._print_battery_status_of_controller()
 
         return controller
 
@@ -96,6 +97,10 @@ class XboxControl:
             print("Succesful connection to forwarded X11 server")
 
         return not returnCode
+
+    def _print_battery_status_of_controller(self):
+        powerLevel = self._controller.get_power_level()
+        print(powerLevel)
 
     def add_car(self, car):
         self._car = car
