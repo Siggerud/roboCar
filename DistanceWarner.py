@@ -26,8 +26,7 @@ class DistanceWarner:
     def listen_for_incoming_sensor_data(self):
         serialReading = self._serialConnection.read_incoming_data()
         if serialReading:
-            side, distance = serialReading.strip().split()
-            print(f"Side {side}, distance {distance}")
+            print(serialReading)
 
     def cleanup(self):
         GPIO.cleanup()
