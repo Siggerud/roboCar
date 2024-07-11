@@ -30,6 +30,8 @@ class XboxControl:
             return
 
         self._controller = self._set_controller()
+        if self._controller:
+            self._print_battery_status_of_controller()
 
     def start_controller(self, threadEvent):
         if not self._x11Connected:
@@ -85,7 +87,6 @@ class XboxControl:
             controller = pygame.joystick.Joystick(0)
             controller.init()
             print("Controller connected: ", controller.get_name())
-            self._print_battery_status_of_controller()
 
         return controller
 
