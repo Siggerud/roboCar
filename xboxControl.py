@@ -2,6 +2,7 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
+from time import sleep
 
 class XboxControl:
     def __init__(self):
@@ -100,8 +101,10 @@ class XboxControl:
         return not returnCode
 
     def _print_battery_status_of_controller(self):
-        powerLevel = self._controller.get_power_level()
-        print(powerLevel)
+        self._controller.rumble()
+        sleep(0.5)
+        self._controller.stop_rumble()
+
 
     def add_car(self, car):
         self._car = car
