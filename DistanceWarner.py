@@ -22,15 +22,15 @@ class DistanceWarner:
         command = b"front\n"
         self._serialConnection.send_command(command)
 
+
     def listen_for_incoming_sensor_data(self):
-        if self._connection.in_waiting > 0:
-            serialReading = self._serialConnection.readline().decode('utf-8').rstrip()
+        serialReading = self._serialConnection.read_incoming_data()
+        if serialReading:
             side, distance = serialReading.trim().split()
             print(f"Side {side}, distance {distance}")
 
-        self._connection.close()
-
     def cleanup(self):
         GPIO.cleanup()
+        self._serialConnection.cleanup()
 
 

@@ -16,8 +16,18 @@ class SerialCommunicator:
 
             print("No port found. Check connections.")
 
+    def read_incoming_data(self):
+        serialReading = None
+        if self._connection.in_waiting > 0:
+            serialReading = self._connection.readline().decode('utf-8').rstrip()
+
+        return serialReading
+
     def send_command(self, command):
         self._connection.write(command)
 
     def _port_exists(self, port):
         return os.path.exists(port)
+
+    def cleanup(self):
+        self._connection.close()
