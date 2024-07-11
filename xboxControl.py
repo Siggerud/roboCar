@@ -9,6 +9,7 @@ class XboxControl:
         self._car = None
         self._camera = None
         self._servo = None
+        self._distanceWarner = None
 
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
@@ -52,6 +53,8 @@ class XboxControl:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
                     self._camera.handle_xbox_input(buttonAndPressValue)
+            if self._distanceWarner:
+                self._distanceWarner.listen_for_incoming_sensor_data()
 
         if self._car:
             self._car.cleanup()
@@ -105,6 +108,8 @@ class XboxControl:
         sleep(0.5)
         self._controller.stop_rumble()
 
+    def add_distance_warner(self, distanceWarner):
+        self._distanceWarner = distanceWarner
 
     def add_car(self, car):
         self._car = car
