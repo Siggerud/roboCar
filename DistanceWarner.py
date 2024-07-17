@@ -1,35 +1,74 @@
 import RPi.GPIO as GPIO
+import serial
+from time import sleep
+
 
 class DistanceWarner:
-    def __init__(self, buzzerPin, serialConnection, frontSensor = True, backSensor = True):
-        GPIO.setup(buzzerPin, GPIO.OUT)
-        self._serialConnection = serialConnection
+    def __init__(self, buzzerPin, port, baudrate, frontSensor = True, backSensor = True):
         self._distanceTreshold = 5
+        self._encodingType = 'uft-8'
+        self._frontSensor = frontSensor
+        self._backSensor = backSensor
+        self._responses = []
 
-        if frontSensor:
-            self._activate_front_distance_sensor()
+        GPIO.setup(buzzerPin, GPIO.OUT)
 
-        if backSensor:
-            self._activate_back_distance_sensor()
+        self._serialObj = serial.Serial(port, baudrate)
+        sleep(3)
 
-    def _activate_back_distance_sensor(self):
-        print("Activating back distance sensor...")
-        command = b"back\n"
-        self._serialConnection.send_command(command)
+    def alert_if_too_close(self):
+        self._responses.clear()
 
-    def _activate_front_distance_sensor(self):
-        print("Activating front distance sensor...")
-        command = b"front\n"
-        self._serialConnection.send_command(command)
+        if self._frontSensor:
+            self._send_command_and_read_response("front")
+
+        if self._backSensor:
+            self._send_command_and_read_response("back")
+
+        if self._check_if_any_response_is_below_threshold():
+            honkValue = True
+        else:
+            honkValue = False
+
+        self._set_honk(honkValue)
+
+    def _set_honk(self, command):
+        pass
+        # TODO: make a method that honks
 
 
-    def listen_for_incoming_sensor_data(self):
-        serialReading = self._serialConnection.read_incoming_data()
-        if serialReading:
-            print(serialReading)
+    def _check_if_any_response_is_below_threshold(self):
+        for response in self._responses:
+            if response < self._distanceTreshold:
+                return True
+
+        return False
+
+    def _send_command_and_read_response(self, command):
+        # send command to arduino
+        self._serialObj.write(self._make_commands_arduino_readable(command))
+
+        # wait for arduino response
+        self._wait_for_arduino_input()
+
+        # print out arduino response
+        response = float(self._make_arduino_response_readable(self._serialObj.readline()))
+        self._responses.append(response)
+
+        sleep(0.25)
+
+    def _make_commands_arduino_readable(self, command):
+        return (command + "\n").encode(self._encodingType)
+
+    def _make_arduino_response_readable(self, response):
+        return response.decode(self._encodingType).rstrip()
+
+    def _wait_for_arduino_input(self):
+        while self._serialObj.in_waiting <= 0:
+            sleep(0.01)
 
     def cleanup(self):
         GPIO.cleanup()
-        self._serialConnection.cleanup()
+        self._serialObj.close()
 
 

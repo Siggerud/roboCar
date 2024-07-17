@@ -1,5 +1,4 @@
 from CarHandling import CarHandling
-from SerialCommunicator import SerialCommunicator
 from DistanceWarner import DistanceWarner
 from Camera import Camera
 from ServoHandling import ServoHandling
@@ -27,24 +26,29 @@ resolution = (384, 288)
 camera = Camera(resolution)
 
 port = '/dev/ttyACM0'
-baudrate = 9600
-serialObj = SerialCommunicator(port, baudrate)  # serial connection to USB port
+baudrate = 115200 # the highest communication rate between a pi and an arduino
 
-distanceWarner = DistanceWarner(buzzerPin, serialObj)
+distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
+
+xboxControl = XboxControl()
+xboxControl.add_car(car)
+xboxControl.add_servo(servo)
+xboxControl.add_camera(camera)
+xboxControl.add_distance_warner(distanceWarner)
 
 def handle_car(event):
-    xboxControl = XboxControl()
-    xboxControl.add_car(car)
-    xboxControl.add_servo(servo)
-    xboxControl.add_camera(camera)
-    xboxControl.add_distance_warner(distanceWarner)
-
     xboxControl.start_controller(event)
+
+def start_serial_comm(event):
+    xboxControl.start_serial_comm()
 
 
 myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
 thread1.start()
+
+thread2 = Thread(target=start_serial_comm, args=(myEvent,))
+thread2.start()
 
 
 try:

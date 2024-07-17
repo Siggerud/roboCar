@@ -51,8 +51,6 @@ class XboxControl:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
                     self._camera.handle_xbox_input(buttonAndPressValue)
-            if self._distanceWarner:
-                self._distanceWarner.listen_for_incoming_sensor_data()
 
         if self._car:
             self._car.cleanup()
@@ -62,6 +60,12 @@ class XboxControl:
 
         if self._camera:
             self._camera.cleanup()
+
+    def start_serial_comm(self, threadEvent):
+        while not threadEvent.is_set():
+            self._distanceWarner.alert_if_too_close()
+
+        self._distanceWarner.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
