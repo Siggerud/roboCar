@@ -10,7 +10,7 @@ class DistanceWarner:
         self._frontSensor = frontSensor
         self._backSensor = backSensor
         self._responses = []
-        self._readFromArduinoRate = 0.5
+        self._readFromArduinoRate = 0.25
 
         self._buzzerPin = buzzerPin
 
