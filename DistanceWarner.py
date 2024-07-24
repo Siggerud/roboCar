@@ -36,6 +36,7 @@ class DistanceWarner:
         self._set_honk(honkValue)
 
     def _set_honk(self, command):
+        print(command)
         if command:
             GPIO.output(self._buzzerPin, GPIO.HIGH)
         else:
