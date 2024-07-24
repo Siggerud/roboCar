@@ -109,8 +109,8 @@ class CarHandling:
 
 	def _prepare_car_for_throttle(self, button, buttonPressValue):
 		speed = scale_button_press_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
-		print(buttonPressValue)
 		if speed > self._pwmTreshold: # only change speed if over the treshold
+			print(buttonPressValue)
 			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 			if button == "RT":
 				self._goForward = True
