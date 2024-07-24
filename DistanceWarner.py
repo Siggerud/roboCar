@@ -44,6 +44,7 @@ class DistanceWarner:
 
     def _check_if_any_response_is_below_threshold(self):
         for response in self._responses:
+            print(response)
             if response < self._distanceTreshold:
                 return True
 
