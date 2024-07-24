@@ -39,9 +39,9 @@ class DistanceWarner:
     def _set_honk(self, command):
         print(command)
         if command:
-            GPIO.output(self._buzzerPin, GPIO.HIGH)
+            GPIO.output(self._buzzerPin, True)
         else:
-            GPIO.output(self._buzzerPin, GPIO.LOW)
+            GPIO.output(self._buzzerPin, False)
 
 
     def _check_if_any_response_is_below_threshold(self):
