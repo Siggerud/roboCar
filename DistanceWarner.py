@@ -6,7 +6,7 @@ from time import sleep
 class DistanceWarner:
     def __init__(self, buzzerPin, port, baudrate, frontSensor = True, backSensor = True):
         self._distanceTreshold = 5
-        self._encodingType = 'uft-8'
+        self._encodingType = 'utf-8'
         self._frontSensor = frontSensor
         self._backSensor = backSensor
         self._responses = []
@@ -37,9 +37,9 @@ class DistanceWarner:
 
     def _set_honk(self, command):
         if command:
-            GPIO.OUTPUT(self._buzzerPin, GPIO.HIGH)
+            GPIO.output(self._buzzerPin, GPIO.HIGH)
         else:
-            GPIO.OUTPUT(self._buzzerPin, GPIO.LOW)
+            GPIO.output(self._buzzerPin, GPIO.LOW)
 
 
     def _check_if_any_response_is_below_threshold(self):

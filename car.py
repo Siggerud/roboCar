@@ -40,7 +40,7 @@ def handle_car(event):
     xboxControl.start_controller(event)
 
 def start_serial_comm(event):
-    xboxControl.start_serial_comm()
+    xboxControl.start_serial_comm(event)
 
 
 myEvent = Event()
