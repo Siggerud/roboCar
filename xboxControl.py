@@ -47,8 +47,8 @@ class XboxControl:
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
-                if self._distanceWarner:
-                    self._distanceWarner.handle_xbox_input(buttonAndPressValue)
+                #if self._distanceWarner:
+                #    self._distanceWarner.handle_xbox_input(buttonAndPressValue)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
@@ -63,8 +63,8 @@ class XboxControl:
         if self._camera:
             self._camera.cleanup()
 
-        if self._distanceWarner:
-            self._distanceWarner.cleanup()
+        #if self._distanceWarner:
+         #   self._distanceWarner.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
