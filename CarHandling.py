@@ -22,7 +22,6 @@ class CarHandling:
 
 		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
 
-		GPIO.setmode(GPIO.BOARD)
 		GPIO.setup(leftBackward, GPIO.OUT)
 		GPIO.setup(leftForward, GPIO.OUT)
 		GPIO.setup(rightBackward, GPIO.OUT)
@@ -125,6 +124,5 @@ class CarHandling:
 			self._goReverse = False
 
 	def cleanup(self):
-		GPIO.cleanup()
 		self._pwmA.stop()
 		self._pwmB.stop()

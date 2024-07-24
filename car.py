@@ -17,6 +17,8 @@ enB = 13
 servoPin = 26 # BCM
 buzzerPin = 29
 
+GPIO.setmode(GPIO.BOARD)
+
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 servo = ServoHandling(servoPin)
 
@@ -55,6 +57,7 @@ except KeyboardInterrupt:
     myEvent.set()
     thread1.join()
     thread2.join()
+    GPIO.cleanup()
 
 
 

@@ -14,7 +14,6 @@ class DistanceWarner:
 
         self._buzzerPin = buzzerPin
 
-        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(buzzerPin, GPIO.OUT)
 
         self._serialObj = serial.Serial(port, baudrate)
@@ -76,7 +75,6 @@ class DistanceWarner:
             sleep(0.01)
 
     def cleanup(self):
-        GPIO.cleanup()
         self._serialObj.close()
 
 
