@@ -51,8 +51,10 @@ class XboxControl:
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
                 if not self._check_if_state_sufficiently_changed(buttonAndPressValue):
+                    print("skipped")
                     continue
-                print(buttonAndPressValue)    
+                print(buttonAndPressValue)
+                """
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._distanceWarner:
@@ -73,6 +75,7 @@ class XboxControl:
 
         if self._distanceWarner:
             self._distanceWarner.cleanup()
+            """
 
     def _check_if_state_sufficiently_changed(self, buttonAndPressValue):
         button = buttonAndPressValue[0]
