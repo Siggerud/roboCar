@@ -10,6 +10,9 @@ class DistanceWarner:
         self._frontSensor = frontSensor
         self._backSensor = backSensor
         self._responses = []
+        self._readFromArduinoRate = 0.5
+
+        self._buzzerPin = buzzerPin
 
         GPIO.setup(buzzerPin, GPIO.OUT)
 
@@ -33,8 +36,10 @@ class DistanceWarner:
         self._set_honk(honkValue)
 
     def _set_honk(self, command):
-        pass
-        # TODO: make a method that honks
+        if command:
+            GPIO.OUTPUT(self._buzzerPin, GPIO.HIGH)
+        else:
+            GPIO.OUTPUT(self._buzzerPin, GPIO.LOW)
 
 
     def _check_if_any_response_is_below_threshold(self):
@@ -55,7 +60,7 @@ class DistanceWarner:
         response = float(self._make_arduino_response_readable(self._serialObj.readline()))
         self._responses.append(response)
 
-        sleep(0.25)
+        sleep(self._readFromArduinoRate)
 
     def _make_commands_arduino_readable(self, command):
         return (command + "\n").encode(self._encodingType)

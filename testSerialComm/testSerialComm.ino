@@ -8,30 +8,34 @@ boolean sendDistanceFront = false;
 int inputPin2 = A2; // define ultrasonic receive pin (Echo)
 int outputPin2 = A3; // define ultrasonic send pin(Trig)
 
+long baudrate = 115200; // the highest speed a pi can communicate with an arduino
+
 void setup() {
-  //start serial at baud rate 9600
+  //set pin modes
   pinMode(inputPin1, INPUT);
   pinMode(outputPin1, OUTPUT);
 
   pinMode(inputPin2, INPUT);
   pinMode(outputPin2, OUTPUT);
-  Serial.begin(9600);
+
+  //start serial communication
+  Serial.begin(baudrate);
 }
 
 void loop() {
-  if (sendDistanceBack && sendDistanceFront) {
-    write_to_serial(inputPin1, outputPin1, "back");
-    write_to_serial(inputPin2, outputPin2, "front");
-  } else {
-    if (sendDistanceBack) {
-      write_to_serial(inputPin1, outputPin1, "back");
-    } else if (sendDistanceFront) {
-      write_to_serial(inputPin2, outputPin2, "front");
-    }
+  //listen for incoming commands from pi
+  listen_for_commands();
 
-    //if either of the distance sensors are not yet active, then check for serial data coming from raspberry pi
-    listen_for_commands();
-  }  
+  // write sensor values to pi
+  if (sendDistanceBack) {
+    write_to_serial(inputPin1, outputPin1, "back");
+  } else if (sendDistanceFront) {
+    write_to_serial(inputPin2, outputPin2, "front");
+  }
+
+  //reset boolean values
+  sendDistanceBack = false;
+  sendDistanceFront = false;
 
 }
 
@@ -55,7 +59,5 @@ void write_to_serial(int inputPin, int outputPin, String direction) {
   float distance = pulseIn(inputPin, HIGH); //get distance by listening for signal
   distance= distance/5.8/10;
 
-  Serial.println(direction + " distance: " + String(distance)); //sending data
-
-  delay(1000); // waiting for one second
+  Serial.println(String(distance)); //sending data
 }

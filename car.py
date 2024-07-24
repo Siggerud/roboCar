@@ -28,7 +28,7 @@ camera = Camera(resolution)
 port = '/dev/ttyACM0'
 baudrate = 115200 # the highest communication rate between a pi and an arduino
 
-distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
+distanceWarner = DistanceWarner(buzzerPin, port, baudrate, buzzerPin)
 
 xboxControl = XboxControl()
 xboxControl.add_car(car)
