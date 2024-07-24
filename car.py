@@ -7,8 +7,6 @@ import RPi.GPIO as GPIO
 from threading import Thread, Event
 from time import sleep
 
-GPIO.setmode(GPIO.BOARD)
-
 # define GPIO pins
 leftBackward = 22 # IN2 
 leftForward = 18 # IN1

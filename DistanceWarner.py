@@ -5,7 +5,7 @@ from time import sleep
 
 class DistanceWarner:
     def __init__(self, buzzerPin, port, baudrate, frontSensor = True, backSensor = True):
-        self._distanceTreshold = 5
+        self._distanceTreshold = 10
         self._encodingType = 'utf-8'
         self._frontSensor = frontSensor
         self._backSensor = backSensor
@@ -14,6 +14,7 @@ class DistanceWarner:
 
         self._buzzerPin = buzzerPin
 
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(buzzerPin, GPIO.OUT)
 
         self._serialObj = serial.Serial(port, baudrate)
