@@ -2,7 +2,7 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
-from time import sleep
+from roboCarHelper import round_nearest
 
 class XboxControl:
     def __init__(self):
@@ -27,6 +27,11 @@ class XboxControl:
 
         }
 
+        self._pressButtonLastValues = {
+            "RT": 0.0,
+            "LT": 0.0
+        }
+
         self._x11Connected = self._check_if_X11_connected()
         if not self._x11Connected:
             return
@@ -45,6 +50,9 @@ class XboxControl:
         while not threadEvent.is_set():
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
+                if not self._check_if_state_sufficiently_changed(buttonAndPressValue):
+                    continue
+                print(buttonAndPressValue)    
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._distanceWarner:
@@ -65,6 +73,23 @@ class XboxControl:
 
         if self._distanceWarner:
             self._distanceWarner.cleanup()
+
+    def _check_if_state_sufficiently_changed(self, buttonAndPressValue):
+        button = buttonAndPressValue[0]
+
+        if button in list(self._pressButtonLastValues.keys()):
+            pressValue = buttonAndPressValue[1]
+
+            pressValueRounded = round_nearest(pressValue, 0.05)
+
+            if pressValueRounded != self._pressButtonLastValues[button]:
+                self._pressButtonLastValues[button] = pressValueRounded
+                return True
+            else:
+                return False
+
+        else:
+            return True
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
