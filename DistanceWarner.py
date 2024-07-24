@@ -10,16 +10,34 @@ class DistanceWarner:
         self._frontSensor = frontSensor
         self._backSensor = backSensor
         self._responses = []
-        self._readFromArduinoRate = 0.25
+        self._honkValue = False
+
+        self._turnButtons = [
+            "D-PAD left",
+            "D-PAD right",
+            "D-PAD released"
+        ]
+
+        self._gasAndReverseButtons = [
+            "RT",
+            "LT",
+        ]
 
         self._buzzerPin = buzzerPin
 
-        GPIO.setup(buzzerPin, GPIO.OUT, initial=False)
+        GPIO.setup(buzzerPin, GPIO.OUT, initial=self._honkValue)
 
         self._serialObj = serial.Serial(port, baudrate)
         sleep(3)
 
-    def alert_if_too_close(self):
+    def handle_xbox_input(self, buttonAndPressValue):
+        button, buttonPressValue = buttonAndPressValue
+        if button in self._turnButtons or button in self._gasAndReverseButtons:
+            self._alert_if_too_close()
+
+
+
+    def _alert_if_too_close(self):
         self._responses.clear()
 
         if self._frontSensor:
@@ -28,19 +46,17 @@ class DistanceWarner:
         if self._backSensor:
             self._send_command_and_read_response("back")
 
+        self._set_honk_value()
+        self._set_honk()
+
+    def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():
-            honkValue = True
+            self._honkValue = True
         else:
-            honkValue = False
+            self._honkValue = False
 
-        self._set_honk(honkValue)
-
-    def _set_honk(self, command):
-        if command:
-            GPIO.output(self._buzzerPin, True)
-        else:
-            GPIO.output(self._buzzerPin, False)
-
+    def _set_honk(self):
+        GPIO.output(self._buzzerPin, self._honkValue)
 
     def _check_if_any_response_is_below_threshold(self):
         for response in self._responses:
@@ -59,8 +75,6 @@ class DistanceWarner:
         # print out arduino response
         response = float(self._make_arduino_response_readable(self._serialObj.readline()))
         self._responses.append(response)
-
-        sleep(self._readFromArduinoRate)
 
     def _make_commands_arduino_readable(self, command):
         return (command + "\n").encode(self._encodingType)

@@ -38,16 +38,10 @@ xboxControl.add_distance_warner(distanceWarner)
 def handle_car(event):
     xboxControl.start_controller(event)
 
-def start_serial_comm(event):
-    xboxControl.start_serial_comm(event)
-
 
 myEvent = Event()
 thread1 = Thread(target=handle_car, args=(myEvent,))
 thread1.start()
-
-thread2 = Thread(target=start_serial_comm, args=(myEvent,))
-thread2.start()
 
 
 try:
@@ -56,7 +50,6 @@ try:
 except KeyboardInterrupt:
     myEvent.set()
     thread1.join()
-    thread2.join()
     GPIO.cleanup()
 
 
