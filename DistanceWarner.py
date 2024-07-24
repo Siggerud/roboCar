@@ -69,12 +69,8 @@ class DistanceWarner:
         return response.decode(self._encodingType).rstrip()
 
     def _wait_for_arduino_input(self):
-        counter = 0
         while self._serialObj.in_waiting <= 0:
             sleep(0.01)
-            counter += 1
-
-        print(counter)
 
     def cleanup(self):
         self._serialObj.close()
