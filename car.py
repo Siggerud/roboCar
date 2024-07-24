@@ -9,8 +9,8 @@ from time import sleep
 
 # define GPIO pins
 rightForward = 22 # IN2 
-leftForward = 18 # IN1
-rightBackward = 16 # IN4
+rightBackward = 18 # IN1
+leftForward = 16 # IN4
 leftBackward = 15 # IN3
 enA = 11
 enB = 13
