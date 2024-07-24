@@ -8,10 +8,10 @@ from threading import Thread, Event
 from time import sleep
 
 # define GPIO pins
-leftBackward = 22 # IN2 
+rightForward = 22 # IN2 
 leftForward = 18 # IN1
 rightBackward = 16 # IN4
-rightForward = 15 # IN3
+leftBackward = 15 # IN3
 enA = 11
 enB = 13
 servoPin = 26 # BCM
