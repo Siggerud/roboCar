@@ -109,19 +109,21 @@ class CarHandling:
 
 	def _prepare_car_for_throttle(self, button, buttonPressValue):
 		speed = scale_button_press_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
-		if speed > self._pwmTreshold: # only change speed if over the treshold
-			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
-			if button == "RT":
-				self._goForward = True
-				self._goReverse = False
-			elif button == "LT":
-				self._goForward = False
-				self._goReverse = True
+		#if speed > self._pwmTreshold: # only change speed if over the treshold
+		self._change_duty_cycle([self._pwmA, self._pwmB], speed)
+		print(speed)
+		if button == "RT":
+			self._goForward = True
+			self._goReverse = False
+		elif button == "LT":
+			self._goForward = False
+			self._goReverse = True
+		"""
 		else:
 			self._change_duty_cycle([self._pwmA, self._pwmB], 0)
 
 			self._goForward = False
-			self._goReverse = False
+			self._goReverse = False"""
 
 	def cleanup(self):
 		self._pwmA.stop()
