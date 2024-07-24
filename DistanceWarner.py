@@ -36,7 +36,6 @@ class DistanceWarner:
         self._set_honk(honkValue)
 
     def _set_honk(self, command):
-        print(command)
         if command:
             GPIO.output(self._buzzerPin, True)
         else:
@@ -45,7 +44,6 @@ class DistanceWarner:
 
     def _check_if_any_response_is_below_threshold(self):
         for response in self._responses:
-            print(response)
             if response < self._distanceTreshold:
                 return True
 
@@ -71,8 +69,12 @@ class DistanceWarner:
         return response.decode(self._encodingType).rstrip()
 
     def _wait_for_arduino_input(self):
+        counter = 0
         while self._serialObj.in_waiting <= 0:
             sleep(0.01)
+            counter += 1
+
+        print(counter)
 
     def cleanup(self):
         self._serialObj.close()
