@@ -111,7 +111,7 @@ class CarHandling:
 		speed = scale_button_press_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		#if speed > self._pwmTreshold: # only change speed if over the treshold
 		self._change_duty_cycle([self._pwmA, self._pwmB], speed)
-		print(speed)
+		print(buttonPressValue)S
 		if button == "RT":
 			self._goForward = True
 			self._goReverse = False
