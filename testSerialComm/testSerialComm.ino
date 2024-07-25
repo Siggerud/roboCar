@@ -28,9 +28,9 @@ void loop() {
 
   // write sensor values to pi
   if (sendDistanceBack) {
-    write_to_serial(inputPin1, outputPin1, "back");
+    write_to_serial(inputPin1, outputPin1);
   } else if (sendDistanceFront) {
-    write_to_serial(inputPin2, outputPin2, "front");
+    write_to_serial(inputPin2, outputPin2);
   }
 
   //reset boolean values
@@ -50,7 +50,7 @@ void listen_for_commands() {
   }
 }
 
-void write_to_serial(int inputPin, int outputPin, String direction) {
+void write_to_serial(int inputPin, int outputPin) {
   digitalWrite(outputPin, LOW); //send no signal
   delayMicroseconds(2); // wait 2 microseconds
   digitalWrite(outputPin, HIGH); //send signal for 10 microseconds
