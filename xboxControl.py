@@ -2,12 +2,15 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
+from threading import Thread
 
 class XboxControl:
     def __init__(self):
         self._car = None
         self._camera = None
         self._servo = None
+        self._distanceWarner = None
+        self._threads = []
 
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
@@ -31,7 +34,7 @@ class XboxControl:
 
         self._controller = self._set_controller()
 
-    def start_controller(self, threadEvent):
+    def _start_controller(self, threadEvent):
         if not self._x11Connected:
             print("X11 not found. Open VcSrv")
             return
@@ -43,14 +46,32 @@ class XboxControl:
         while not threadEvent.is_set():
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
-                print(buttonAndPressValue)
-                """
+
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
                     self._camera.handle_xbox_input(buttonAndPressValue)
+
+    def _listen_for_distance_warnings(self, threadEvent):
+        while not threadEvent.is_set():
+            self._distanceWarner.alert_if_too_close()
+
+    def activate_distance_warner(self, event):
+        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
+        self._threads.append(thread)
+        thread.start()
+
+    def activate_car_controlling(self, event):
+        thread = Thread(target=self._start_controller, args=(event,))
+        self._threads.append(thread)
+        thread.start()
+
+    def cleanup(self):
+        # close all threads
+        for thread in self._threads:
+            thread.join()
 
         if self._car:
             self._car.cleanup()
@@ -59,7 +80,10 @@ class XboxControl:
             self._servo.cleanup()
 
         if self._camera:
-            self._camera.cleanup()"""
+            self._camera.cleanup()
+
+        if self._distanceWarner:
+            self._distanceWarner.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
@@ -98,6 +122,9 @@ class XboxControl:
             print("Succesful connection to forwarded X11 server")
 
         return not returnCode
+
+    def add_distance_warner(self, distanceWarner):
+        self._distanceWarner = distanceWarner
 
     def add_car(self, car):
         self._car = car

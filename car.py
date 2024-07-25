@@ -1,57 +1,59 @@
 from CarHandling import CarHandling
-from SerialCommunicator import SerialCommunicator
+from DistanceWarner import DistanceWarner
 from Camera import Camera
 from ServoHandling import ServoHandling
 from xboxControl import XboxControl
 import RPi.GPIO as GPIO
-from threading import Thread, Event
 from time import sleep
-
-GPIO.setmode(GPIO.BOARD)
+from threading import Event
 
 # define GPIO pins
-leftBackward = 22 # IN2 
-leftForward = 18 # IN1
-rightBackward = 16 # IN4
-rightForward = 15 # IN3
+rightForward = 22 # IN2 
+rightBackward = 18 # IN1
+leftForward = 16 # IN4
+leftBackward = 15 # IN3
 enA = 11
 enB = 13
 servoPin = 26 # BCM
+buzzerPin = 29
 
+GPIO.setmode(GPIO.BOARD)
+
+# define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
+
+# define servo aboard car
 servo = ServoHandling(servoPin)
 
+# define camera aboard car
 resolution = (384, 288)
 camera = Camera(resolution)
 
-def handle_car(event):
-    xboxControl = XboxControl()
-    xboxControl.add_car(car)
-    xboxControl.add_servo(servo)
-    xboxControl.add_camera(camera)
-    xboxControl.start_controller(event)
+# define distance warning system for
+port = '/dev/ttyACM0'
+baudrate = 115200 # the highest communication rate between a pi and an arduino
+distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
 
-def get_serial_data(event):
-    serialObj = SerialCommunicator('/dev/ttyACM0', 9600)  # serial connection to USB port
-    serialObj.activate_back_distance_sensor()
-    serialObj.activate_front_distance_sensor()
-    serialObj.listen_for_incoming_arduino_data(event)
+# set up car controller
+xboxControl = XboxControl()
+xboxControl.add_car(car)
+xboxControl.add_servo(servo)
+xboxControl.add_camera(camera)
+xboxControl.add_distance_warner(distanceWarner)
 
-
+# activate distance warning and car controlling
 myEvent = Event()
-thread1 = Thread(target=handle_car, args=(myEvent,))
-thread1.start()
+xboxControl.activate_distance_warner(myEvent)
+xboxControl.activate_car_controlling(myEvent)
 
-thread2 = Thread(target=get_serial_data, args=(myEvent,))
-thread2.start()
-
+# keep process running until keyboard interrupt
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         sleep(0.5)
 except KeyboardInterrupt:
-    myEvent.set()
-    thread1.join()
-    thread2.join()
+    myEvent.set() # set event to stop all active processes
+    xboxControl.cleanup() # cleanup to finish all threads and close processes
+    GPIO.cleanup()
 
 
 
