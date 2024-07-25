@@ -19,27 +19,34 @@ buzzerPin = 29
 
 GPIO.setmode(GPIO.BOARD)
 
+# define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
+
+# define servo aboard car
 servo = ServoHandling(servoPin)
 
+# define camera aboard car
 resolution = (384, 288)
 camera = Camera(resolution)
 
+# define distance warning system for
 port = '/dev/ttyACM0'
 baudrate = 115200 # the highest communication rate between a pi and an arduino
 distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
 
+# set up car controller
 xboxControl = XboxControl()
 xboxControl.add_car(car)
 xboxControl.add_servo(servo)
 xboxControl.add_camera(camera)
 xboxControl.add_distance_warner(distanceWarner)
 
+# activate distance warning and car controlling
 myEvent = Event()
-
 xboxControl.activate_distance_warner(myEvent)
 xboxControl.activate_car_controlling(myEvent)
 
+# keep process running until keyboard interrupt
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         sleep(0.5)
