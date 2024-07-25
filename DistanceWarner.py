@@ -39,11 +39,12 @@ class DistanceWarner:
         print("sending front")
         if self._frontSensor:
             self._send_command_and_read_response("front")
-        
+        print("sending back")
         if self._backSensor:
             self._send_command_and_read_response("back")
 
         self._set_honk_value()
+        print("honking")
         self._set_honk()
 
         sleep(self._sleepTime)
