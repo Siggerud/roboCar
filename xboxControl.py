@@ -43,8 +43,9 @@ class XboxControl:
         if not self._controller:
             print("No controller detected. Turn on xbox controller")
             return
-
+        now = time()
         while not threadEvent.is_set():
+            if (time() - now) > 5: threadEvent.set()
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
 
