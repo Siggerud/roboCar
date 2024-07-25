@@ -36,7 +36,7 @@ class XboxControl:
 
         self._controller = self._set_controller()
 
-    def start_controller(self, threadEvent):
+    def _start_controller(self, threadEvent):
         if not self._x11Connected:
             print("X11 not found. Open VcSrv")
             return
@@ -51,8 +51,6 @@ class XboxControl:
 
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
-                if self._distanceWarner:
-                    self._listen_for_reading(buttonAndPressValue)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
@@ -67,13 +65,17 @@ class XboxControl:
         if self._camera:
             self._camera.cleanup()
 
-        if self._distanceWarner:
-            self._distanceWarner.cleanup()
+    def _listen_for_distance_warnings(self, threadEvent):
+        while threadEvent:
+            self._distanceWarner.alert_if_too_close()
 
-    def _listen_for_reading(self, buttonAndPressValue):
-        if self._check_if_time_for_reading():
-            thread = Thread(target=self._distanceWarner.handle_xbox_input, args=(buttonAndPressValue,))
-            thread.start()
+    def activate_distance_warner(self, event):
+        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
+        thread.start()
+
+    def activate_car_controlling(self, event):
+        thread = Thread(target=self._start_controller, args=(event,))
+        thread.start()
 
     def _check_if_time_for_reading(self):
         if not self._lastReadTime:

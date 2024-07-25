@@ -4,8 +4,8 @@ from time import sleep
 
 
 class DistanceWarner:
-    def __init__(self, buzzerPin, port, baudrate, readFrequency = 0.5, frontSensor = True, backSensor = True):
-        self._readFrequency = readFrequency
+    def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
+        self._sleepTime = sleepTime
         self._frontSensor = frontSensor
         self._backSensor = backSensor
 
@@ -34,12 +34,7 @@ class DistanceWarner:
         self._serialObj = serial.Serial(port, baudrate)
         sleep(3)
 
-    def handle_xbox_input(self, buttonAndPressValue):
-        button, buttonPressValue = buttonAndPressValue
-        if button in self._turnButtons or button in self._gasAndReverseButtons:
-            self._alert_if_too_close()
-
-    def _alert_if_too_close(self):
+    def alert_if_too_close(self):
         self._responses.clear()
 
         if self._frontSensor:
@@ -50,6 +45,8 @@ class DistanceWarner:
 
         self._set_honk_value()
         self._set_honk()
+
+        sleep(self._sleepTime)
 
     def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():

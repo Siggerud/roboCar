@@ -35,7 +35,9 @@ xboxControl.add_camera(camera)
 xboxControl.add_distance_warner(distanceWarner)
 
 keepRunning = True
-xboxControl.start_controller(keepRunning)
+
+xboxControl.activate_distance_warner(keepRunning)
+xboxControl.activate_car_controlling(keepRunning)
 
 try:
     while keepRunning: # listen for any threads setting the event
