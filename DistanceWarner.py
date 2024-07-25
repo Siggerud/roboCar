@@ -8,6 +8,7 @@ class DistanceWarner:
         self._readFrequency = readFrequency
         self._frontSensor = frontSensor
         self._backSensor = backSensor
+
         self._distanceTreshold = 10
         self._encodingType = 'utf-8'
 
@@ -41,8 +42,6 @@ class DistanceWarner:
         if button in self._turnButtons or button in self._gasAndReverseButtons:
             self._alert_if_too_close()
 
-
-
     def _alert_if_too_close(self):
         self._responses.clear()
 
@@ -56,12 +55,11 @@ class DistanceWarner:
         self._set_honk()
 
     def _check_if_time_for_reading(self):
-        # first reading
         if not self._lastReadTime:
             return True
 
         now = time()
-        if (now - self._lastReadTime) >= self._readFrequency:
+        if (now - time()) >= self._lastReadTime:
             self._lastReadTime = now
             return True
 

@@ -3,6 +3,7 @@ os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome messa
 import pygame
 import subprocess
 from roboCarHelper import round_nearest
+from threading import Thread
 
 class XboxControl:
     def __init__(self):
@@ -42,7 +43,7 @@ class XboxControl:
             print("No controller detected. Turn on xbox controller")
             return
 
-        while not threadEvent.is_set():
+        while not threadEvent:
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
 
@@ -66,6 +67,10 @@ class XboxControl:
 
         if self._distanceWarner:
             self._distanceWarner.cleanup()
+
+    def _listen_for_reading(self, buttonAndPressValue):
+        thread = Thread(target=self._distanceWarner.handle_xbox_input, args=(buttonAndPressValue,))
+        thread.start()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
