@@ -45,7 +45,7 @@ class XboxControl:
             print("No controller detected. Turn on xbox controller")
             return
 
-        while threadEvent:
+        while not threadEvent.is_set():
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
 
@@ -66,7 +66,7 @@ class XboxControl:
             self._camera.cleanup()
 
     def _listen_for_distance_warnings(self, threadEvent):
-        while threadEvent:
+        while not threadEvent.is_set():
             self._distanceWarner.alert_if_too_close()
 
     def activate_distance_warner(self, event):

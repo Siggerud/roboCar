@@ -5,6 +5,7 @@ from ServoHandling import ServoHandling
 from xboxControl import XboxControl
 import RPi.GPIO as GPIO
 from time import sleep
+from threading import Event
 
 # define GPIO pins
 rightForward = 22 # IN2 
@@ -34,16 +35,16 @@ xboxControl.add_servo(servo)
 xboxControl.add_camera(camera)
 xboxControl.add_distance_warner(distanceWarner)
 
-keepRunning = True
+myEvent = Event()
 
-xboxControl.activate_distance_warner(keepRunning)
-xboxControl.activate_car_controlling(keepRunning)
+xboxControl.activate_distance_warner(myEvent)
+xboxControl.activate_car_controlling(myEvent)
 
 try:
-    while keepRunning: # listen for any threads setting the event
+    while not myEvent.is_set(): # listen for any threads setting the event
         sleep(0.5)
 except KeyboardInterrupt:
-    keepRunning = False
+    myEvent.set()
     GPIO.cleanup()
 
 
