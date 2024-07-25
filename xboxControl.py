@@ -11,8 +11,7 @@ class XboxControl:
         self._camera = None
         self._servo = None
         self._distanceWarner = None
-        self._readFrequency = 0.5
-        self._lastReadTime = None
+        self._threads = []
 
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
@@ -56,6 +55,25 @@ class XboxControl:
                 if self._camera:
                     self._camera.handle_xbox_input(buttonAndPressValue)
 
+    def _listen_for_distance_warnings(self, threadEvent):
+        while not threadEvent.is_set():
+            self._distanceWarner.alert_if_too_close()
+
+    def activate_distance_warner(self, event):
+        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
+        self._threads.append(thread)
+        thread.start()
+
+    def activate_car_controlling(self, event):
+        thread = Thread(target=self._start_controller, args=(event,))
+        self._threads.append(thread)
+        thread.start()
+
+    def cleanup(self):
+        # close all threads
+        for thread in self._threads:
+            thread.join()
+
         if self._car:
             self._car.cleanup()
 
@@ -65,28 +83,8 @@ class XboxControl:
         if self._camera:
             self._camera.cleanup()
 
-    def _listen_for_distance_warnings(self, threadEvent):
-        while not threadEvent.is_set():
-            self._distanceWarner.alert_if_too_close()
-
-    def activate_distance_warner(self, event):
-        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
-        thread.start()
-
-    def activate_car_controlling(self, event):
-        thread = Thread(target=self._start_controller, args=(event,))
-        thread.start()
-
-    def _check_if_time_for_reading(self):
-        if not self._lastReadTime:
-            return True
-
-        now = time()
-        if (now - self._lastReadTime) >= self._readFrequency:
-            self._lastReadTime = now
-            return True
-
-        return False
+        if self._distanceWarner:
+            self._distanceWarner.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None

@@ -44,7 +44,8 @@ try:
     while not myEvent.is_set(): # listen for any threads setting the event
         sleep(0.5)
 except KeyboardInterrupt:
-    myEvent.set()
+    myEvent.set() # set event to stop all active processes
+    xboxControl.cleanup() # cleanup to finish all threads and close processes
     GPIO.cleanup()
 
 

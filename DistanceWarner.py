@@ -36,19 +36,17 @@ class DistanceWarner:
 
     def alert_if_too_close(self):
         self._responses.clear()
-        print("sending front")
+
         if self._frontSensor:
             self._send_command_and_read_response("front")
-        print("sending back")
+
         if self._backSensor:
             self._send_command_and_read_response("back")
 
         self._set_honk_value()
-        print("honking")
         self._set_honk()
 
         sleep(self._sleepTime)
-        print("Done sleeping")
 
     def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():
