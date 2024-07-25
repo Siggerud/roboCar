@@ -50,7 +50,7 @@ class XboxControl:
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._distanceWarner:
-                    self._distanceWarner.handle_xbox_input(buttonAndPressValue)
+                    self._listen_for_reading(buttonAndPressValue)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
