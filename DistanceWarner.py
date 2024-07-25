@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import serial
-from time import sleep, time
+from time import sleep
 
 
 class DistanceWarner:
@@ -35,9 +35,6 @@ class DistanceWarner:
         sleep(3)
 
     def handle_xbox_input(self, buttonAndPressValue):
-        if not self._check_if_time_for_reading():
-            return
-
         button, buttonPressValue = buttonAndPressValue
         if button in self._turnButtons or button in self._gasAndReverseButtons:
             self._alert_if_too_close()
@@ -53,17 +50,6 @@ class DistanceWarner:
 
         self._set_honk_value()
         self._set_honk()
-
-    def _check_if_time_for_reading(self):
-        if not self._lastReadTime:
-            return True
-
-        now = time()
-        if (now - time()) >= self._lastReadTime:
-            self._lastReadTime = now
-            return True
-
-        return False
 
     def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():

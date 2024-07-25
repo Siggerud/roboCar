@@ -2,7 +2,7 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
-from roboCarHelper import round_nearest
+from time import time
 from threading import Thread
 
 class XboxControl:
@@ -11,6 +11,8 @@ class XboxControl:
         self._camera = None
         self._servo = None
         self._distanceWarner = None
+        self._readFrequency = 0.5
+        self._lastReadTime = None
 
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
@@ -69,8 +71,20 @@ class XboxControl:
             self._distanceWarner.cleanup()
 
     def _listen_for_reading(self, buttonAndPressValue):
-        thread = Thread(target=self._distanceWarner.handle_xbox_input, args=(buttonAndPressValue,))
-        thread.start()
+        if self._check_if_time_for_reading():
+            thread = Thread(target=self._distanceWarner.handle_xbox_input, args=(buttonAndPressValue,))
+            thread.start()
+
+    def _check_if_time_for_reading(self):
+        if not self._lastReadTime:
+            return True
+
+        now = time()
+        if (now - self._lastReadTime) >= self._readFrequency:
+            self._lastReadTime = now
+            return True
+
+        return False
 
     def _get_button_and_press_value_from_event(self, event):
         button = None
