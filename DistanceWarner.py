@@ -36,10 +36,10 @@ class DistanceWarner:
 
     def alert_if_too_close(self):
         self._responses.clear()
-
+        print("sending front")
         if self._frontSensor:
             self._send_command_and_read_response("front")
-
+        
         if self._backSensor:
             self._send_command_and_read_response("back")
 
