@@ -1,22 +1,22 @@
 //variables for back sensor
 boolean sendDistanceBack = false;
-int inputPin1 = A0; // define ultrasonic receive pin (Echo)
-int outputPin1 = A1; // define ultrasonic send pin(Trig)
+int inputPinBack = A0; // define ultrasonic receive pin (Echo)
+int outputPinBack = A1; // define ultrasonic send pin(Trig)
 
 //variables for front sensor
 boolean sendDistanceFront = false;
-int inputPin2 = A2; // define ultrasonic receive pin (Echo)
-int outputPin2 = A3; // define ultrasonic send pin(Trig)
+int inputPinFront = A2; // define ultrasonic receive pin (Echo)
+int outputPinFront = A3; // define ultrasonic send pin(Trig)
 
 long baudrate = 115200; // the highest speed a pi can communicate with an arduino
 
 void setup() {
   //set pin modes
-  pinMode(inputPin1, INPUT);
-  pinMode(outputPin1, OUTPUT);
+  pinMode(inputPinBack, INPUT);
+  pinMode(outputPinBack, OUTPUT);
 
-  pinMode(inputPin2, INPUT);
-  pinMode(outputPin2, OUTPUT);
+  pinMode(inputPinFront, INPUT);
+  pinMode(outputPinFront, OUTPUT);
 
   //start serial communication
   Serial.begin(baudrate);
@@ -28,9 +28,9 @@ void loop() {
 
   // write sensor values to pi
   if (sendDistanceBack) {
-    write_to_serial(inputPin1, outputPin1);
+    write_to_serial(inputPinBack, outputPinBack);
   } else if (sendDistanceFront) {
-    write_to_serial(inputPin2, outputPin2);
+    write_to_serial(inputPinFront, outputPinFront);
   }
 
   //reset boolean values
