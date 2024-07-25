@@ -48,6 +48,7 @@ class DistanceWarner:
         self._set_honk()
 
         sleep(self._sleepTime)
+        print("Done sleeping")
 
     def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():
