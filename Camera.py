@@ -33,7 +33,7 @@ class Camera:
 
 		# text on video properties
 		self._colour = (0, 255, 0)
-		self._origin = (30, 200)
+		self._origin = (10, 250)
 		self._font = cv2.FONT_HERSHEY_SIMPLEX
 		self._scale = 1
 		self._thickness = 1
