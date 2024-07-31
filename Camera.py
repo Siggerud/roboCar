@@ -40,7 +40,7 @@ class Camera:
 		self._thickness = 1
 
 		# control values displayed on camera feed
-		self._speed = "0%"
+		self._currentCarSpeed = "0%"
 		self._currentServoAngle = "0"
 
 	def start_preview(self):
@@ -67,7 +67,7 @@ class Camera:
 		self._currentServoAngle = str(currentServoAngle)
 
 	def set_current_car_speed(self, currentSpeed):
-		self._speed = str(currentSpeed)
+		self._currentCarSpeed = str(currentSpeed)
 
 	def cleanup(self):
 		self._cam.close()
@@ -75,7 +75,7 @@ class Camera:
 	def _insert_control_values_on_video_feed(self, request):
 		#TODO: set up a way to check if servo and car are actually set
 		angleText = "Angle: " + self._currentServoAngle
-		speedText = "Speed: " + self._carSpeed + "%"
+		speedText = "Speed: " + self._currentCarSpeed + "%"
 		with MappedArray(request, "main") as m:
 			cv2.putText(m.array, angleText, self._servoOrigin, self._font, self._scale, self._colour, self._thickness)
 			cv2.putText(m.array, speedText, self._speedOrigin, self._font, self._scale, self._colour, self._thickness)
