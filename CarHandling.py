@@ -58,7 +58,7 @@ class CarHandling:
 			self._move_car()
 
 	def get_current_speed(self):
-		return self._speed
+		return int(self._speed)
 
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
