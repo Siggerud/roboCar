@@ -5,7 +5,7 @@ from libcamera import Transform
 import time
 import cv2
 from time import sleep # TODO: remove when finished testing
-from roboCarHelper import scale_button_press_value
+from roboCarHelper import map_value_to_new_scale
 
 class Camera:
 	def __init__(self, resolution, rotation=True):
@@ -38,6 +38,9 @@ class Camera:
 		self._scale = 1
 		self._thickness = 2
 
+		# control values
+		self._currentServoAngle = ""
+
 	def start_preview(self):
 		self._cam.pre_callback = self._apply_timestamp # callback for video stream
 		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh or VNC
@@ -58,14 +61,17 @@ class Camera:
 			if self._zoomCamera:
 				self._zoom()
 
+	def set_current_servo_angle(self, currentServoAngle):
+		self._currentServoAngle = str(currentServoAngle)
+
 
 	def cleanup(self):
 		self._cam.close()
 
 	def _apply_timestamp(self, request):
-		timestamp = time.strftime("%Y-%m-%d %X")
+		angleText = "Angle: " + self._currentServoAngle
 		with MappedArray(request, "main") as m:
-			cv2.putText(m.array, timestamp, self._origin, self._font, self._scale, self._colour, self._thickness)
+			cv2.putText(m.array, angleText, self._origin, self._font, self._scale, self._colour, self._thickness)
 
 	def _zoom(self):
 		size = [int(s * self._zoomValue) for s in self._standardSize]
@@ -82,8 +88,8 @@ class Camera:
 
 		if stickValue != self._lastStickValue:
 			self._zoomCamera = True
-			self._zoomValue = scale_button_press_value(stickValue, self._minZoomValue, self._maxZoomValue, 2,
-													   self._zoomButtonMinValue, self._zoomButtonMaxValue)
+			self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
+													 self._zoomButtonMinValue, self._zoomButtonMaxValue)
 			self._lastStickValue = stickValue
 		else:
 			self._zoomCamera = False

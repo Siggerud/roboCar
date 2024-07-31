@@ -52,7 +52,13 @@ class XboxControl:
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
+                    self._set_control_values()
                     self._camera.handle_xbox_input(buttonAndPressValue)
+
+    def _set_control_values(self):
+        if self._servo:
+            currentServoAngle = self._servo.get_current_servo_angle()
+            self._camera.set_current_servo_angle(currentServoAngle)
 
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():

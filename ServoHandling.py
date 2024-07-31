@@ -1,4 +1,4 @@
-from roboCarHelper import scale_button_press_value
+from roboCarHelper import map_value_to_new_scale
 import pigpio
 
 class ServoHandling:
@@ -24,6 +24,11 @@ class ServoHandling:
             self._prepare_for_servo_movement(buttonPressValue)
             self._move_servo()
 
+    def get_current_servo_angle(self):
+        current_servo_angle = map_value_to_new_scale(self._servoPwmValue, self._pwmMinServo, self._pwmMaxServo, 0, -90, 90)
+
+        return current_servo_angle
+
     def _move_servo(self):
         if self._servoValueChanged:
             self._pigpioPwm.set_servo_pulsewidth(self._servoPin, self._servoPwmValue)
@@ -35,7 +40,7 @@ class ServoHandling:
             self._servoValueChanged = False
         else:
             self._servoValueChanged = True
-            self._servoPwmValue = scale_button_press_value(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
+            self._servoPwmValue = map_value_to_new_scale(stickValue, self._pwmMinServo, self._pwmMaxServo, 1)
             self._lastServoStickValue = stickValue
 
     def cleanup(self):

@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-from roboCarHelper import scale_button_press_value
+from roboCarHelper import map_value_to_new_scale
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -107,7 +107,7 @@ class CarHandling:
 			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
 
 	def _prepare_car_for_throttle(self, button, buttonPressValue):
-		speed = scale_button_press_value(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
+		speed = map_value_to_new_scale(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		if speed > self._pwmMinTT + 1: # only change speed if over the treshold
 			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 			if button == "RT":

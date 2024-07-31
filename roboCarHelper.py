@@ -1,9 +1,9 @@
-def scale_button_press_value(pressValue, pwmMinValue, pwmMaxValue, valuePrecision, buttonMinValue=-1, buttonMaxValue=1):
-    pwmSpan = pwmMaxValue - pwmMinValue
-    buttonSpan = buttonMaxValue - buttonMinValue
+def map_value_to_new_scale(inputValue, newScaleMinValue, newScaleMaxValue, valuePrecision, oldScaleMinValue=-1, oldScaleMaxValue=1):
+    newScaleSpan = newScaleMaxValue - newScaleMinValue
+    oldScaleSpan = oldScaleMaxValue - oldScaleMinValue
 
-    valueScaled = float(pressValue - buttonMinValue) / float(buttonSpan)
-    valueMapped = round(pwmMinValue + (valueScaled * pwmSpan), valuePrecision)
+    valueScaled = float(inputValue - oldScaleMinValue) / float(oldScaleSpan)
+    valueMapped = round(newScaleMinValue + (valueScaled * newScaleSpan), valuePrecision)
 
     return valueMapped
 
