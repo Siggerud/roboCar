@@ -33,16 +33,16 @@ class Camera:
 
 		# text on video properties
 		self._colour = (0, 255, 0)
-		self._origin = (0, 30)
+		self._origin = (300, 30)
 		self._font = cv2.FONT_HERSHEY_SIMPLEX
 		self._scale = 1
-		self._thickness = 2
+		self._thickness = 1
 
-		# control values
-		self._currentServoAngle = ""
+		# control values displayed on camera feed
+		self._currentServoAngle = "0"
 
 	def start_preview(self):
-		self._cam.pre_callback = self._apply_timestamp # callback for video stream
+		self._cam.pre_callback = self._apply_timestamp # callback for video feed
 		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh or VNC
 		self._cam.start(show_preview=True)  # start camera
 

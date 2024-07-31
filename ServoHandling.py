@@ -25,7 +25,7 @@ class ServoHandling:
             self._move_servo()
 
     def get_current_servo_angle(self):
-        current_servo_angle = map_value_to_new_scale(self._servoPwmValue, -90, 90, 0, self._pwmMinServo, self._pwmMaxServo)
+        current_servo_angle = int(map_value_to_new_scale(self._servoPwmValue, -90, 90, 0, self._pwmMinServo, self._pwmMaxServo))
 
         return current_servo_angle
 
