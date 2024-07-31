@@ -69,7 +69,7 @@ class Camera:
 		self._cam.close()
 
 	def _apply_timestamp(self, request):
-		angleText = "Angle: " + self._currentServoAngle
+		angleText = "Angle: " + self._currentServoAngle + "\nyes"
 		with MappedArray(request, "main") as m:
 			cv2.putText(m.array, angleText, self._origin, self._font, self._scale, self._colour, self._thickness)
 
