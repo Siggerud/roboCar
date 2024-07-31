@@ -1,5 +1,6 @@
 from picamera2 import Picamera2, Preview
 import os
+import cv2
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
 from time import sleep
@@ -30,8 +31,11 @@ class Camera:
 		]
 
 	def start_preview(self):
-		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
-		self._cam.start()  # start camera
+        self._cam.preview_configuration.main.format = "RGB888"
+        self._cam.preview_configuration.align()
+        self._cam.configure("preview")
+		#self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
+        self._cam.start()  # start camera
 
 		self._standardSize = self._cam.capture_metadata()['ScalerCrop'][2:]
 		self._full_res = self._cam.camera_properties['PixelArraySize']
@@ -39,6 +43,12 @@ class Camera:
 		print("Starting camera preview")
 
 		sleep(2)
+		
+		while True:
+            frame = self._cam.capture_array()
+            
+            cv2.imshow("self._cam", frame)
+            
 
 	def handle_xbox_input(self, buttonAndValue):
 		button, buttonPressValue = buttonAndValue
