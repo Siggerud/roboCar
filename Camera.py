@@ -33,15 +33,14 @@ class Camera:
 
 		# text on video properties
 		self._colour = (0, 255, 0)
-		self._servoOrigin = (10, 250)
-		self._speedOrigin = (10, 200)
+		self._origins = [(10, 260), (10, 220), (10, 180), (10, 140)]
 		self._font = cv2.FONT_HERSHEY_SIMPLEX
 		self._scale = 1
 		self._thickness = 1
 
 		# control values displayed on camera feed
-		self._currentCarSpeed = "0%"
-		self._currentServoAngle = "0"
+		self._currentCarSpeed = None
+		self._currentServoAngle = None
 
 	def start_preview(self):
 		self._cam.pre_callback = self._insert_control_values_on_video_feed # callback for video feed
@@ -73,12 +72,20 @@ class Camera:
 		self._cam.close()
 
 	def _insert_control_values_on_video_feed(self, request):
-		#TODO: set up a way to check if servo and car are actually set
-		angleText = "Angle: " + self._currentServoAngle
-		speedText = "Speed: " + self._currentCarSpeed + "%"
 		with MappedArray(request, "main") as m:
-			cv2.putText(m.array, angleText, self._servoOrigin, self._font, self._scale, self._colour, self._thickness)
-			cv2.putText(m.array, speedText, self._speedOrigin, self._font, self._scale, self._colour, self._thickness)
+			originCounter = 0
+			if self._currentServoAngle:
+				angleText = "Angle: " + self._currentServoAngle
+				cv2.putText(m.array, angleText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
+				originCounter += 1
+
+			if self._currentCarSpeed:
+				speedText = "Speed: " + self._currentCarSpeed + "%"
+				cv2.putText(m.array, speedText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
+				originCounter += 1
+
+	def _get_origin(self, count):
+		return self._origins[count]
 
 	def _zoom(self):
 		size = [int(s * self._zoomValue) for s in self._standardSize]
