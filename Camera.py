@@ -33,16 +33,18 @@ class Camera:
 
 		# text on video properties
 		self._colour = (0, 255, 0)
-		self._origin = (10, 250)
+		self._servoOrigin = (10, 250)
+		self._speedOrigin = (10, 200)
 		self._font = cv2.FONT_HERSHEY_SIMPLEX
 		self._scale = 1
 		self._thickness = 1
 
 		# control values displayed on camera feed
+		self._speed = "0%"
 		self._currentServoAngle = "0"
 
 	def start_preview(self):
-		self._cam.pre_callback = self._apply_timestamp # callback for video feed
+		self._cam.pre_callback = self._insert_control_values_on_video_feed # callback for video feed
 		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh or VNC
 		self._cam.start(show_preview=True)  # start camera
 
@@ -64,14 +66,19 @@ class Camera:
 	def set_current_servo_angle(self, currentServoAngle):
 		self._currentServoAngle = str(currentServoAngle)
 
+	def set_current_car_speed(self, currentSpeed):
+		self._speed = str(currentSpeed)
 
 	def cleanup(self):
 		self._cam.close()
 
-	def _apply_timestamp(self, request):
-		angleText = "Angle: " + self._currentServoAngle + "\nyes"
+	def _insert_control_values_on_video_feed(self, request):
+		#TODO: set up a way to check if servo and car are actually set
+		angleText = "Angle: " + self._currentServoAngle
+		speedText = "Speed: " + self._carSpeed + "%"
 		with MappedArray(request, "main") as m:
-			cv2.putText(m.array, angleText, self._origin, self._font, self._scale, self._colour, self._thickness)
+			cv2.putText(m.array, angleText, self._servoOrigin, self._font, self._scale, self._colour, self._thickness)
+			cv2.putText(m.array, speedText, self._speedOrigin, self._font, self._scale, self._colour, self._thickness)
 
 	def _zoom(self):
 		size = [int(s * self._zoomValue) for s in self._standardSize]

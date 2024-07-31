@@ -60,6 +60,10 @@ class XboxControl:
             currentServoAngle = self._servo.get_current_servo_angle()
             self._camera.set_current_servo_angle(currentServoAngle)
 
+        if self._car:
+            currentSpeed = self._car.get_current_speed()
+            self._camera.set_current_car_speed(currentSpeed)
+
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():
             self._distanceWarner.alert_if_too_close()

@@ -14,6 +14,8 @@ class CarHandling:
 		self._pwmMinTT = 20 # this needs to be set to the value where the motors start "biting"
 		self._pwmMaxTT = 70
 
+		self._speed = 0
+
 		self._turnLeft = False
 		self._turnRight = False
 
@@ -54,6 +56,9 @@ class CarHandling:
 		elif button in self._gasAndReverseButtons:
 			self._prepare_car_for_throttle(button, buttonPressValue)
 			self._move_car()
+
+	def get_current_speed(self):
+		return self._speed
 
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
@@ -109,7 +114,6 @@ class CarHandling:
 	def _prepare_car_for_throttle(self, button, buttonPressValue):
 		speed = map_value_to_new_scale(buttonPressValue, self._pwmMinTT, self._pwmMaxTT, 2)
 		if speed > self._pwmMinTT + 1: # only change speed if over the treshold
-			self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 			if button == "RT":
 				self._goForward = True
 				self._goReverse = False
@@ -117,10 +121,13 @@ class CarHandling:
 				self._goForward = False
 				self._goReverse = True
 		else:
-			self._change_duty_cycle([self._pwmA, self._pwmB], 0)
+			speed = 0
 
 			self._goForward = False
 			self._goReverse = False
+
+		self._change_duty_cycle([self._pwmA, self._pwmB], speed)
+		self._speed = speed
 
 	def cleanup(self):
 		self._pwmA.stop()
