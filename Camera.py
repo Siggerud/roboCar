@@ -1,9 +1,10 @@
-from picamera2 import Picamera2, Preview
+from picamera2 import Picamera2, Preview, MappedArray
 import os
-import cv2
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
-from time import sleep
+import time
+import cv2
+from time import sleep # TODO: remove when finished testing
 from roboCarHelper import scale_button_press_value
 
 class Camera:
@@ -31,10 +32,8 @@ class Camera:
 		]
 
 	def start_preview(self):
-		self._cam.preview_configuration.main.format = "RGB888"
-		self._cam.preview_configuration.align()
-		self._cam.configure("preview")
-		#self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
+		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
+		self._cam.pre_callback = self._apply_timestamp()
 		self._cam.start()  # start camera
 
 		self._standardSize = self._cam.capture_metadata()['ScalerCrop'][2:]
@@ -43,12 +42,6 @@ class Camera:
 		print("Starting camera preview")
 
 		sleep(2)
-		
-		while True:
-			frame = self._cam.capture_array()
-
-			cv2.imshow("self._cam", frame)
-
 
 	def handle_xbox_input(self, buttonAndValue):
 		button, buttonPressValue = buttonAndValue
@@ -61,6 +54,18 @@ class Camera:
 
 	def cleanup(self):
 		self._cam.close()
+
+	def _apply_timestamp(self):
+		colour = (0, 255, 0)
+		origin = (0, 30)
+		font = cv2.FONT_HERSHEY_SIMPLEX
+		scale = 1
+		thickness = 2
+
+		timestamp = time.strftime("%Y-%m-%d %X")
+
+		with MappedArray(request, "main") as m:
+			cv2.putText(m.array, timestamp, origin, font, scale, colour, thickness)
 
 	def _zoom(self):
 		size = [int(s * self._zoomValue) for s in self._standardSize]
@@ -87,7 +92,3 @@ class Camera:
 		if buttonPressValue >= self._zoomButtonMaxValue and buttonPressValue <= self._zoomButtonMinValue:
 			return True
 		return False
-
-
-
-
