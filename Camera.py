@@ -31,9 +31,16 @@ class Camera:
 			"LSB vertical"
 		]
 
+		# text on video properties
+		self._colour = (0, 255, 0)
+		self._origin = (0, 30)
+		self._font = cv2.FONT_HERSHEY_SIMPLEX
+		self._scale = 1
+		self._thickness = 2
+
 	def start_preview(self):
-		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
-		self._cam.pre_callback = self._apply_timestamp()
+		self._cam.pre_callback = self._apply_timestamp # callback for video stream
+		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh or VNC
 		self._cam.start(show_preview=True)  # start camera
 
 		self._standardSize = self._cam.capture_metadata()['ScalerCrop'][2:]
@@ -55,19 +62,10 @@ class Camera:
 	def cleanup(self):
 		self._cam.close()
 
-	def _apply_timestamp(self):
-		colour = (0, 255, 0)
-		origin = (0, 30)
-		font = cv2.FONT_HERSHEY_SIMPLEX
-		scale = 1
-		thickness = 2
-
+	def _apply_timestamp(self, request):
 		timestamp = time.strftime("%Y-%m-%d %X")
-		request = self._cam.capture_request()
 		with MappedArray(request, "main") as m:
-			cv2.putText(m.array, timestamp, origin, font, scale, colour, thickness)
-
-		request.release()
+			cv2.putText(m.array, timestamp, self._origin, self._font, self._scale, self._colour, self._thickness)
 
 	def _zoom(self):
 		size = [int(s * self._zoomValue) for s in self._standardSize]
