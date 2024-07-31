@@ -63,9 +63,11 @@ class Camera:
 		thickness = 2
 
 		timestamp = time.strftime("%Y-%m-%d %X")
-
+		request = self._cam.capture_request()
 		with MappedArray(request, "main") as m:
 			cv2.putText(m.array, timestamp, origin, font, scale, colour, thickness)
+
+		request.release()
 
 	def _zoom(self):
 		size = [int(s * self._zoomValue) for s in self._standardSize]
