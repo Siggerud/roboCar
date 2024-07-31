@@ -34,7 +34,7 @@ class Camera:
 	def start_preview(self):
 		self._cam.start_preview(Preview.QT)  # must use this preview to run over ssh
 		self._cam.pre_callback = self._apply_timestamp()
-		self._cam.start()  # start camera
+		self._cam.start(show_preview=True)  # start camera
 
 		self._standardSize = self._cam.capture_metadata()['ScalerCrop'][2:]
 		self._full_res = self._cam.camera_properties['PixelArraySize']
