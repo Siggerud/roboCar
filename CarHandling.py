@@ -137,7 +137,7 @@ class CarHandling:
 
 		self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 		self._speed = speed
-		print("Speed: " + speed)
+		print("Speed: ", speed)
 
 	def cleanup(self):
 		self._pwmA.stop()
