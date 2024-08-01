@@ -78,6 +78,12 @@ class Camera:
 	def _insert_control_values_on_video_feed(self, request):
 		with MappedArray(request, "main") as m:
 			originCounter = 0
+
+			zoomText = "Zoom: " + self._get_zoom_value_in_x_form() + "x"
+			cv2.putText(m.array, zoomText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+						self._thickness)
+			originCounter += 1
+
 			if self._currentServoAngle:
 				angleText = "Angle: " + self._currentServoAngle
 				cv2.putText(m.array, angleText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
@@ -93,6 +99,9 @@ class Camera:
 				cv2.putText(m.array, turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
 							self._thickness)
 				originCounter += 1
+
+	def _get_zoom_value_in_x_form(self):
+		return str(round((1 / self._zoomValue), 2))
 
 	def _get_origin(self, count):
 		return self._origins[count]
