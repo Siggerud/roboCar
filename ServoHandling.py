@@ -10,7 +10,7 @@ class ServoHandling:
 
         self._lastServoStickValue = 0
         self._servoValueChanged = False
-        self._servoPwmValue = 0
+        self._servoPwmValue = 1500
         self._pwmMinServo = 2500
         self._pwmMaxServo = 500
 
