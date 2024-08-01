@@ -46,7 +46,6 @@ class XboxControl:
         while not threadEvent.is_set():
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
-                print(buttonAndPressValue)
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._servo:
