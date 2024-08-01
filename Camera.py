@@ -41,6 +41,7 @@ class Camera:
 		# control values displayed on camera feed
 		self._currentCarSpeed = None
 		self._currentServoAngle = None
+		self._currentTurnValue = None
 
 	def start_preview(self):
 		self._cam.pre_callback = self._insert_control_values_on_video_feed # callback for video feed
@@ -68,6 +69,9 @@ class Camera:
 	def set_current_car_speed(self, currentSpeed):
 		self._currentCarSpeed = str(currentSpeed)
 
+	def set_current_turn_value(self, currentTurnValue):
+		self._currentTurnValue = currentTurnValue
+
 	def cleanup(self):
 		self._cam.close()
 
@@ -82,6 +86,12 @@ class Camera:
 			if self._currentCarSpeed:
 				speedText = "Speed: " + self._currentCarSpeed + "%"
 				cv2.putText(m.array, speedText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
+				originCounter += 1
+
+			if self._currentTurnValue:
+				turnText = "Turn: " + self._currentTurnValue
+				cv2.putText(m.array, turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+							self._thickness)
 				originCounter += 1
 
 	def _get_origin(self, count):

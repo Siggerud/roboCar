@@ -60,6 +60,14 @@ class CarHandling:
 	def get_current_speed(self):
 		return int(self._speed)
 
+	def get_current_turn_value(self):
+		if self._turnLeft:
+			return "Left"
+		elif self._turnRight:
+			return "Right"
+		else:
+			return "-"
+
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)
