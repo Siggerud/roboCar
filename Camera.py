@@ -21,7 +21,7 @@ class Camera:
 		self._lastStickValue = 0
 		self._minZoomValue = 1
 		self._maxZoomValue = 0.35
-		self._zoomValue = None
+		self._zoomValue = 1
 		self._zoomCamera = False
 
 		self._zoomButtonMinValue = 0
