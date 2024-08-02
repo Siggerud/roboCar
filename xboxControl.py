@@ -7,7 +7,7 @@ from threading import Thread
 class XboxControl:
     def __init__(self):
         if not self._check_if_X11_connected():
-            raise x11ForwardingError("X11 forwarding not detected.")
+            raise X11ForwardingError("X11 forwarding not detected.")
 
         self._controller = self._set_controller()
 
@@ -34,14 +34,6 @@ class XboxControl:
         }
 
     def _start_controller(self, threadEvent):
-        if not self._x11Connected:
-            print("X11 not found. Open VcSrv")
-            return
-
-        if not self._controller:
-            print("No controller detected. Turn on xbox controller")
-            return
-
         while not threadEvent.is_set():
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
@@ -122,6 +114,8 @@ class XboxControl:
             controller = pygame.joystick.Joystick(0)
             controller.init()
             print("Controller connected: ", controller.get_name())
+        else:
+            raise NoControllerDetected("No controller detected. Turn on xbox controller")
 
         return controller
 
@@ -147,5 +141,8 @@ class XboxControl:
     def add_servo(self, servo):
         self._servo = servo
 
-class x11ForwardingError(Exception):
+class X11ForwardingError(Exception):
+    pass
+
+class NoControllerDetected(Exception):
     pass

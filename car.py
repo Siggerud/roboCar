@@ -2,7 +2,7 @@ from CarHandling import CarHandling
 from DistanceWarner import DistanceWarner, InvalidPortError
 from Camera import Camera
 from ServoHandling import ServoHandling
-from xboxControl import XboxControl, x11ForwardingError
+from xboxControl import XboxControl, X11ForwardingError, NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 from time import sleep
@@ -41,10 +41,9 @@ except InvalidPortError as e:
     exit()
 
 # set up car controller
-
 try:
     xboxControl = XboxControl()
-except x11ForwardingError as e:
+except (X11ForwardingError, NoControllerDetected) as e:
     print_startup_error(e)
     exit()
 
@@ -57,8 +56,6 @@ xboxControl.add_distance_warner(distanceWarner)
 myEvent = Event()
 xboxControl.activate_distance_warner(myEvent)
 xboxControl.activate_car_controlling(myEvent)
-
-
 
 # keep process running until keyboard interrupt
 try:
