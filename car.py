@@ -35,8 +35,9 @@ baudrate = 115200 # the highest communication rate between a pi and an arduino
 
 try:
     distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
-except InvalidPortError:
+except InvalidPortError as e:
     print("hello")
+    print(e)
     exit()
 
 # set up car controller
