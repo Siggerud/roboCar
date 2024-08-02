@@ -92,8 +92,8 @@ class DistanceWarner:
         while self._serialObj.in_waiting <= 0:
             sleep(0.01)
 
-    def _port_exists(self, path):
-        return path.exists(path)
+    def _port_exists(self, portPath):
+        return path.exists(portPath)
 
 class InvalidPortError(Exception):
     pass
