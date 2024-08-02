@@ -47,7 +47,7 @@ myEvent = Event()
 try:
     xboxControl.activate_distance_warner(myEvent)
     xboxControl.activate_car_controlling(myEvent)
-except InvalidPortError:
+except Exception as e:
     xboxControl.cleanup()
     GPIO.cleanup()
     print("Something went wrong during startup. Exiting...")
