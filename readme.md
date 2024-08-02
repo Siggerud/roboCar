@@ -1,6 +1,12 @@
 # Robocar
+![Alt text](Images/robocar.jpg)
+
 This is a project where I've built
 a vehicle that can be controlled with a wireless xbox controller via bluetooth.
+It has a camera mounted on a servo that can be turned 90 degrees to both sides.
+It also has a distance sensors in the front and the back of the car, and a warning sound will
+be set off if the vehicle is too close to any object. I've used a serial connection to an arduino
+to read data from the distance sensors.
 
 ## Prerequisites
 
@@ -40,6 +46,23 @@ pip3 install pyserial
 ```
 
 ### Setting up pigpio
+We need pigpio to control our servo, otherwise
+there will be a lot of jitter.
+```
+sudo apt-get install pigpio 
+sudo apt-get install  python-pigpio python3-pigpio
+```
+
+Setup pipgio service to run at boot
+```
+sudo systemctl enable pigpiod
+```
+
+Then reboot or start pipgio
+```
+sudo systemctl start pigpiod
+```
+
 
 
 
