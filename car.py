@@ -2,7 +2,8 @@ from CarHandling import CarHandling
 from DistanceWarner import DistanceWarner, InvalidPortError
 from Camera import Camera
 from ServoHandling import ServoHandling
-from xboxControl import XboxControl
+from xboxControl import XboxControl, x11ForwardingError
+from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 from time import sleep
 from threading import Event
@@ -36,12 +37,17 @@ baudrate = 115200 # the highest communication rate between a pi and an arduino
 try:
     distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
 except InvalidPortError as e:
-    print("hello")
-    print(e)
+    print_startup_error(e)
     exit()
 
 # set up car controller
-xboxControl = XboxControl()
+
+try:
+    xboxControl = XboxControl()
+except x11ForwardingError as e:
+    print_startup_error(e)
+    exit()
+
 xboxControl.add_car(car)
 xboxControl.add_servo(servo)
 xboxControl.add_camera(camera)

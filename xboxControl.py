@@ -6,6 +6,11 @@ from threading import Thread
 
 class XboxControl:
     def __init__(self):
+        if not self._check_if_X11_connected():
+            raise x11ForwardingError("X11 forwarding not detected.")
+
+        self._controller = self._set_controller()
+
         self._car = None
         self._camera = None
         self._servo = None
@@ -27,12 +32,6 @@ class XboxControl:
             5: "LT",
 
         }
-
-        self._x11Connected = self._check_if_X11_connected()
-        if not self._x11Connected:
-            return
-
-        self._controller = self._set_controller()
 
     def _start_controller(self, threadEvent):
         if not self._x11Connected:
@@ -147,3 +146,6 @@ class XboxControl:
 
     def add_servo(self, servo):
         self._servo = servo
+
+class x11ForwardingError(Exception):
+    pass

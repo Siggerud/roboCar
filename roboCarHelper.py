@@ -7,5 +7,9 @@ def map_value_to_new_scale(inputValue, newScaleMinValue, newScaleMaxValue, value
 
     return valueMapped
 
+def print_startup_error(error):
+    print("Something went wrong during startup. Exiting...")
+    print(error)
+
 def round_nearest(x, a):
     return round(x / a) * a
