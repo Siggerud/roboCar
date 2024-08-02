@@ -3,7 +3,6 @@ import RPi.GPIO as GPIO
 import serial
 from time import sleep
 
-
 class DistanceWarner:
     def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
         if not self._port_exists(port):
@@ -36,7 +35,7 @@ class DistanceWarner:
         GPIO.setup(buzzerPin, GPIO.OUT, initial=self._honkValue)
 
         self._serialObj = serial.Serial(port, baudrate)
-        sleep(3)
+        sleep(3) # give the serial object some time to start communication
 
     def alert_if_too_close(self):
         self._responses.clear()

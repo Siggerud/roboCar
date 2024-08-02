@@ -33,6 +33,33 @@ class XboxControl:
 
         }
 
+    def activate_distance_warner(self, event):
+        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
+        self._threads.append(thread)
+        thread.start()
+
+    def activate_car_controlling(self, event):
+        thread = Thread(target=self._start_controller, args=(event,))
+        self._threads.append(thread)
+        thread.start()
+
+    def cleanup(self):
+        # close all threads
+        for thread in self._threads:
+            thread.join()
+
+        if self._car:
+            self._car.cleanup()
+
+        if self._servo:
+            self._servo.cleanup()
+
+        if self._camera:
+            self._camera.cleanup()
+
+        if self._distanceWarner:
+            self._distanceWarner.cleanup()
+
     def _start_controller(self, threadEvent):
         while not threadEvent.is_set():
             for event in pygame.event.get():
@@ -60,33 +87,6 @@ class XboxControl:
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():
             self._distanceWarner.alert_if_too_close()
-
-    def activate_distance_warner(self, event):
-        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
-        self._threads.append(thread)
-        thread.start()
-
-    def activate_car_controlling(self, event):
-        thread = Thread(target=self._start_controller, args=(event,))
-        self._threads.append(thread)
-        thread.start()
-
-    def cleanup(self):
-        # close all threads
-        for thread in self._threads:
-            thread.join()
-
-        if self._car:
-            self._car.cleanup()
-
-        if self._servo:
-            self._servo.cleanup()
-
-        if self._camera:
-            self._camera.cleanup()
-
-        if self._distanceWarner:
-            self._distanceWarner.cleanup()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None

@@ -10,7 +10,6 @@ class CarHandling:
 		self._enA = enA
 		self._enB = enB
 
-		self._pwmTreshold = 30
 		self._pwmMinTT = 20 # this needs to be set to the value where the motors start "biting"
 		self._pwmMaxTT = 70
 

@@ -2,7 +2,6 @@ from picamera2 import Picamera2, Preview, MappedArray
 import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
-import time
 import cv2
 from time import sleep # TODO: remove when finished testing
 from roboCarHelper import map_value_to_new_scale
@@ -16,7 +15,6 @@ class Camera:
 		else:
 			camera_config = self._cam.create_preview_configuration(main={"size": resolution})
 		self._cam.configure(camera_config)
-
 
 		self._lastStickValue = 0
 		self._minZoomValue = 1

@@ -18,6 +18,7 @@ enB = 13
 servoPin = 26 # BCM
 buzzerPin = 29
 
+# set GPIO layout
 GPIO.setmode(GPIO.BOARD)
 
 # set up car controller
