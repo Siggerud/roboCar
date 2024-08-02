@@ -6,7 +6,7 @@ from time import sleep
 class DistanceWarner:
     def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
         if not self._port_exists(port):
-            raise InvalidPortError(f"{port} not found. Check connection.")
+            raise InvalidPortError(f"Port {port} not found. Check connection.")
 
         self._sleepTime = sleepTime
         self._frontSensor = frontSensor
