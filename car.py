@@ -1,5 +1,5 @@
 from CarHandling import CarHandling
-from DistanceWarner import DistanceWarner
+from DistanceWarner import DistanceWarner, InvalidPortError
 from Camera import Camera
 from ServoHandling import ServoHandling
 from xboxControl import XboxControl
@@ -43,8 +43,13 @@ xboxControl.add_distance_warner(distanceWarner)
 
 # activate distance warning and car controlling
 myEvent = Event()
-xboxControl.activate_distance_warner(myEvent)
-xboxControl.activate_car_controlling(myEvent)
+
+try:
+    xboxControl.activate_distance_warner(myEvent)
+    xboxControl.activate_car_controlling(myEvent)
+except InvalidPortError:
+    print("Something went wrong during startup. Exiting...")
+    exit()
 
 # keep process running until keyboard interrupt
 try:

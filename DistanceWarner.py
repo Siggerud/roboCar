@@ -1,3 +1,4 @@
+from os import path
 import RPi.GPIO as GPIO
 import serial
 from time import sleep
@@ -5,6 +6,9 @@ from time import sleep
 
 class DistanceWarner:
     def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
+        if not self._port_exists(port):
+            raise InvalidPortError(f"{port} not found. Check connection.")
+
         self._sleepTime = sleepTime
         self._frontSensor = frontSensor
         self._backSensor = backSensor
@@ -48,6 +52,9 @@ class DistanceWarner:
 
         sleep(self._sleepTime)
 
+    def cleanup(self):
+        self._serialObj.close()
+
     def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():
             self._honkValue = True
@@ -85,7 +92,12 @@ class DistanceWarner:
         while self._serialObj.in_waiting <= 0:
             sleep(0.01)
 
-    def cleanup(self):
-        self._serialObj.close()
+    def _port_exists(self, path):
+        return path.exists(path)
+
+class InvalidPortError(Exception):
+    pass
+
+
 
 
