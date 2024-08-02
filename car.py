@@ -32,7 +32,12 @@ camera = Camera(resolution)
 # define distance warning system for
 port = '/dev/ttyACM0'
 baudrate = 115200 # the highest communication rate between a pi and an arduino
-distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
+
+try:
+    distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
+except InvalidPortError:
+    print("hello")
+    exit()
 
 # set up car controller
 xboxControl = XboxControl()
@@ -43,15 +48,10 @@ xboxControl.add_distance_warner(distanceWarner)
 
 # activate distance warning and car controlling
 myEvent = Event()
+xboxControl.activate_distance_warner(myEvent)
+xboxControl.activate_car_controlling(myEvent)
 
-try:
-    xboxControl.activate_distance_warner(myEvent)
-    xboxControl.activate_car_controlling(myEvent)
-except Exception as e:
-    xboxControl.cleanup()
-    GPIO.cleanup()
-    print("Something went wrong during startup. Exiting...")
-    exit()
+
 
 # keep process running until keyboard interrupt
 try:
