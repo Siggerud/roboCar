@@ -104,8 +104,6 @@ class XboxControl:
 
 
     def _set_controller(self):
-        controller = None
-
         pygame.init()
         pygame.joystick.init()
 

@@ -20,6 +20,23 @@ buzzerPin = 29
 
 GPIO.setmode(GPIO.BOARD)
 
+# set up car controller
+try:
+    xboxControl = XboxControl()
+except (X11ForwardingError, NoControllerDetected) as e:
+    print_startup_error(e)
+    exit()
+
+# define distance warning system for car
+port = '/dev/ttyACM0'
+baudrate = 115200 # the highest communication rate between a pi and an arduino
+
+try:
+    distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
+except InvalidPortError as e:
+    print_startup_error(e)
+    exit()
+
 # define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 
@@ -30,23 +47,7 @@ servo = ServoHandling(servoPin)
 resolution = (384, 288)
 camera = Camera(resolution)
 
-# define distance warning system for
-port = '/dev/ttyACM0'
-baudrate = 115200 # the highest communication rate between a pi and an arduino
-
-try:
-    distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
-except InvalidPortError as e:
-    print_startup_error(e)
-    exit()
-
-# set up car controller
-try:
-    xboxControl = XboxControl()
-except (X11ForwardingError, NoControllerDetected) as e:
-    print_startup_error(e)
-    exit()
-
+# add components
 xboxControl.add_car(car)
 xboxControl.add_servo(servo)
 xboxControl.add_camera(camera)
