@@ -47,6 +47,8 @@ servo = ServoHandling(servoPin)
 # define camera aboard car
 resolution = (384, 288)
 camera = Camera(resolution)
+camera.add_car(car)
+camera.add_servo(servo)
 
 # add components
 xboxControl.add_car(car)

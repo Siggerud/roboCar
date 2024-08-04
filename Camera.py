@@ -36,10 +36,8 @@ class Camera:
 		self._scale = 1
 		self._thickness = 1
 
-		# control values displayed on camera feed
-		self._currentCarSpeed = None
-		self._currentServoAngle = None
-		self._currentTurnValue = None
+		self._car = None
+		self._servo = None
 
 	def start_preview(self):
 		self._cam.pre_callback = self._insert_control_values_on_video_feed # callback for video feed
@@ -61,17 +59,14 @@ class Camera:
 			if self._zoomCamera:
 				self._zoom()
 
-	def set_current_servo_angle(self, currentServoAngle):
-		self._currentServoAngle = str(currentServoAngle)
-
-	def set_current_car_speed(self, currentSpeed):
-		self._currentCarSpeed = str(currentSpeed)
-
-	def set_current_turn_value(self, currentTurnValue):
-		self._currentTurnValue = currentTurnValue
-
 	def cleanup(self):
 		self._cam.close()
+
+	def add_car(self, car):
+		self._car = car
+
+	def add_servo(self, servo):
+		self._servo = servo
 
 	def _insert_control_values_on_video_feed(self, request):
 		with MappedArray(request, "main") as m:
@@ -82,18 +77,17 @@ class Camera:
 						self._thickness)
 			originCounter += 1
 
-			if self._currentServoAngle:
-				angleText = "Angle: " + self._currentServoAngle
+			if self._servo:
+				angleText = "Angle: " + self._servo.get_current_servo_angle()
 				cv2.putText(m.array, angleText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
 				originCounter += 1
 
-			if self._currentCarSpeed:
-				speedText = "Speed: " + self._currentCarSpeed + "%"
+			if self._car:
+				speedText = "Speed: " + self._car.get_current_speed() + "%"
 				cv2.putText(m.array, speedText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
 				originCounter += 1
 
-			if self._currentTurnValue:
-				turnText = "Turn: " + self._currentTurnValue
+				turnText = "Turn: " + self._car.get_current_turn_value()
 				cv2.putText(m.array, turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
 							self._thickness)
 				originCounter += 1
