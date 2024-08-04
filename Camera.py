@@ -78,12 +78,12 @@ class Camera:
 			originCounter += 1
 
 			if self._servo:
-				angleText = "Angle: " + self._servo.get_current_servo_angle()
+				angleText = "Angle: " + str(self._servo.get_current_servo_angle())
 				cv2.putText(m.array, angleText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
 				originCounter += 1
 
 			if self._car:
-				speedText = "Speed: " + self._car.get_current_speed() + "%"
+				speedText = "Speed: " + str(self._car.get_current_speed()) + "%"
 				cv2.putText(m.array, speedText, self._get_origin(originCounter), self._font, self._scale, self._colour, self._thickness)
 				originCounter += 1
 
