@@ -36,11 +36,11 @@ class CarHandling:
 		self._pwmA.start(0)
 		self._pwmB.start(0)
 
-		self._turnButtons = [
+		self._turnButtons = {
 			"D-PAD left",
 			"D-PAD right",
 			"D-PAD released"
-		]
+		}
 
 		self._gasAndReverseButtons = [
 			"RT",

@@ -30,7 +30,6 @@ class XboxControl:
             3: "RSB vertical",
             4: "RT",
             5: "LT",
-
         }
 
     def activate_distance_warner(self, event):
@@ -61,6 +60,8 @@ class XboxControl:
             self._distanceWarner.cleanup()
 
     def _start_controller(self, threadEvent):
+        self._print_button_explanation()
+
         while not threadEvent.is_set():
             for event in pygame.event.get():
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
@@ -70,6 +71,24 @@ class XboxControl:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
                     self._camera.handle_xbox_input(buttonAndPressValue)
+
+    def _print_button_explanation(self):
+        print("Controller layout: ")
+        if self._car:
+            print("Car controls:")
+            print("Turn left: D-Pad Left")
+            print("Turn right: D-Pad Right")
+            print("Drive forward: RT")
+            print("Reverse: LT")
+            print()
+        if self._servo:
+            print("Servo controls:")
+            print("Turn servo: RSB")
+            print()
+        if self._camera:
+            print("Camera controls")
+            print("Zoom camera: LSB")
+            print()
 
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():

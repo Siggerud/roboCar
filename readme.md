@@ -63,6 +63,14 @@ Then reboot or start pipgio
 sudo systemctl start pigpiod
 ```
 
+### Starting and driving the car
+1. Power your xbox controller and wait for it to connect to the pi
+2. Connect to your pi via RealVNC
+3. Open this project in a terminal 
+4. Run main.py
+5. Control the car via your xBox controller
+6. When you're finished press Ctrl+C to exit the program safely
+
 
 
 

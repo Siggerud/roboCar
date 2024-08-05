@@ -3,7 +3,7 @@ import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from libcamera import Transform
 import cv2
-from time import sleep # TODO: remove when finished testing
+from time import sleep
 from roboCarHelper import map_value_to_new_scale
 
 class Camera:
