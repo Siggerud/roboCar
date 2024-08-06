@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 from roboCarHelper import map_value_to_new_scale
+from itertools import chain
 
 class CarHandling:
 	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
@@ -65,8 +66,9 @@ class CarHandling:
 			self._move_car()
 
 	def car_buttons(self):
-		print(self._controlsDictTurnButtons.update(self._controlsDictThrottle))
-		return self._controlsDictTurnButtons.update(self._controlsDictThrottle)
+		completeDict = dict(chain(self._controlsDictThrottle.items(), self._controlsDictTurnButtons.items()))
+		
+		return completeDict
 
 	def get_current_speed(self):
 		return int(self._speed)
