@@ -76,18 +76,18 @@ class XboxControl:
         print("Controller layout: ")
         if self._car:
             print("Car controls:")
-            print("Turn left: D-Pad Left")
-            print("Turn right: D-Pad Right")
-            print("Drive forward: RT")
-            print("Reverse: LT")
+            print("Turn left: " + self._car.car_buttons()["Left"])
+            print("Turn right: " + self._car.car_buttons()["Right"])
+            print("Drive forward: " + self._car.car_buttons()["Gas"])
+            print("Reverse: LT" + self._car.car_buttons()["Reverse"])
             print()
         if self._servo:
             print("Servo controls:")
-            print("Turn servo: RSB")
+            print("Turn servo: " + self._servo.servo_buttons()["Servo"])
             print()
         if self._camera:
             print("Camera controls")
-            print("Zoom camera: LSB")
+            print("Zoom camera: " + self._camera.camera_buttons()["Zoom"])
             print()
 
     def _listen_for_distance_warnings(self, threadEvent):

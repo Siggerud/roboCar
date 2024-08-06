@@ -25,9 +25,11 @@ class Camera:
 		self._zoomButtonMinValue = 0
 		self._zoomButtonMaxValue = -1
 
-		self._zoomButtons = [
-			"LSB vertical"
-		]
+		self._controlsDictCamera = {
+			"Zoom": "LSB vertical"
+		}
+
+		self._zoomButton = self._controlsDictCamera["Zoom"]
 
 		# text on video properties
 		self._colour = (0, 255, 0)
@@ -53,11 +55,14 @@ class Camera:
 
 	def handle_xbox_input(self, buttonAndValue):
 		button, buttonPressValue = buttonAndValue
-		if button in self._zoomButtons:
+		if button == self._zoomButton:
 			self._prepare_for_zooming(buttonPressValue)
 
 			if self._zoomCamera:
 				self._zoom()
+
+	def camera_buttons(self):
+		return self._controlsDictCamera
 
 	def cleanup(self):
 		self._cam.close()

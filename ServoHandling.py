@@ -14,15 +14,20 @@ class ServoHandling:
         self._pwmMinServo = 2500
         self._pwmMaxServo = 500
 
-        self._moveServoButtons = [
-            "RSB horizontal"
-        ]
+        self._controlsDictServo = {
+            "Servo": "RSB horizontal"
+        }
+
+        self._moveServoButton = self._controlsDictServo["Servo"]
 
     def handle_xbox_input(self, buttonAndPressValue):
         button, buttonPressValue = buttonAndPressValue
-        if button in self._moveServoButtons:
+        if button == self._moveServoButton:
             self._prepare_for_servo_movement(buttonPressValue)
             self._move_servo()
+
+    def servo_buttons(self):
+        return self._controlsDictServo
 
     def get_current_servo_angle(self):
         current_servo_angle = int(map_value_to_new_scale(self._servoPwmValue, -90, 90, 0, self._pwmMinServo, self._pwmMaxServo))

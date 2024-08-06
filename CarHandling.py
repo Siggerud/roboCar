@@ -36,25 +36,36 @@ class CarHandling:
 		self._pwmA.start(0)
 		self._pwmB.start(0)
 
-		self._turnButtons = {
-			"D-PAD left",
-			"D-PAD right",
-			"D-PAD released"
+		self._turnButtonReleased = "D-PAD released"
+
+		self._controlsDictTurnButtons = {
+			"Left": "D-PAD left",
+			"Right": "D-PAD right",
 		}
 
-		self._gasAndReverseButtons = [
-			"RT",
-			"LT",
-		]
+		self._controlsDictThrottle = {
+			"Gas": "RT",
+			"Reverse": "LT"
+		}
+
+		self._turnButtons = list(self._controlsDictTurnButtons.values())
+
+		self._gasAndReverseButtons = list(self._controlsDictThrottle.values())
 
 	def handle_xbox_input(self, buttonAndPressValue):
 		button, buttonPressValue = buttonAndPressValue
 		if button in self._turnButtons:
 			self._prepare_car_for_turning(button)
 			self._move_car()
+		elif button == self._turnButtonReleased:
+			self._prepare_car_to_stop_turning()
+			self._move_car()
 		elif button in self._gasAndReverseButtons:
 			self._prepare_car_for_throttle(button, buttonPressValue)
 			self._move_car()
+
+	def car_buttons(self):
+		return self._controlsDictTurnButtons.update(self._controlsDictThrottle)
 
 	def get_current_speed(self):
 		return int(self._speed)
@@ -104,6 +115,10 @@ class CarHandling:
 
 		self._adjust_gpio_values(gpioValues)
 
+	def _prepare_car_to_stop_turning(self):
+		self._turnLeft = False
+		self._turnRight = False
+
 	def _prepare_car_for_turning(self, button):
 		if button == "D-PAD left":
 			self._turnLeft = True
@@ -111,9 +126,6 @@ class CarHandling:
 		elif button == "D-PAD right":
 			self._turnLeft = False
 			self._turnRight = True
-		elif button == "D-PAD released":
-			self._turnLeft = False
-			self._turnRight = False
 
 		if not self._goForward and not self._goReverse:
 			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
