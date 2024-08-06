@@ -67,7 +67,7 @@ class CarHandling:
 
 	def car_buttons(self):
 		completeDict = dict(chain(self._controlsDictThrottle.items(), self._controlsDictTurnButtons.items()))
-		
+
 		return completeDict
 
 	def get_current_speed(self):

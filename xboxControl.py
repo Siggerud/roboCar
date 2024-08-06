@@ -73,13 +73,14 @@ class XboxControl:
                     self._camera.handle_xbox_input(buttonAndPressValue)
 
     def _print_button_explanation(self):
+        print()
         print("Controller layout: ")
         if self._car:
             print("Car controls:")
             print("Turn left: " + self._car.car_buttons()["Left"])
             print("Turn right: " + self._car.car_buttons()["Right"])
             print("Drive forward: " + self._car.car_buttons()["Gas"])
-            print("Reverse: LT" + self._car.car_buttons()["Reverse"])
+            print("Reverse: " + self._car.car_buttons()["Reverse"])
             print()
         if self._servo:
             print("Servo controls:")
@@ -88,7 +89,6 @@ class XboxControl:
         if self._camera:
             print("Camera controls")
             print("Zoom camera: " + self._camera.camera_buttons()["Zoom"])
-            print()
 
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():
