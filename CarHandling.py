@@ -65,6 +65,7 @@ class CarHandling:
 			self._move_car()
 
 	def car_buttons(self):
+		print(self._controlsDictTurnButtons.update(self._controlsDictThrottle))
 		return self._controlsDictTurnButtons.update(self._controlsDictThrottle)
 
 	def get_current_speed(self):
