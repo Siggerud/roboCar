@@ -74,6 +74,7 @@ class XboxControl:
 
     def _print_button_explanation(self):
         print("Controller layout: ")
+        print(self._car)
         if self._car:
             print("Car controls:")
             print("Turn left: " + self._car.car_buttons()["Left"])
