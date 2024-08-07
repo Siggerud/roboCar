@@ -18,7 +18,6 @@ class DistanceWarner:
 
         self._lastReadTime = None
         self._responses = []
-        self._honk = False
         self._currentLowestDistance = None
 
         self._turnButtons = [
@@ -37,8 +36,10 @@ class DistanceWarner:
         GPIO.setup(buzzerPin, GPIO.OUT)
         self._lowestFrequency = 25
         self._highestFrequency = 1000
-        self._buzzer = GPIO.PWM(buzzerPin, self._highestFrequency)
-        self._buzzer.start(0)
+        self._lastFrequency = self._highestFrequency
+        self._lastDutyCycle = 0
+        self._buzzer = GPIO.PWM(buzzerPin, self._lastFrequency)
+        self._buzzer.start(self._lastDutyCycle)
 
         self._serialObj = serial.Serial(port, baudrate)
         sleep(3) # give the serial object some time to start communication
@@ -64,14 +65,21 @@ class DistanceWarner:
 
     def _set_honk(self):
         if self._check_if_response_is_below_threshold():
-            self._honk = True
+            dutyCycle = 50
         else:
-            self._honk = False
+            dutyCycle = 0
+
+        if dutyCycle != self._lastDutyCycle:
+            self._buzzer.ChangeDutyCycle(dutyCycle)
+            self._lastDutyCycle = dutyCycle
 
     def _honk_if_too_close(self):
-        if self._honk:
+        if self._lastDutyCycle != 0:
             frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
-            self._buzzer.ChangeFrequency()
+
+            if frequency != self._lastFrequency:
+                self._buzzer.ChangeFrequency(frequency)
+                self._lastFrequency = frequency
 
     def _check_if_response_is_below_threshold(self):
         if self._currentLowestDistance < self._distanceTreshold:
