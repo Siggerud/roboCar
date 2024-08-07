@@ -53,8 +53,8 @@ class DistanceWarner:
             self._send_command_and_read_response("back")
 
         self._set_current_lowest_distance()
-        self._honk()
-        self._honk()
+        self._set_honk()
+        self._honk_if_too_close()
 
         sleep(self._sleepTime)
 
@@ -68,7 +68,7 @@ class DistanceWarner:
         else:
             self._honk = False
 
-    def _honk(self):
+    def _honk_if_too_close(self):
         if self._honk:
             frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
             print(frequency)
