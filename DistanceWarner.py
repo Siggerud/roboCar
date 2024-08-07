@@ -2,6 +2,7 @@ from os import path
 import RPi.GPIO as GPIO
 import serial
 from time import sleep
+from roboCarHelper import map_value_to_new_scale
 
 class DistanceWarner:
     def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
@@ -18,6 +19,7 @@ class DistanceWarner:
         self._lastReadTime = None
         self._responses = []
         self._honkValue = False
+        self._currentLowestDistance = None
 
         self._turnButtons = [
             "D-PAD left",
@@ -32,7 +34,11 @@ class DistanceWarner:
 
         self._buzzerPin = buzzerPin
 
-        GPIO.setup(buzzerPin, GPIO.OUT, initial=self._honkValue)
+        GPIO.setup(buzzerPin, GPIO.OUT)
+        self._lowestFrequency = 25
+        self._highestFrequency = 1000
+        self._buzzer = GPIO.PWM(buzzerPin, self._highestFrequency)
+        self._buzzer.start(0)
 
         self._serialObj = serial.Serial(port, baudrate)
         sleep(3) # give the serial object some time to start communication
@@ -46,29 +52,35 @@ class DistanceWarner:
         if self._backSensor:
             self._send_command_and_read_response("back")
 
+        self._set_current_lowest_distance()
         self._set_honk_value()
         self._set_honk()
 
         sleep(self._sleepTime)
 
     def cleanup(self):
+        self._buzzer.stop()
         self._serialObj.close()
 
     def _set_honk_value(self):
-        if self._check_if_any_response_is_below_threshold():
+        if self._check_if_response_is_below_threshold():
             self._honkValue = True
         else:
             self._honkValue = False
 
     def _set_honk(self):
-        GPIO.output(self._buzzerPin, self._honkValue)
+        frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
+        print(frequency)
+        self._buzzer.ChangeFrequency()
 
-    def _check_if_any_response_is_below_threshold(self):
-        for response in self._responses:
-            if response < self._distanceTreshold:
-                return True
+    def _check_if_response_is_below_threshold(self):
+        if self._currentLowestDistance < self._distanceTreshold:
+            return True
 
         return False
+
+    def _set_current_lowest_distance(self):
+        self._currentLowestDistance = min(self._responses)
 
     def _send_command_and_read_response(self, command):
         # send command to arduino
