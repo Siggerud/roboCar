@@ -5,7 +5,7 @@ from time import sleep
 from roboCarHelper import map_value_to_new_scale
 
 class DistanceWarner:
-    def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
+    def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.1, frontSensor = True, backSensor = True):
         if not self._port_exists(port):
             raise InvalidPortError(f"Port {port} not found. Check connection.")
 
