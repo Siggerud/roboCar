@@ -71,8 +71,7 @@ class DistanceWarner:
     def _honk_if_too_close(self):
         if self._honk:
             frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
-            print(frequency)
-            #self._buzzer.ChangeFrequency()
+            self._buzzer.ChangeFrequency()
 
     def _check_if_response_is_below_threshold(self):
         if self._currentLowestDistance < self._distanceTreshold:
