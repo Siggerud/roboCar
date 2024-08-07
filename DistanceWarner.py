@@ -68,7 +68,7 @@ class DistanceWarner:
             dutyCycle = 50
         else:
             dutyCycle = 0
-
+        print(self._currentLowestDistance)
         if dutyCycle != self._lastDutyCycle:
             self._buzzer.ChangeDutyCycle(dutyCycle)
             self._lastDutyCycle = dutyCycle
@@ -76,7 +76,7 @@ class DistanceWarner:
     def _honk_if_too_close(self):
         if self._lastDutyCycle != 0:
             frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
-
+            print(frequency)
             if frequency != self._lastFrequency:
                 self._buzzer.ChangeFrequency(frequency)
                 self._lastFrequency = frequency
