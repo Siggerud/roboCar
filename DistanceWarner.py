@@ -18,7 +18,7 @@ class DistanceWarner:
 
         self._lastReadTime = None
         self._responses = []
-        self._honkValue = False
+        self._honk = False
         self._currentLowestDistance = None
 
         self._turnButtons = [
@@ -53,8 +53,8 @@ class DistanceWarner:
             self._send_command_and_read_response("back")
 
         self._set_current_lowest_distance()
-        self._set_honk_value()
-        self._set_honk()
+        self._honk()
+        self._honk()
 
         sleep(self._sleepTime)
 
@@ -62,16 +62,17 @@ class DistanceWarner:
         self._buzzer.stop()
         self._serialObj.close()
 
-    def _set_honk_value(self):
-        if self._check_if_response_is_below_threshold():
-            self._honkValue = True
-        else:
-            self._honkValue = False
-
     def _set_honk(self):
-        frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
-        print(frequency)
-        #self._buzzer.ChangeFrequency()
+        if self._check_if_response_is_below_threshold():
+            self._honk = True
+        else:
+            self._honk = False
+
+    def _honk(self):
+        if self._honk:
+            frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
+            print(frequency)
+            #self._buzzer.ChangeFrequency()
 
     def _check_if_response_is_below_threshold(self):
         if self._currentLowestDistance < self._distanceTreshold:
