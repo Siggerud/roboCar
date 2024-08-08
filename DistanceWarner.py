@@ -5,7 +5,7 @@ from time import sleep, time
 from roboCarHelper import map_value_to_new_scale
 
 class DistanceWarner:
-    def __init__(self, buzzerPin, port, baudrate, waitTime = 0.25, frontSensor = True, backSensor = True):
+    def __init__(self, buzzerPin, port, baudrate, waitTime = 0.1, frontSensor = True, backSensor = True):
         if not self._port_exists(port):
             raise InvalidPortError(f"Port {port} not found. Check connection.")
 
@@ -71,6 +71,7 @@ class DistanceWarner:
     def _set_honk_timing(self):
         if self._withinAlarmDistance:
             timeBetweenEachHonk = map_value_to_new_scale(self._currentLowestDistance, 0.5, 0.1, 1, self._distanceTreshold, 0)
+            print(timeBetweenEachHonk)
             if (time() - self._lastHonkChange) > timeBetweenEachHonk:
                 self._honkCurrentlyOn = not self._honkCurrentlyOn
 
