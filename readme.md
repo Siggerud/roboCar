@@ -71,7 +71,7 @@ sudo systemctl start pigpiod
 4. Run main.py
 
 ### Driving and controlling the car
-To drive the car:
+To drive the car:<br />
 RT - Gas
 LT - Reverse
 D-Pad - Turn
@@ -79,11 +79,11 @@ D-Pad - Turn
 If you stand still while turning, the wheels will turn opposite of the
 adjacent side to turn faster.
 
-To turn the camera:
+To turn the camera:<br />
 Use the RSB stick to turn the camera to the left and right. Letting the stick
 go will make the camera go to the neutral position.
 
-To zoom:
+To zoom:<br />
 Use the LSB stick to zoom in and out. Letting the stick go will set the zoom to
 1x.
 
