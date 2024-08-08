@@ -23,6 +23,9 @@ class DistanceWarner:
         self._honkCurrentlyOn = False
         self._lastHonkChange = time()
 
+        self._lowEndTimeBetweenEachHonk = 0.4
+        self._highEndTimeBetweenEachHonk = 0.01
+
         self._turnButtons = [
             "D-PAD left",
             "D-PAD right",
@@ -70,7 +73,14 @@ class DistanceWarner:
 
     def _set_honk_timing(self):
         if self._withinAlarmDistance:
-            timeBetweenEachHonk = map_value_to_new_scale(self._currentLowestDistance, 0.5, 0.1, 1, self._distanceTreshold, 0)
+            timeBetweenEachHonk = map_value_to_new_scale(
+                self._currentLowestDistance,
+                self._lowEndTimeBetweenEachHonk,
+                self._highEndTimeBetweenEachHonk,
+                1,
+                self._distanceTreshold,
+                0
+            )
             print(timeBetweenEachHonk)
             if (time() - self._lastHonkChange) > timeBetweenEachHonk:
                 self._honkCurrentlyOn = not self._honkCurrentlyOn
@@ -78,9 +88,11 @@ class DistanceWarner:
 
     def _set_honk(self):
         if not self._withinAlarmDistance:
-            GPIO.output(self._buzzerPin, False)
+            honk = False
         else:
-            GPIO.output(self._buzzerPin, self._honkCurrentlyOn)
+            honk = self._honkCurrentlyOn
+
+        GPIO.output(self._buzzerPin, honk)
 
     def _check_if_any_response_is_below_threshold(self):
         self._currentLowestDistance = min(self._responses)
