@@ -75,7 +75,7 @@ class DistanceWarner:
             dutyCycle = 0
 
         if dutyCycle != self._lastDutyCycle:
-            self._buzzer.ChangeDutyCycle()
+            self._buzzer.ChangeDutyCycle(dutyCycle)
             self._lastDutyCycle = dutyCycle
 
     def _check_if_response_is_below_threshold(self):
