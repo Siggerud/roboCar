@@ -34,11 +34,10 @@ class DistanceWarner:
         self._buzzerPin = buzzerPin
 
         GPIO.setup(buzzerPin, GPIO.OUT)
-        self._lowestFrequency = 25
-        self._highestFrequency = 1000
-        self._lastFrequency = self._highestFrequency
+        self._lowestDutyCycle = 50
+        self._highestDutyCycle = 100
         self._lastDutyCycle = 0
-        self._buzzer = GPIO.PWM(buzzerPin, self._lastFrequency)
+        self._buzzer = GPIO.PWM(buzzerPin, 440)
         self._buzzer.start(self._lastDutyCycle)
 
         self._serialObj = serial.Serial(port, baudrate)
@@ -55,7 +54,6 @@ class DistanceWarner:
 
         self._set_current_lowest_distance()
         self._set_honk()
-        self._honk_if_too_close()
 
         sleep(self._sleepTime)
 
@@ -65,21 +63,20 @@ class DistanceWarner:
 
     def _set_honk(self):
         if self._check_if_response_is_below_threshold():
-            dutyCycle = 50
+            dutyCycle = map_value_to_new_scale(
+                self._currentLowestDistance,
+                self._lowestDutyCycle,
+                self._highestDutyCycle,
+                1,
+                self._distanceTreshold,
+                0
+            )
         else:
             dutyCycle = 0
-        print(self._currentLowestDistance)
-        if dutyCycle != self._lastDutyCycle:
-            self._buzzer.ChangeDutyCycle(dutyCycle)
-            self._lastDutyCycle = dutyCycle
 
-    def _honk_if_too_close(self):
-        if self._lastDutyCycle != 0:
-            frequency = map_value_to_new_scale(self._currentLowestDistance, self._highestFrequency, self._lowestFrequency, 1, self._distanceTreshold, 0)
-            print(frequency)
-            if frequency != self._lastFrequency:
-                self._buzzer.ChangeFrequency(frequency)
-                self._lastFrequency = frequency
+        if dutyCycle != self._lastDutyCycle:
+            self._buzzer.ChangeDutyCycle()
+            self._lastDutyCycle = dutyCycle
 
     def _check_if_response_is_below_threshold(self):
         if self._currentLowestDistance < self._distanceTreshold:
