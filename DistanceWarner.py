@@ -73,7 +73,7 @@ class DistanceWarner:
             )
         else:
             dutyCycle = 0
-
+        print(dutyCycle)
         if dutyCycle != self._lastDutyCycle:
             self._buzzer.ChangeDutyCycle(dutyCycle)
             self._lastDutyCycle = dutyCycle
