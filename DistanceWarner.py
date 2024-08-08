@@ -1,14 +1,15 @@
 from os import path
 import RPi.GPIO as GPIO
 import serial
-from time import sleep
+from time import sleep, time
+from roboCarHelper import map_value_to_new_scale
 
 class DistanceWarner:
-    def __init__(self, buzzerPin, port, baudrate, sleepTime = 0.25, frontSensor = True, backSensor = True):
+    def __init__(self, buzzerPin, port, baudrate, waitTime = 0.25, frontSensor = True, backSensor = True):
         if not self._port_exists(port):
             raise InvalidPortError(f"Port {port} not found. Check connection.")
 
-        self._sleepTime = sleepTime
+        self._waitTime = waitTime
         self._frontSensor = frontSensor
         self._backSensor = backSensor
 
@@ -17,7 +18,10 @@ class DistanceWarner:
 
         self._lastReadTime = None
         self._responses = []
-        self._honkValue = False
+        self._withinAlarmDistance = False
+
+        self._honkCurrentlyOn = False
+        self._lastHonkChange = time()
 
         self._turnButtons = [
             "D-PAD left",
@@ -32,41 +36,52 @@ class DistanceWarner:
 
         self._buzzerPin = buzzerPin
 
-        GPIO.setup(buzzerPin, GPIO.OUT, initial=self._honkValue)
+        GPIO.setup(buzzerPin, GPIO.OUT, initial=self._withinAlarmDistance)
+        self._currentLowestDistance = None
 
         self._serialObj = serial.Serial(port, baudrate)
         sleep(3) # give the serial object some time to start communication
 
     def alert_if_too_close(self):
-        self._responses.clear()
+        if (time() - self._lastReadTime) < self._waitTime:
+            self._responses.clear()
 
-        if self._frontSensor:
-            self._send_command_and_read_response("front")
+            if self._frontSensor:
+                self._send_command_and_read_response("front")
 
-        if self._backSensor:
-            self._send_command_and_read_response("back")
+            if self._backSensor:
+                self._send_command_and_read_response("back")
 
-        self._set_honk_value()
+            self._set_honk_value()
+            self._set_honk_timing()
+
         self._set_honk()
-
-        sleep(self._sleepTime)
 
     def cleanup(self):
         self._serialObj.close()
 
     def _set_honk_value(self):
         if self._check_if_any_response_is_below_threshold():
-            self._honkValue = True
+            self._withinAlarmDistance = True
         else:
-            self._honkValue = False
+            self._withinAlarmDistance = False
+
+    def _set_honk_timing(self):
+        if self._withinAlarmDistance:
+            timeBetweenEachHonk = map_value_to_new_scale(self._currentLowestDistance, 0.5, 0.1, 1, self._distanceTreshold, 0)
+            if (time() - self._lastHonkChange) > timeBetweenEachHonk:
+                self._honkCurrentlyOn = not self._honkCurrentlyOn
 
     def _set_honk(self):
-        GPIO.output(self._buzzerPin, self._honkValue)
+        if not self._withinAlarmDistance:
+            GPIO.output(self._buzzerPin, False)
+        else:
+            GPIO.output(self._buzzerPin, self._honkCurrentlyOn)
 
     def _check_if_any_response_is_below_threshold(self):
-        for response in self._responses:
-            if response < self._distanceTreshold:
-                return True
+        self._currentLowestDistance = min(self._responses)
+        if self._currentLowestDistance < self._distanceTreshold:
+            return True
 
         return False
 
