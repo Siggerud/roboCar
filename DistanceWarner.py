@@ -43,7 +43,7 @@ class DistanceWarner:
         sleep(3) # give the serial object some time to start communication
 
     def alert_if_too_close(self):
-        if (time() - self._lastReadTime) < self._waitTime or not self._lastReadTime:
+        if not self._lastReadTime or (time() - self._lastReadTime) < self._waitTime:
             self._responses.clear()
 
             if self._frontSensor:
