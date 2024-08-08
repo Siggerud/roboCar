@@ -21,7 +21,7 @@ class DistanceWarner:
         self._withinAlarmDistance = False
 
         self._honkCurrentlyOn = False
-        self._lastHonkChange = time()
+        self._lastHonkChangeTime = time()
 
         self._lowEndTimeBetweenEachHonk = 0.4
         self._highEndTimeBetweenEachHonk = 0.01
@@ -46,6 +46,8 @@ class DistanceWarner:
         sleep(3) # give the serial object some time to start communication
 
     def alert_if_too_close(self):
+        # if it's been more than the specified wait time since last reading, then
+        # do a new reading
         if not self._lastReadTime or (time() - self._lastReadTime) < self._waitTime:
             self._responses.clear()
 
@@ -58,7 +60,7 @@ class DistanceWarner:
             self._set_honk_value()
             self._set_honk_timing()
 
-            self._lastReadTime = time()
+            self._lastReadTime = time() # update last read time
 
         self._set_honk()
 
@@ -73,6 +75,7 @@ class DistanceWarner:
 
     def _set_honk_timing(self):
         if self._withinAlarmDistance:
+            # time between each honk is determined by the distance to the obstacle
             timeBetweenEachHonk = map_value_to_new_scale(
                 self._currentLowestDistance,
                 self._lowEndTimeBetweenEachHonk,
@@ -81,10 +84,12 @@ class DistanceWarner:
                 self._distanceTreshold,
                 0
             )
-            print(timeBetweenEachHonk)
-            if (time() - self._lastHonkChange) > timeBetweenEachHonk:
+
+            # if time passed is longer than the wait time between the trigger
+            # to change, then change
+            if (time() - self._lastHonkChangeTime) > timeBetweenEachHonk:
                 self._honkCurrentlyOn = not self._honkCurrentlyOn
-                self._lastHonkChange = time()
+                self._lastHonkChangeTime = time() # update time of last change
 
     def _set_honk(self):
         if not self._withinAlarmDistance:

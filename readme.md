@@ -5,7 +5,8 @@ This is a project where I've built
 a vehicle that can be controlled with a wireless xbox controller via bluetooth.
 It has a camera mounted on a servo that can be turned 90 degrees to both sides.
 It also has a distance sensors in the front and the back of the car, and a warning sound will
-be set off if the vehicle is too close to any object. I've used a serial connection to an arduino
+be set off if the vehicle is too close to any object. The closer the car is 
+to an obstacle, the faster the alarm will beep. I've used a serial connection to an arduino
 to read data from the distance sensors.
 
 ## Prerequisites
@@ -63,14 +64,32 @@ Then reboot or start pipgio
 sudo systemctl start pigpiod
 ```
 
-### Starting and driving the car
+### Starting up the program
 1. Power your xbox controller and wait for it to connect to the pi
 2. Connect to your pi via RealVNC
 3. Open this project in a terminal 
 4. Run main.py
-5. Control the car via your xBox controller
-6. When you're finished press Ctrl+C to exit the program safely
 
+### Driving and controlling the car
+To drive the car:
+RT - Gas
+LT - Reverse
+D-Pad - Turn
+
+If you stand still while turning, the wheels will turn opposite of the
+adjacent side to turn faster.
+
+To turn the camera:
+Use the RSB stick to turn the camera to the left and right. Letting the stick
+go will make the camera go to the neutral position.
+
+To zoom:
+Use the LSB stick to zoom in and out. Letting the stick go will set the zoom to
+1x.
+
+### Exiting the program
+1. When you're finished press Ctrl+C to exit the program safely
+2. Power off your xBox controller
 
 
 
