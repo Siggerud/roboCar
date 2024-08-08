@@ -74,6 +74,7 @@ class DistanceWarner:
             print(timeBetweenEachHonk)
             if (time() - self._lastHonkChange) > timeBetweenEachHonk:
                 self._honkCurrentlyOn = not self._honkCurrentlyOn
+                self._lastHonkChange = time()
 
     def _set_honk(self):
         if not self._withinAlarmDistance:
