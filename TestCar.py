@@ -46,5 +46,22 @@ class TestCarHandling(unittest.TestCase):
                 any_order=True
         )
 
+    def test_change_duty_cycle(self):
+
+        with patch("RPi.GPIO.PWM.ChangeDutyCycle") as mock_change_duty_cycle:
+            car = CarHandling(
+                self.leftBackward,
+                self.leftForward,
+                self.rightBackward,
+                self.rightForward,
+                self.enA,
+                self.enB
+            )
+
+            car._change_duty_cycle([car._pwmA], 50)
+            mock_change_duty_cycle.assert_called_once_with(50)
+
+
+
 if __name__ == '__main__':
     unittest.main()
