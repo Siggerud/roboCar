@@ -3,6 +3,8 @@ from unittest.mock import patch, call
 from CarHandling import CarHandling
 import RPi.GPIO as GPIO
 
+@patch("RPi.GPIO.setup")
+@patch("RPi.GPIO.PWM")
 class TestCarHandling(unittest.TestCase):
     # define GPIO pins
     rightForward = 22  # IN2
@@ -12,8 +14,7 @@ class TestCarHandling(unittest.TestCase):
     enA = 11
     enB = 13
 
-    @patch("RPi.GPIO.setup")
-    @patch("RPi.GPIO.PWM")
+
     def test_init(self, mock_pwm, mock_setup):
         car = CarHandling(
             self.leftBackward,
@@ -44,7 +45,6 @@ class TestCarHandling(unittest.TestCase):
                 call(self.enB, 100)],
                 any_order=True
         )
-
 
 if __name__ == '__main__':
     unittest.main()
