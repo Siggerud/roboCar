@@ -15,8 +15,6 @@ class TestCarHandling(unittest.TestCase):
     @patch("RPi.GPIO.setup")
     @patch("RPi.GPIO.PWM")
     def test_init(self, mock_pwm, mock_setup):
-
-
         car = CarHandling(
             self.leftBackward,
             self.leftForward,
@@ -26,7 +24,16 @@ class TestCarHandling(unittest.TestCase):
             self.enB
         )
 
-        mock_setup.assert_has_calls([call(self.leftBackward, GPIO.OUT), call(self.leftForward)], any_order=True)
+        mock_setup.assert_has_calls(
+            [
+            call(self.leftBackward, GPIO.OUT),
+            call(self.leftForward, GPIO.OUT),
+            call(self.rightForward, GPIO.OUT),
+            call(self.rightBackward, GPIO.OUT),
+            call(self.enA, GPIO.OUT),
+            call(self.enB, GPIO.OUT)
+            ],
+            any_order=True)
 
 
 if __name__ == '__main__':
