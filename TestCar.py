@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, call
+from unittest.mock import patch, call, Mock
 from CarHandling import CarHandling
 import RPi.GPIO as GPIO
 
@@ -47,19 +47,30 @@ class TestCarHandling(unittest.TestCase):
         )
 
     def test_change_duty_cycle(self, mock_pwm, mock_setup):
+        car = CarHandling(
+            self.leftBackward,
+            self.leftForward,
+            self.rightBackward,
+            self.rightForward,
+            self.enA,
+            self.enB
+        )
 
-        with patch("RPi.GPIO.PWM.ChangeDutyCycle") as mock_change_duty_cycle:
-            car = CarHandling(
-                self.leftBackward,
-                self.leftForward,
-                self.rightBackward,
-                self.rightForward,
-                self.enA,
-                self.enB
-            )
+        mockPwmA = Mock()
+        mockPwmB = Mock()
 
-            car._change_duty_cycle([car._pwmA], 50)
-            mock_change_duty_cycle.assert_called_once_with(50)
+        car._pwmA = mockPwmA
+        car._pwmB = mockPwmB
+
+        speed = 50
+
+        car._change_duty_cycle(speed)
+
+        mockPwmA.ChangeDutyCycle.assert_called_with(speed)
+
+
+
+
 
 
 
