@@ -46,6 +46,31 @@ class TestCarHandling(unittest.TestCase):
                 any_order=True
         )
 
+    def test_adjust_gpio_values(self, mock_pwm, mock_setup):
+        with patch("RPi.GPIO.output") as mock_output:
+            car = CarHandling(
+                self.leftBackward,
+                self.leftForward,
+                self.rightBackward,
+                self.rightForward,
+                self.enA,
+                self.enB
+            )
+
+            gpioValues = [True, True, False, False]
+
+            car._adjust_gpio_values(gpioValues)
+
+            mock_output.assert_has_calls(
+                [
+                    call(self.leftForward, GPIO.HIGH),
+                    call(self.rightForward, GPIO.HIGH),
+                    call(self.leftBackward, GPIO.LOW),
+                    call(self.rightBackward, GPIO.LOW),
+                ],
+                any_order=True
+            )
+
     def test_change_duty_cycle(self, mock_pwm, mock_setup):
         car = CarHandling(
             self.leftBackward,
