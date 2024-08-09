@@ -25,7 +25,7 @@ class TestCarHandling(unittest.TestCase):
             self.enB
         )
 
-        mock_setup.assert_has_calls([call(self.leftBackward), call(self.leftForward)], any_order=True)
+        mock_setup.assert_has_calls([call(self.leftBackward, GPIO.OUT), call(self.leftForward)], any_order=True)
 
 
 if __name__ == '__main__':
