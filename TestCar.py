@@ -24,6 +24,7 @@ class TestCarHandling(unittest.TestCase):
             self.enB
         )
 
+        # check that GPIO setup has been called with expected pins
         mock_setup.assert_has_calls(
             [
             call(self.leftBackward, GPIO.OUT),
@@ -33,7 +34,16 @@ class TestCarHandling(unittest.TestCase):
             call(self.enA, GPIO.OUT),
             call(self.enB, GPIO.OUT)
             ],
-            any_order=True)
+            any_order=True
+        )
+
+        # check that GPIO.PWM has been called with expected pins
+        mock_pwm.assert_has_calls(
+            [
+                call(self.enA, 100),
+                call(self.enB, 100)],
+                any_order=True
+        )
 
 
 if __name__ == '__main__':
