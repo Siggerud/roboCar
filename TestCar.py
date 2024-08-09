@@ -56,18 +56,22 @@ class TestCarHandling(unittest.TestCase):
             self.enB
         )
 
+        # create mock pwm objects
         mockPwmA = Mock()
         mockPwmB = Mock()
 
+        # assign mock objects to car instance variables
         car._pwmA = mockPwmA
         car._pwmB = mockPwmB
 
         speed = 50
 
+        # call the method we want to test
         car._change_duty_cycle([car._pwmA, car._pwmB], speed)
 
+        # check that the ChangeDutyCycle has been called on the mock object
         mockPwmA.ChangeDutyCycle.assert_called_with(speed)
-
+        mockPwmB.ChangeDutyCycle.assert_called_with(speed)
 
 
 
