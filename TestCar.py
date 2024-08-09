@@ -64,7 +64,7 @@ class TestCarHandling(unittest.TestCase):
 
         speed = 50
 
-        car._change_duty_cycle(speed)
+        car._change_duty_cycle([car._pwmA, car._pwmB], speed)
 
         mockPwmA.ChangeDutyCycle.assert_called_with(speed)
 
