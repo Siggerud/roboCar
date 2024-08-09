@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch, call
 from CarHandling import CarHandling
+import RPi.GPIO
 
 class TestCarHandling(unittest.TestCase):
     # define GPIO pins
