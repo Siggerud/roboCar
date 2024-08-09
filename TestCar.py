@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, call
 from CarHandling import CarHandling
 
-class TestMoterManager(unittest.TestClass):
+class TestMoterManager(unittest.TestCase):
     # define GPIO pins
     rightForward = 22  # IN2
     rightBackward = 18  # IN1
