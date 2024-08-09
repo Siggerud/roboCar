@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, call
 from CarHandling import CarHandling
 
-class TestMoterManager(unittest.TestCase):
+class TestCarHandling(unittest.TestCase):
     # define GPIO pins
     rightForward = 22  # IN2
     rightBackward = 18  # IN1
@@ -13,7 +13,7 @@ class TestMoterManager(unittest.TestCase):
 
     @patch("RPi.GPIO.setup")
     @patch("RPi.GPIO.PWM")
-    def test_init(self, mock_output):
+    def test_init(self, mock_setup, mock_pwm):
 
 
         car = CarHandling(
@@ -25,7 +25,7 @@ class TestMoterManager(unittest.TestCase):
             self.enB
         )
 
-        mock_output.assert_has_calls([call(self.leftBackward, True), call(self.leftForward, True)], any_order=True)
+        mock_setup.assert_has_calls([call(self.leftBackward, True), call(self.leftForward, True)], any_order=True)
 
 
 if __name__ == '__main__':
