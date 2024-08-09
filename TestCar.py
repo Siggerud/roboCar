@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, call
 from CarHandling import CarHandling
-import RPi.GPIO
+import RPi.GPIO as GPIO
 
 class TestCarHandling(unittest.TestCase):
     # define GPIO pins
@@ -26,7 +26,7 @@ class TestCarHandling(unittest.TestCase):
             self.enB
         )
 
-        mock_setup.assert_has_calls([call(self.leftBackward, RPi.GPIO.OUT), call(self.leftForward)], any_order=True)
+        mock_setup.assert_has_calls([call(self.leftBackward, GPIO.OUT), call(self.leftForward)], any_order=True)
 
 
 if __name__ == '__main__':
