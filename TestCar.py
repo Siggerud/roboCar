@@ -27,3 +27,6 @@ class TestMoterManager(unittest.TestCase):
 
         mock_output.assert_has_calls([call(self.leftBackward, True), call(self.leftForward, True)], any_order=True)
 
+
+if __name__ == '__main__':
+    unittest.main()
