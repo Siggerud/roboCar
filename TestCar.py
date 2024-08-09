@@ -46,7 +46,7 @@ class TestCarHandling(unittest.TestCase):
                 any_order=True
         )
 
-    def test_change_duty_cycle(self):
+    def test_change_duty_cycle(self, mock_pwm, mock_setup):
 
         with patch("RPi.GPIO.PWM.ChangeDutyCycle") as mock_change_duty_cycle:
             car = CarHandling(
