@@ -57,10 +57,13 @@ class TestCarHandling(unittest.TestCase):
                 self.enB
             )
 
+            # values that will set the GPIO state of each motor
             gpioValues = [True, True, False, False]
 
+            # call method we want to test
             car._adjust_gpio_values(gpioValues)
 
+            # check that GPIO.output has been called on expected pins
             mock_output.assert_has_calls(
                 [
                     call(self.leftForward, GPIO.HIGH),
