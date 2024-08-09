@@ -13,7 +13,7 @@ class TestCarHandling(unittest.TestCase):
 
     @patch("RPi.GPIO.setup")
     @patch("RPi.GPIO.PWM")
-    def test_init(self, mock_setup, mock_pwm):
+    def test_init(self, mock_pwm, mock_setup):
 
 
         car = CarHandling(
