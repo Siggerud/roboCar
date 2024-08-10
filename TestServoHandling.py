@@ -20,6 +20,14 @@ class TestServoHandling(unittest.TestCase):
 
         mock_instance.set_PWM_frequency.assert_called_with(self.servoPin, 50)
 
+        self.assertEqual(servo._lastServoStickValue, 0)
+        self.assertEqual(servo._servoValueChanged, False)
+        self.assertEqual(servo._servoPwmValue, 1500)
+        self.assertEqual(servo._pwmMinServo, 2500)
+        self.assertEqual(servo._pwmMaxServo, 500)
+        self.assertEqual(servo._controlsDictServo, {"Servo": "RSH horizontal"})
+        self.assertEqual(servo._moveServoButton, "RSB horizontal")
+
 
 if __name__ == '__main__':
     unittest.main()
