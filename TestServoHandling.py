@@ -5,7 +5,7 @@ import pigpio
 
 @patch("pigpio.pi")
 @patch("pigpio.set_mode")
-@patch("set_PWM_frequency")
+@patch("pigpio.set_PWM_frequency")
 class TestServoHandling(unittest.TestCase):
     # define GPIO pins
     servoPin = 26
