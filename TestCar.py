@@ -102,9 +102,5 @@ class TestCarHandling(unittest.TestCase):
         mockPwmB.ChangeDutyCycle.assert_called_with(speed)
 
 
-
-
-
-
 if __name__ == '__main__':
     unittest.main()

@@ -1,31 +1,25 @@
 import unittest
-from unittest.mock import patch, call, Mock
+from unittest.mock import patch, MagicMock
 from ServoHandling import ServoHandling
 import pigpio
 
 @patch("pigpio.pi")
-@patch("pigpio.set_mode")
-@patch("pigpio.set_PWM_frequency")
 class TestServoHandling(unittest.TestCase):
     # define GPIO pins
     servoPin = 26
 
-    def test_init(self, mock_pwm_frequency, mock_set_mode, mock_pi):
+    def test_init(self, mock_pi):
+        mock_instance = MagicMock()
+        mock_pi.return_value = mock_instance
+
         servo = ServoHandling(self.servoPin)
 
-        mock_pwm_frequency.assert_has_calls(
-            [
-                call(self.servoPin, 50),
-            ]
-        )
-
-        mock_set_mode.assert_has_calls(
-            [
-                call(self.servoPin, pigpio.OUTPUT)
-            ]
-        )
-
         mock_pi.assert_called_once()
+
+        mock_instance.set_mode.assert_called_with(self.servoPin, pigpio.OUTPUT)
+
+        mock_instance.set_PWM_frequency.assert_called_with(self.servoPin, 50)
+
 
 if __name__ == '__main__':
     unittest.main()
