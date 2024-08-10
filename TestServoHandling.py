@@ -26,3 +26,6 @@ class TestServoHandling(unittest.TestCase):
         )
 
         mock_pi.assert_called_once()
+
+if __name__ == '__main__':
+    unittest.main()
