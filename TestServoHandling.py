@@ -33,7 +33,7 @@ class TestServoHandling(unittest.TestCase):
         self.assertEqual(servo._controlsDictServo, {"Servo": "RSB horizontal"})
         self.assertEqual(servo._moveServoButton, "RSB horizontal")
 
-    def test_prepare_for_servo_movement(self):
+    def test_prepare_for_servo_movement(self, mock_pi):
         # initialize servo
         servo = ServoHandling(self.servoPin)
 
