@@ -45,6 +45,5 @@ class TestServoHandling(unittest.TestCase):
         self.assertEqual(servo._lastServoStickValue, inputValue)
 
 
-
 if __name__ == '__main__':
     unittest.main()

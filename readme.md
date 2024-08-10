@@ -91,7 +91,10 @@ Use the LSB stick to zoom in and out. Letting the stick go will set the zoom to
 1. When you're finished press Ctrl+C to exit the program safely
 2. Power off your xBox controller
 
-
+### Running tests
+To make sure everything is as expected you can run some
+tests written to verify the classes in this project. To test
+you just have to run the test files.
 
 
 
