@@ -25,7 +25,7 @@ class TestServoHandling(unittest.TestCase):
         self.assertEqual(servo._servoPwmValue, 1500)
         self.assertEqual(servo._pwmMinServo, 2500)
         self.assertEqual(servo._pwmMaxServo, 500)
-        self.assertEqual(servo._controlsDictServo, {"Servo": "RSH horizontal"})
+        self.assertEqual(servo._controlsDictServo, {"Servo": "RSB horizontal"})
         self.assertEqual(servo._moveServoButton, "RSB horizontal")
 
 
