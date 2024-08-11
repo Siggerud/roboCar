@@ -33,10 +33,17 @@ class Camera:
         self._fpsPos = (10, 30)
 
     def show_camera_feed(self, lock):
-        tStart = time()
+        tStart = time() # start timer for calculating fps
+
         im = self._picam2.capture_array()
+
         self._read_control_values_for_video_feed(lock)
 
+        if self._zoomValue != 1.0:
+            newResolution = (int(self._dispW), int(self._dispH))
+            cv2.resize(newResolution, interpolation=cv2.INTER_LINEAR)
+
+        # add control values to camera feed
         originCounter = 0
         if self._angleText:
             cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
@@ -60,6 +67,7 @@ class Camera:
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
 
+        # calculate fps
         tEnd = time()
         loopTime = tEnd - tStart
         self._fps = 0.9 * self._fps + 0.1 * (1 / loopTime)
@@ -76,6 +84,7 @@ class Camera:
             self._angleText = self._cameraHelper.get_angle_text()
             self._speedText = self._cameraHelper.get_speed_text()
             self._turnText = self._cameraHelper.get_turn_text()
+            self._zoomValue = self._cameraHelper.get_zoom_value()
 
     def _get_origin(self, count):
         return self._origins[count]

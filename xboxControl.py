@@ -88,7 +88,7 @@ class XboxControl:
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._cameraEnabled:
-                    #self._cameraHelper.handle_xbox_input(buttonAndPressValue)
+                    self._cameraHelper.handle_xbox_input(buttonAndPressValue)
                     self._cameraHelper.update_control_values_for_video_feed(lock)
 
     def _print_button_explanation(self):
@@ -107,8 +107,7 @@ class XboxControl:
             print()
         if self._cameraEnabled:
             print("Camera controls")
-            # TODO: add method for this in either camera or camerahelper
-            #print("Zoom camera: " + self._camera.camera_buttons()["Zoom"])
+            print("Zoom camera: " + self._cameraHelper.camera_buttons()["Zoom"])
 
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():
