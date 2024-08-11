@@ -56,6 +56,9 @@ class CameraHelper:
                 self._speedText = "Speed: " + str(self._car.get_current_speed()) + "%"
                 self._turnText = "Turn: " + self._car.get_current_turn_value()
 
+    def camera_buttons(self):
+        return self._controlsDictCamera
+
     def _set_zoom_value(self, buttonPressValue):
         if self._check_if_button_press_within_valid_range(buttonPressValue):
             stickValue = round(buttonPressValue, 1)
