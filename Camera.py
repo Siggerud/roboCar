@@ -6,13 +6,15 @@ from time import time
 
 class Camera:
     def __init__(self, resolution, cameraHelper, rotation = True):
-        self._cam = Picamera2()
-        self._cameraHelper = cameraHelper
-        self._cam.preview_configuration.main.size = resolution
-        self._cam.preview_configuration.main.format = "RGB888"
-        self._cam.preview_configuration.align()
-        self._cam.configure("preview")
-        self._cam.start()
+        self._picam2 = Picamera2()
+        dispW = 1280
+        dispH = 720
+        self._picam2.preview_configuration.main.size = (dispW, dispH)
+        self._picam2.preview_configuration.main.format = "RGB888"
+        # picam2.preview_configuration.controls.FrameRate=30
+        self._picam2.preview_configuration.align()
+        self._picam2.configure("preview")
+        self._picam2.start()
 
         # text on video properties
         self._colour = (0, 255, 0)
@@ -29,7 +31,7 @@ class Camera:
     def show_camera_feed(self):
         tStart = time()
         while time() - tStart < 20:
-            im = self._cam.capture_array()
+            im = self._picam2.capture_array()
             """
             self._read_control_values_for_video_feed(lock)
     
@@ -54,7 +56,7 @@ class Camera:
 
     def cleanup(self):
         cv2.destroyAllWindows()
-        self._cam.close()
+        self._picam2.close()
 
     def _read_control_values_for_video_feed(self, lock):
         with lock:
