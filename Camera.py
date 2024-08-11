@@ -27,7 +27,7 @@ class Camera:
 
 
     def show_camera_feed(self):
-        tStart = time():
+        tStart = time()
         while time() - tStart < 20:
             im = self._cam.capture_array()
             """
