@@ -51,7 +51,7 @@ class Camera:
                             self._thickness)
                 originCounter += 1
             """
-
+            cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
             cv2.imshow("Camera", im)
 
     def cleanup(self):
