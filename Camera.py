@@ -20,7 +20,10 @@ class Camera:
         self._speedText = None
         self._turnText = None
 
+
+
     def show_camera_feed(self, lock):
+        print("start")
         im = self._cam.capture_array()
         print(im)
         self._read_control_values_for_video_feed(lock)

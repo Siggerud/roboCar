@@ -49,7 +49,7 @@ class XboxControl:
         self._servo = servo
 
     def activate_camera(self, event):
-        thread = Thread(target=self._start_camera_feed, args=(event,self._threadLock))
+        thread = Thread(target=self._start_camera_feed, args=(event, self._threadLock))
         self._threads.append(thread)
         thread.start()
 
