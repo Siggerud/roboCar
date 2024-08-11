@@ -22,7 +22,7 @@ class Camera:
 
     def show_camera_feed(self, lock):
         im = self._cam.capture_array()
-
+        print(im)
         self._read_control_values_for_video_feed(lock)
 
         originCounter = 0
