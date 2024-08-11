@@ -6,7 +6,7 @@ import cv2
 from time import sleep
 from roboCarHelper import map_value_to_new_scale
 
-class Camera:
+class Camera_Old:
 	def __init__(self, resolution, rotation=True):
 		self._cam = Picamera2()
 

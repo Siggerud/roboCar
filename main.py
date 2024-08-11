@@ -1,6 +1,7 @@
 from CarHandling import CarHandling
 from DistanceWarner import DistanceWarner, InvalidPortError
 from Camera import Camera
+from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
 from xboxControl import XboxControl, X11ForwardingError, NoControllerDetected
 from roboCarHelper import print_startup_error
@@ -46,20 +47,22 @@ servo = ServoHandling(servoPin)
 
 # define camera aboard car
 resolution = (384, 288)
-camera = Camera(resolution)
-camera.add_car(car)
-camera.add_servo(servo)
+cameraHelper = CameraHelper()
+camera = Camera(resolution, cameraHelper)
+cameraHelper.add_car(car)
+cameraHelper.add_servo(servo)
 
 # add components
 xboxControl.add_car(car)
 xboxControl.add_servo(servo)
-xboxControl.add_camera(camera)
+xboxControl.add_camera(camera, cameraHelper)
 xboxControl.add_distance_warner(distanceWarner)
 
-# activate distance warning and car controlling
+# activate distance warning, camera and car controlling
 myEvent = Event()
 xboxControl.activate_distance_warner(myEvent)
 xboxControl.activate_car_controlling(myEvent)
+xboxControl.activate_camera(myEvent)
 
 # keep process running until keyboard interrupt
 try:

@@ -2,7 +2,7 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
-from threading import Thread
+from threading import Thread, Lock
 
 class XboxControl:
     def __init__(self):
@@ -13,9 +13,11 @@ class XboxControl:
 
         self._car = None
         self._camera = None
+        self._cameraHelper = None
         self._servo = None
         self._distanceWarner = None
         self._threads = []
+        self._threadLock = None
 
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
@@ -32,13 +34,35 @@ class XboxControl:
             5: "LT",
         }
 
+    def add_distance_warner(self, distanceWarner):
+        self._distanceWarner = distanceWarner
+
+    def add_car(self, car):
+        self._car = car
+
+    def add_camera(self, camera, cameraHelper):
+        self._camera = camera
+        self._cameraHelper = cameraHelper
+        self._treadLock = Lock()
+
+    def add_servo(self, servo):
+        self._servo = servo
+
+    def activate_camera(self, event):
+        thread = Thread(target=self._start_camera_feed, args=(event,self._threadLock))
+        self._threads.append(thread)
+        thread.start()
+
     def activate_distance_warner(self, event):
         thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
         self._threads.append(thread)
         thread.start()
 
     def activate_car_controlling(self, event):
-        thread = Thread(target=self._start_controller, args=(event,))
+        if self._camera:
+            thread = Thread(target=self._start_controller, args=(event,self._threadLock))
+        else:
+            thread = Thread(target=self._start_controller, args=(event,))
         self._threads.append(thread)
         thread.start()
 
@@ -59,7 +83,11 @@ class XboxControl:
         if self._distanceWarner:
             self._distanceWarner.cleanup()
 
-    def _start_controller(self, threadEvent):
+    def _start_camera_feed(self, threadEvent, lock):
+        while not threadEvent.is_set():
+            self._camera.show_camera_feed(lock)
+
+    def _start_controller(self, threadEvent, lock=None):
         self._print_button_explanation()
 
         while not threadEvent.is_set():
@@ -70,7 +98,8 @@ class XboxControl:
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._camera:
-                    self._camera.handle_xbox_input(buttonAndPressValue)
+                    #self._cameraHelper.handle_xbox_input(buttonAndPressValue)
+                    self._cameraHelper.update_control_values_for_video_feed(lock)
 
     def _print_button_explanation(self):
         print()
@@ -132,18 +161,6 @@ class XboxControl:
 
         return not returnCode
 
-    def add_distance_warner(self, distanceWarner):
-        self._distanceWarner = distanceWarner
-
-    def add_car(self, car):
-        self._car = car
-
-    def add_camera(self, camera):
-        self._camera = camera
-        self._camera.start_preview()
-
-    def add_servo(self, servo):
-        self._servo = servo
 
 class X11ForwardingError(Exception):
     pass
