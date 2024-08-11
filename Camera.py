@@ -53,7 +53,8 @@ class Camera:
             """
             #cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
             cv2.imshow("Camera", im)
-            cv2.waitKey(0)
+            if cv2.waitKey(1) == ord('q'):
+                break
 
     def cleanup(self):
         cv2.destroyAllWindows()
