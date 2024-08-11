@@ -105,7 +105,7 @@ class XboxControl:
             print("Servo controls:")
             print("Turn servo: " + self._servo.servo_buttons()["Servo"])
             print()
-        if self._camera:
+        if self._cameraEnabled:
             print("Camera controls")
             # TODO: add method for this in either camera or camerahelper
             #print("Zoom camera: " + self._camera.camera_buttons()["Zoom"])
