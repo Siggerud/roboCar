@@ -76,9 +76,6 @@ class Camera:
         cv2.destroyAllWindows()
         self._picam2.close()
 
-    def _add_control_values_to_camera_feed(self):
-
-
     def _get_fps(self):
         return str(int(self._fps)) + " FPS"
 
