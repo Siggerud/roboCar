@@ -87,7 +87,7 @@ class XboxControl:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
-                if self._camera:
+                if self._cameraEnabled:
                     #self._cameraHelper.handle_xbox_input(buttonAndPressValue)
                     self._cameraHelper.update_control_values_for_video_feed(lock)
 
