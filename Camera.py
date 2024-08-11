@@ -6,11 +6,11 @@ from time import time
 
 class Camera:
     def __init__(self, resolution, cameraHelper, rotation = True):
-        dispW, dispH = resolution
+        self._dispW, self._dispH = resolution
         self._cameraHelper = cameraHelper
 
         self._picam2 = Picamera2()
-        self._picam2.preview_configuration.main.size = (dispW, dispH)
+        self._picam2.preview_configuration.main.size = resolution
         self._picam2.preview_configuration.main.format = "RGB888"
         # picam2.preview_configuration.controls.FrameRate=30
         self._picam2.preview_configuration.align()
@@ -19,6 +19,7 @@ class Camera:
 
         # text on video properties
         self._colour = (0, 255, 0)
+        # TODO: base origins on input resolution
         self._origins = [(10, 270), (10, 240), (10, 210), (10, 180)]
         self._font = cv2.FONT_HERSHEY_SIMPLEX
         self._scale = 1
@@ -28,7 +29,11 @@ class Camera:
         self._speedText = None
         self._turnText = None
 
+        self._fps = 0
+        self._fpsPos = (10, 50)
+
     def show_camera_feed(self, lock):
+        tStart = time()
         im = self._picam2.capture_array()
         self._read_control_values_for_video_feed(lock)
 
@@ -48,12 +53,23 @@ class Camera:
                         self._thickness)
             originCounter += 1
 
+        # display fps
+        cv2.putText(im, self._get_fps(), self._get_origin(originCounter), self._font, self._scale, self._colour,
+                    self._thickness)
+
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
+
+        tEnd = time()
+        loopTime = tEnd - tStart
+        self._fps = 0.9 * self._fps + 0.1 * (1 / loopTime)
 
     def cleanup(self):
         cv2.destroyAllWindows()
         self._picam2.close()
+
+    def _get_fps(self):
+        return str(int(self._fps)) + " FPS"
 
     def _read_control_values_for_video_feed(self, lock):
         with lock:
