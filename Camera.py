@@ -41,7 +41,7 @@ class Camera:
 
         if self._zoomValue != 1.0:
             newResolution = (int(self._dispW), int(self._dispH))
-            cv2.resize(newResolution, interpolation=cv2.INTER_LINEAR)
+            im = cv2.resize(im, newResolution, interpolation=cv2.INTER_LINEAR)
 
         # add control values to camera feed
         originCounter = 0
