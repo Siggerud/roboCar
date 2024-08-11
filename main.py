@@ -7,7 +7,7 @@ from xboxControl import XboxControl, X11ForwardingError, NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 from time import sleep
-from threading import Event
+from threading import Event, Lock
 
 # define GPIO pins
 rightForward = 22 # IN2 
@@ -55,22 +55,24 @@ cameraHelper.add_servo(servo)
 # add components
 xboxControl.add_car(car)
 xboxControl.add_servo(servo)
-xboxControl.add_camera(camera, cameraHelper)
 xboxControl.add_distance_warner(distanceWarner)
 
 # activate distance warning, camera and car controlling
 myEvent = Event()
+lock = Lock()
+xboxControl.enable_camera(cameraHelper, lock)
 xboxControl.activate_distance_warner(myEvent)
 xboxControl.activate_car_controlling(myEvent)
-xboxControl.activate_camera(myEvent)
 
 # keep process running until keyboard interrupt
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
-        sleep(0.5)
+        # camera module will be run from main module, since cv2 is not thread safe
+        camera.show_camera_feed()
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
     xboxControl.cleanup() # cleanup to finish all threads and close processes
+    camera.cleanup()
     GPIO.cleanup()
 
 

@@ -12,10 +12,12 @@ class XboxControl:
         self._controller = self._set_controller()
 
         self._car = None
-        self._camera = None
-        self._cameraHelper = None
         self._servo = None
         self._distanceWarner = None
+
+        self._cameraEnabled = False
+        self._cameraHelper = None
+
         self._threads = []
         self._threadLock = None
 
@@ -40,18 +42,13 @@ class XboxControl:
     def add_car(self, car):
         self._car = car
 
-    def add_camera(self, camera, cameraHelper):
-        self._camera = camera
+    def enable_camera(self, cameraHelper, lock):
+        self._cameraEnabled = True
         self._cameraHelper = cameraHelper
-        self._threadLock = Lock()
+        self._threadLock = lock
 
     def add_servo(self, servo):
         self._servo = servo
-
-    def activate_camera(self, event):
-        thread = Thread(target=self._start_camera_feed, args=(event, self._threadLock))
-        self._threads.append(thread)
-        thread.start()
 
     def activate_distance_warner(self, event):
         thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
@@ -59,8 +56,8 @@ class XboxControl:
         thread.start()
 
     def activate_car_controlling(self, event):
-        if self._camera:
-            thread = Thread(target=self._start_controller, args=(event,self._threadLock))
+        if self._cameraEnabled:
+            thread = Thread(target=self._start_controller, args=(event, self._threadLock))
         else:
             thread = Thread(target=self._start_controller, args=(event,))
         self._threads.append(thread)
@@ -77,15 +74,8 @@ class XboxControl:
         if self._servo:
             self._servo.cleanup()
 
-        if self._camera:
-            self._camera.cleanup()
-
         if self._distanceWarner:
             self._distanceWarner.cleanup()
-
-    def _start_camera_feed(self, threadEvent, lock):
-        while not threadEvent.is_set():
-            self._camera.show_camera_feed(lock)
 
     def _start_controller(self, threadEvent, lock=None):
         self._print_button_explanation()
