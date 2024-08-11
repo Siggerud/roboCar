@@ -117,7 +117,8 @@ class XboxControl:
             print()
         if self._camera:
             print("Camera controls")
-            print("Zoom camera: " + self._camera.camera_buttons()["Zoom"])
+            # TODO: add method for this in either camera or camerahelper
+            #print("Zoom camera: " + self._camera.camera_buttons()["Zoom"])
 
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():
