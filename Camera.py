@@ -49,7 +49,7 @@ class Camera:
             originCounter += 1
 
         cv2.imshow("Camera", im)
-        cv2.waitkey(1)
+        cv2.waitKey(1)
 
     def cleanup(self):
         cv2.destroyAllWindows()
