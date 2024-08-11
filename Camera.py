@@ -7,7 +7,11 @@ class Camera:
     def __init__(self, resolution, cameraHelper, rotation = True):
         self._cam = Picamera2()
         self._cameraHelper = cameraHelper
-        self._setup_cam(resolution)
+        self._cam.preview_configuration.main.size = resolution
+        self._cam.preview_configuration.main.format = "RGB888"
+        self._cam.preview_configuration.align()
+        self._cam.configure("preview")
+        self._cam.start()
 
         # text on video properties
         self._colour = (0, 255, 0)
@@ -21,11 +25,9 @@ class Camera:
         self._turnText = None
 
 
-
     def show_camera_feed(self, lock):
-        print("start")
         im = self._cam.capture_array()
-        print(im)
+        """
         self._read_control_values_for_video_feed(lock)
 
         originCounter = 0
@@ -43,6 +45,7 @@ class Camera:
             cv2.putText(im, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
                         self._thickness)
             originCounter += 1
+        """
 
         cv2.imshow("Camera", im)
 
@@ -55,13 +58,6 @@ class Camera:
             self._angleText = self._cameraHelper.get_angle_text()
             self._speedText = self._cameraHelper.get_speed_text()
             self._turnText = self._cameraHelper.get_turn_text()
-
-    def _setup_cam(self, resolution):
-        self._cam.preview_configuration.main.size = resolution
-        self._cam.preview_configuration.main.format = "RGB888"
-        self._cam.preview_configuration.align()
-        self._cam.configure("preview")
-        self._cam.start()
 
     def _get_origin(self, count):
         return self._origins[count]
