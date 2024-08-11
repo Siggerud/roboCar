@@ -28,6 +28,7 @@ class Camera:
         self._angleText = None
         self._speedText = None
         self._turnText = None
+        self._zoomValue = 1.0
 
         self._fps = 0
         self._fpsPos = (10, 30)
@@ -38,7 +39,7 @@ class Camera:
         im = self._picam2.capture_array()
 
         self._read_control_values_for_video_feed(lock)
-
+        print(self._zoomValue)
         if self._zoomValue != 1.0:
             newResolution = (int(self._dispW), int(self._dispH))
             im = cv2.resize(im, newResolution, interpolation=cv2.INTER_LINEAR)
