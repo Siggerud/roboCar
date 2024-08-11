@@ -84,8 +84,8 @@ class XboxControl:
             self._distanceWarner.cleanup()
 
     def _start_camera_feed(self, threadEvent, lock):
-        while not threadEvent.is_set():
-            self._camera.show_camera_feed(lock)
+        #while not threadEvent.is_set():
+        self._camera.show_camera_feed()
 
     def _start_controller(self, threadEvent, lock=None):
         self._print_button_explanation()

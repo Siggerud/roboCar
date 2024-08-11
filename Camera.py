@@ -2,6 +2,7 @@ import cv2
 import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from picamera2 import Picamera2
+from time import time
 
 class Camera:
     def __init__(self, resolution, cameraHelper, rotation = True):
@@ -25,29 +26,31 @@ class Camera:
         self._turnText = None
 
 
-    def show_camera_feed(self, lock):
-        im = self._cam.capture_array()
-        """
-        self._read_control_values_for_video_feed(lock)
+    def show_camera_feed(self):
+        tStart = time():
+        while time() - tStart < 20:
+            im = self._cam.capture_array()
+            """
+            self._read_control_values_for_video_feed(lock)
+    
+            originCounter = 0
+            if self._angleText:
+                cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                            self._thickness)
+                originCounter += 1
+    
+            if self._speedText:
+                cv2.putText(im, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                            self._thickness)
+                originCounter += 1
+    
+            if self._turnText:
+                cv2.putText(im, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                            self._thickness)
+                originCounter += 1
+            """
 
-        originCounter = 0
-        if self._angleText:
-            cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                        self._thickness)
-            originCounter += 1
-
-        if self._speedText:
-            cv2.putText(im, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                        self._thickness)
-            originCounter += 1
-
-        if self._turnText:
-            cv2.putText(im, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                        self._thickness)
-            originCounter += 1
-        """
-
-        cv2.imshow("Camera", im)
+            cv2.imshow("Camera", im)
 
     def cleanup(self):
         cv2.destroyAllWindows()
