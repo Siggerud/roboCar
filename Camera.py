@@ -39,9 +39,8 @@ class Camera:
         im = self._picam2.capture_array()
 
         self._read_control_values_for_video_feed(lock)
-        print(self._zoomValue)
         if self._zoomValue != 1.0:
-            newResolution = (int(self._dispW), int(self._dispH))
+            newResolution = (int(self._zoomValue * self._dispW), int(self._zoomValue * self._dispH))
             im = cv2.resize(im, newResolution, interpolation=cv2.INTER_LINEAR)
 
         # add control values to camera feed
