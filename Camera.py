@@ -30,7 +30,7 @@ class Camera:
         self._turnText = None
 
         self._fps = 0
-        self._fpsPos = (10, 50)
+        self._fpsPos = (10, 30)
 
     def show_camera_feed(self, lock):
         tStart = time()
@@ -54,7 +54,7 @@ class Camera:
             originCounter += 1
 
         # display fps
-        cv2.putText(im, self._get_fps(), self._get_origin(originCounter), self._font, self._scale, self._colour,
+        cv2.putText(im, self._get_fps(), self._fpsPos, self._font, self._scale, self._colour,
                     self._thickness)
 
         cv2.imshow("Camera", im)
