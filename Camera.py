@@ -55,7 +55,7 @@ class Camera:
 
     def _setup_cam(self, resolution):
         self._cam.preview_configuration.main.size = (resolution)
-        self._cam.preview.configuration.main.format = "RGB888"
+        self._cam.preview_configuration.main.format = "RGB888"
         self._cam.configure("preview")
         self._cam.start()
 
