@@ -43,7 +43,7 @@ class XboxControl:
     def add_camera(self, camera, cameraHelper):
         self._camera = camera
         self._cameraHelper = cameraHelper
-        self._treadLock = Lock()
+        self._threadLock = Lock()
 
     def add_servo(self, servo):
         self._servo = servo
