@@ -46,8 +46,7 @@ car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, e
 servo = ServoHandling(servoPin)
 
 # define camera aboard car
-#resolution = (384, 288)
-resolution = (1280, 720)
+resolution = (384, 288)
 cameraHelper = CameraHelper()
 camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)

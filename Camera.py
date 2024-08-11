@@ -6,9 +6,10 @@ from time import time
 
 class Camera:
     def __init__(self, resolution, cameraHelper, rotation = True):
+        dispW, dispH = resolution
+        self._cameraHelper = cameraHelper
+
         self._picam2 = Picamera2()
-        dispW = 1280
-        dispH = 720
         self._picam2.preview_configuration.main.size = (dispW, dispH)
         self._picam2.preview_configuration.main.format = "RGB888"
         # picam2.preview_configuration.controls.FrameRate=30
@@ -27,34 +28,28 @@ class Camera:
         self._speedText = None
         self._turnText = None
 
+    def show_camera_feed(self, lock):
+        im = self._picam2.capture_array()
+        self._read_control_values_for_video_feed(lock)
 
-    def show_camera_feed(self):
-        tStart = time()
-        while time() - tStart < 20:
-            im = self._picam2.capture_array()
-            """
-            self._read_control_values_for_video_feed(lock)
-    
-            originCounter = 0
-            if self._angleText:
-                cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                            self._thickness)
-                originCounter += 1
-    
-            if self._speedText:
-                cv2.putText(im, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                            self._thickness)
-                originCounter += 1
-    
-            if self._turnText:
-                cv2.putText(im, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                            self._thickness)
-                originCounter += 1
-            """
-            #cv2.namedWindow("Camera", cv2.WINDOW_NORMAL)
-            cv2.imshow("Camera", im)
-            if cv2.waitKey(1) == ord('q'):
-                break
+        originCounter = 0
+        if self._angleText:
+            cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                        self._thickness)
+            originCounter += 1
+
+        if self._speedText:
+            cv2.putText(im, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                        self._thickness)
+            originCounter += 1
+
+        if self._turnText:
+            cv2.putText(im, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                        self._thickness)
+            originCounter += 1
+
+        cv2.imshow("Camera", im)
+        cv2.waitkey(1)
 
     def cleanup(self):
         cv2.destroyAllWindows()
