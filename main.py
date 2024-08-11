@@ -68,7 +68,7 @@ xboxControl.activate_car_controlling(myEvent)
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed()
+        camera.show_camera_feed(lock)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
     xboxControl.cleanup() # cleanup to finish all threads and close processes
