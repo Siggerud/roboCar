@@ -54,8 +54,9 @@ class Camera:
             self._turnText = self._cameraHelper.get_turn_text()
 
     def _setup_cam(self, resolution):
-        self._cam.preview_configuration.main.size = (resolution)
+        self._cam.preview_configuration.main.size = resolution
         self._cam.preview_configuration.main.format = "RGB888"
+        self._cam.preview_configuration.align()
         self._cam.configure("preview")
         self._cam.start()
 
