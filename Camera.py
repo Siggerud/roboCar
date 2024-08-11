@@ -37,7 +37,7 @@ class Camera:
         tStart = time() # start timer for calculating fps
 
         im = self._picam2.capture_array()
-
+        print(im.shape)
         self._read_control_values_for_video_feed(lock)
         if self._zoomValue != 1.0:
             newResolution = (int(self._zoomValue * self._dispW), int(self._zoomValue * self._dispH))
@@ -75,6 +75,9 @@ class Camera:
     def cleanup(self):
         cv2.destroyAllWindows()
         self._picam2.close()
+
+    def _add_control_values_to_camera_feed(self):
+
 
     def _get_fps(self):
         return str(int(self._fps)) + " FPS"
