@@ -51,6 +51,10 @@ class Camera:
 
         # add control values to camera feed
         originCounter = 0
+        cv2.putText(im, "Zoom: " + str(self._zoomValue) + "x", self._get_origin(originCounter), self._font, self._scale, self._colour,
+                    self._thickness)
+        originCounter += 1
+
         if self._angleText:
             cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
                         self._thickness)
