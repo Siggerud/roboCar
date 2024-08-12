@@ -7,12 +7,13 @@ from time import time
 class Camera:
     def __init__(self, resolution, cameraHelper, rotation = True):
         self._dispW, self._dispH = resolution
+        self._centerX = int(self._dispW)
+        self._centerY = int(self._dispH)
         self._cameraHelper = cameraHelper
 
         self._picam2 = Picamera2()
         self._picam2.preview_configuration.main.size = resolution
         self._picam2.preview_configuration.main.format = "RGB888"
-        # picam2.preview_configuration.controls.FrameRate=30
         self._picam2.preview_configuration.align()
         self._picam2.configure("preview")
         self._picam2.start()
@@ -37,11 +38,16 @@ class Camera:
         tStart = time() # start timer for calculating fps
 
         im = self._picam2.capture_array()
-        print(im.shape[:2])
         self._read_control_values_for_video_feed(lock)
+        
         if self._zoomValue != 1.0:
-            newResolution = (int(self._zoomValue * self._dispW), int(self._zoomValue * self._dispH))
-            im = cv2.resize(im, newResolution, interpolation=cv2.INTER_LINEAR)
+            halfZoomDisplayWidth = self._dispW / (2 * self._zoomValue)
+            halfZoomDisplayHeight = self._dispH / (2 * self._zoomValue)
+
+            regionOfInterest = im[self._centerY - halfZoomDisplayHeight:self._centerY + halfZoomDisplayHeight,
+                               self._centerX - halfZoomDisplayWidth:self._centerY + halfZoomDisplayWidth]
+
+            im = cv2.resize(regionOfInterest, (self._dispW, self._dispH), cv2.INTER_LINEAR)
 
         # add control values to camera feed
         originCounter = 0
