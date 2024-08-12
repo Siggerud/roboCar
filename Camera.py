@@ -37,42 +37,18 @@ class Camera:
     def show_camera_feed(self, lock):
         tStart = time() # start timer for calculating fps
 
+        # get raw image
         im = self._picam2.capture_array()
+
+        # read control values from external classes
         self._read_control_values_for_video_feed(lock)
 
+        # resize image when zooming
         if self._zoomValue != 1.0:
-            halfZoomDisplayWidth = int(self._dispW / (2 * self._zoomValue))
-            halfZoomDisplayHeight = int(self._dispH / (2 * self._zoomValue))
+            im = self._get_zoomed_image(im)
 
-            regionOfInterest = im[self._centerY - halfZoomDisplayHeight:self._centerY + halfZoomDisplayHeight,
-                               self._centerX - halfZoomDisplayWidth:self._centerX + halfZoomDisplayWidth]
-
-            im = cv2.resize(regionOfInterest, (self._dispW, self._dispH), cv2.INTER_LINEAR)
-
-        # add control values to camera feed
-        originCounter = 0
-        cv2.putText(im, "Zoom: " + str(self._zoomValue) + "x", self._get_origin(originCounter), self._font, self._scale, self._colour,
-                    self._thickness)
-        originCounter += 1
-
-        if self._angleText:
-            cv2.putText(im, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                        self._thickness)
-            originCounter += 1
-
-        if self._speedText:
-            cv2.putText(im, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                        self._thickness)
-            originCounter += 1
-
-        if self._turnText:
-            cv2.putText(im, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
-                        self._thickness)
-            originCounter += 1
-
-        # display fps
-        cv2.putText(im, self._get_fps(), self._fpsPos, self._font, self._scale, self._colour,
-                    self._thickness)
+        # add control values to cam feed
+        self._add_text_to_cam_feed(im)
 
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
@@ -85,6 +61,44 @@ class Camera:
     def cleanup(self):
         cv2.destroyAllWindows()
         self._picam2.close()
+
+    def _get_zoomed_image(self, image):
+        halfZoomDisplayWidth = int(self._dispW / (2 * self._zoomValue))
+        halfZoomDisplayHeight = int(self._dispH / (2 * self._zoomValue))
+
+        regionOfInterest = image[self._centerY - halfZoomDisplayHeight:self._centerY + halfZoomDisplayHeight,
+                           self._centerX - halfZoomDisplayWidth:self._centerX + halfZoomDisplayWidth]
+
+        im = cv2.resize(regionOfInterest, (self._dispW, self._dispH), cv2.INTER_LINEAR)
+
+        return im
+
+    def _add_text_to_cam_feed(self, image):
+        # add control values to camera feed
+        originCounter = 0
+        cv2.putText(image, "Zoom: " + str(self._zoomValue) + "x", self._get_origin(originCounter), self._font, self._scale,
+                    self._colour,
+                    self._thickness)
+        originCounter += 1
+
+        if self._angleText:
+            cv2.putText(image, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                        self._thickness)
+            originCounter += 1
+
+        if self._speedText:
+            cv2.putText(image, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                        self._thickness)
+            originCounter += 1
+
+        if self._turnText:
+            cv2.putText(image, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+                        self._thickness)
+            originCounter += 1
+
+        # display fps
+        cv2.putText(image, self._get_fps(), self._fpsPos, self._font, self._scale, self._colour,
+                    self._thickness)
 
     def _get_fps(self):
         return str(int(self._fps)) + " FPS"
