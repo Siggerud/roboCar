@@ -45,7 +45,7 @@ class Camera:
             halfZoomDisplayHeight = int(self._dispH / (2 * self._zoomValue))
 
             regionOfInterest = im[self._centerY - halfZoomDisplayHeight:self._centerY + halfZoomDisplayHeight,
-                               self._centerX - halfZoomDisplayWidth:self._centerY + halfZoomDisplayWidth]
+                               self._centerX - halfZoomDisplayWidth:self._centerX + halfZoomDisplayWidth]
 
             im = cv2.resize(regionOfInterest, (self._dispW, self._dispH), cv2.INTER_LINEAR)
 
