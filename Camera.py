@@ -39,10 +39,10 @@ class Camera:
 
         im = self._picam2.capture_array()
         self._read_control_values_for_video_feed(lock)
-        
+
         if self._zoomValue != 1.0:
-            halfZoomDisplayWidth = self._dispW / (2 * self._zoomValue)
-            halfZoomDisplayHeight = self._dispH / (2 * self._zoomValue)
+            halfZoomDisplayWidth = int(self._dispW / (2 * self._zoomValue))
+            halfZoomDisplayHeight = int(self._dispH / (2 * self._zoomValue))
 
             regionOfInterest = im[self._centerY - halfZoomDisplayHeight:self._centerY + halfZoomDisplayHeight,
                                self._centerX - halfZoomDisplayWidth:self._centerY + halfZoomDisplayWidth]
