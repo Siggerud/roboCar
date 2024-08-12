@@ -32,6 +32,8 @@ class Camera:
         self._zoomValue = 1.0
 
         self._fps = 0
+        self._weightPrevFps = 0.9
+        self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
     def show_camera_feed(self, lock):
@@ -54,13 +56,17 @@ class Camera:
         cv2.waitKey(1)
 
         # calculate fps
-        tEnd = time()
-        loopTime = tEnd - tStart
-        self._fps = 0.9 * self._fps + 0.1 * (1 / loopTime)
+        self._calculate_fps(tStart)
 
     def cleanup(self):
         cv2.destroyAllWindows()
         self._picam2.close()
+
+    def _calculate_fps(self, startTime):
+        endTime = time()
+        loopTime = endTime - startTime
+
+        self._fps = self._weightPrevFps * self._fps + self._weightNewFps * (1 / loopTime)
 
     def _get_zoomed_image(self, image):
         halfZoomDisplayWidth = int(self._dispW / (2 * self._zoomValue))
