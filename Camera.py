@@ -5,11 +5,12 @@ from picamera2 import Picamera2
 from time import time
 
 class Camera:
-    def __init__(self, resolution, cameraHelper, rotation = True):
+    def __init__(self, resolution, cameraHelper, rotation=True):
         self._dispW, self._dispH = resolution
         self._centerX = int(self._dispW / 2)
         self._centerY = int(self._dispH / 2)
         self._cameraHelper = cameraHelper
+        self._rotation = rotation
 
         self._picam2 = Picamera2()
         self._picam2.preview_configuration.main.size = resolution
@@ -42,6 +43,10 @@ class Camera:
         # get raw image
         im = self._picam2.capture_array()
 
+        # rotate/flip image
+        if self._rotation:
+            im = self._rotate_image(im)
+
         # read control values from external classes
         self._read_control_values_for_video_feed(lock)
 
@@ -67,6 +72,9 @@ class Camera:
         loopTime = endTime - startTime
 
         self._fps = self._weightPrevFps * self._fps + self._weightNewFps * (1 / loopTime)
+
+    def _rotate_image(self, image):
+        return cv2.flip(image, -1)
 
     def _get_zoomed_image(self, image):
         halfZoomDisplayWidth = int(self._dispW / (2 * self._zoomValue))
