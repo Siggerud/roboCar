@@ -21,8 +21,7 @@ class Camera:
 
         # text on video properties
         self._colour = (0, 255, 0)
-        # TODO: base origins on input resolution
-        self._origins = [(10, 270), (10, 240), (10, 210), (10, 180)]
+        self._textPositions = self._set_text_positions()
         self._font = cv2.FONT_HERSHEY_SIMPLEX
         self._scale = 1
         self._thickness = 1
@@ -67,6 +66,19 @@ class Camera:
         cv2.destroyAllWindows()
         self._picam2.close()
 
+    def _set_text_positions(self):
+        spacingVertical = 30
+
+        horizontalCoord = 10
+        verticalCoord = self._dispH - 15
+
+        positions = []
+        for i in range(4):
+            position = (horizontalCoord, verticalCoord - i * spacingVertical)
+            positions.append(position)
+
+        return positions
+
     def _calculate_fps(self, startTime):
         endTime = time()
         loopTime = endTime - startTime
@@ -89,26 +101,26 @@ class Camera:
 
     def _add_text_to_cam_feed(self, image):
         # add control values to camera feed
-        originCounter = 0
-        cv2.putText(image, "Zoom: " + str(self._zoomValue) + "x", self._get_origin(originCounter), self._font, self._scale,
+        counter = 0
+        cv2.putText(image, "Zoom: " + str(self._zoomValue) + "x", self._get_origin(counter), self._font, self._scale,
                     self._colour,
                     self._thickness)
-        originCounter += 1
+        counter += 1
 
         if self._angleText:
-            cv2.putText(image, self._angleText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+            cv2.putText(image, self._angleText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
-            originCounter += 1
+            counter += 1
 
         if self._speedText:
-            cv2.putText(image, self._speedText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+            cv2.putText(image, self._speedText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
-            originCounter += 1
+            counter += 1
 
         if self._turnText:
-            cv2.putText(image, self._turnText, self._get_origin(originCounter), self._font, self._scale, self._colour,
+            cv2.putText(image, self._turnText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
-            originCounter += 1
+            counter += 1
 
         # display fps
         cv2.putText(image, self._get_fps(), self._fpsPos, self._font, self._scale, self._colour,
@@ -125,33 +137,4 @@ class Camera:
             self._zoomValue = self._cameraHelper.get_zoom_value()
 
     def _get_origin(self, count):
-        return self._origins[count]
-
-"""
-picam2 = Picamera2()
-dispW=1280
-dispH=720
-picam2.preview_configuration.main.size = (dispW,dispH)
-picam2.preview_configuration.main.format = "RGB888"
-picam2.preview_configuration.controls.FrameRate=30
-picam2.preview_configuration.align()
-picam2.configure("preview")
-picam2.start()
-fps=0
-pos=(30,60)
-font=cv2.FONT_HERSHEY_SIMPLEX
-height=1.5
-weight=3
-myColor=(0,0,255)
-while True:
-    tStart=time.time()
-    im= picam2.capture_array()
-    cv2.putText(im,str(int(fps))+' FPS',pos,font,height,myColor,weight)
-    cv2.imshow("Camera", im)
-    if cv2.waitKey(1)==ord('q'):
-        break
-    tEnd=time.time()
-    loopTime=tEnd-tStart
-    fps=.9*fps + .1*(1/loopTime)
-cv2.destroyAllWindows()
-"""
+        return self._textPositions[count]
