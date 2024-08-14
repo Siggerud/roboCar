@@ -96,6 +96,7 @@ class XboxControl:
 
         while not threadEvent.is_set():
             for event in pygame.event.get():
+                print(event)
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
@@ -140,7 +141,7 @@ class XboxControl:
             buttonPressValue = self._controller.get_axis(axis)
         elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
             buttonNum = self._get_pushed_button()
-            print(buttonNum)
+
 
         return (button, buttonPressValue)
 
