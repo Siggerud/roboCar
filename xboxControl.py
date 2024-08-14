@@ -148,8 +148,7 @@ class XboxControl:
             button = self._joyAxisMotionToButtons[axis]
             buttonPressValue = self._controller.get_axis(axis)
         elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
-            buttonNum = self._get_pushed_button()
-            button = self._pushButtons[buttonNum]
+            button = self._get_pushed_button()
 
         return (button, buttonPressValue)
 
@@ -159,31 +158,35 @@ class XboxControl:
 
     def _check_for_exit_event(self, buttonAndPressValue):
         button, pressValue = buttonAndPressValue
-        print(button)
         if button == self._exitButton:
-            if self._exitButtonLastPush:
-                if (time() - self._exitButtonLastPush) < 0.5:
-                    return True
+            # check if exit button has been pushed
+            if self._pushButtonsStates[self._exitButton] == 1:
+
+                # check how long ago it was pushed
+                if self._exitButtonLastPush:
+                    if (time() - self._exitButtonLastPush) < 0.5:
+                        return True
+                    else:
+                        self._exitButtonLastPush = time()
                 else:
                     self._exitButtonLastPush = time()
-            else:
-                self._exitButtonLastPush = time()
 
         return False
 
     def _create_push_button_states_dict(self):
         pushedButtonStates = {}
-        for num in list(self._pushButtons.keys()):
+        for num in list(self._pushButtons.values()):
             pushedButtonStates[num] = 0
 
         return pushedButtonStates
 
     def _get_pushed_button(self):
         for num in list(self._pushButtons.keys()):
-            if self._controller.get_button(num) != self._pushButtonsStates[num]:
-                self._pushButtonsStates[num] = self._controller.get_button(num)
+            button = self._pushButtons[num]
+            if self._controller.get_button(num) != self._pushButtonsStates[button]:
+                self._pushButtonsStates[button] = self._controller.get_button(num)
 
-                return num
+                return button
 
     def _set_controller(self):
         pygame.init()
