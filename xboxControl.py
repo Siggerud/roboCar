@@ -138,7 +138,7 @@ class XboxControl:
             axis = event.axis
             button = self._joyAxisMotionToButtons[axis]
             buttonPressValue = self._controller.get_axis(axis)
-        elif eventType == pygame.JOYBUTTONDOWN:
+        elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
             buttonNum = self._get_pushed_button()
             print(buttonNum)
 
