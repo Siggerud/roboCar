@@ -161,9 +161,10 @@ class XboxControl:
 
     def _check_for_exit_event(self, buttonAndPressValue):
         button, pressValue = buttonAndPressValue
+        print(button)
         if button == self._exitButton:
             if self._exitButtonLastPush:
-                if (time() - self._exitButtonLastPush) < 0.2:
+                if (time() - self._exitButtonLastPush) < 0.5:
                     return True
                 else:
                     self._exitButtonLastPush = time()
