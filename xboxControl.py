@@ -36,6 +36,8 @@ class XboxControl:
             5: "LT",
         }
 
+        self._exitButton = "Start"
+
     def add_distance_warner(self, distanceWarner):
         self._distanceWarner = distanceWarner
 
@@ -82,7 +84,6 @@ class XboxControl:
 
         while not threadEvent.is_set():
             for event in pygame.event.get():
-                print(event)
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
@@ -125,6 +126,8 @@ class XboxControl:
             axis = event.axis
             button = self._joyAxisMotionToButtons[axis]
             buttonPressValue = self._controller.get_axis(axis)
+        elif eventType == pygame.JOYBUTTONDOWN:
+            print(self._controller.get_button(11))
 
         return (button, buttonPressValue)
 
