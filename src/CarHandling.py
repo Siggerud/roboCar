@@ -71,11 +71,7 @@ class CarHandling:
 		return completeDict
 
 	def get_current_speed(self):
-		# instead of having the speed from our min and max PWM value, we map it to a corresponding number
-		# between 0 and 100
-		speed = map_value_to_new_scale(self._speed, 0, 100, 0, self._pwmMinTT, self._pwmMaxTT)
-
-		return int(speed)
+		return int(self._speed)
 
 	def get_current_turn_value(self):
 		if self._turnLeft:
