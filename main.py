@@ -71,6 +71,7 @@ try:
         camera.show_camera_feed(lock)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
+finally:
     xboxControl.cleanup() # cleanup to finish all threads and close processes
     camera.cleanup()
     GPIO.cleanup()

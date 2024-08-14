@@ -38,17 +38,24 @@ class XboxControl:
         }
 
         self._pushButtons = {
-            11: "Start"
+            0: "A",
+            1: "B",
+            3: "X",
+            4: "Y",
+            6: "LB",
+            7: "RB",
+            11: "Start",
+            15: "Back"
         }
 
         self._pushButtonsStates = {
             11: 0
         }
 
+        self._exitButton = "Start"
+
         # keeps track of last time exit button was pushed
-        self._exitButton = {
-            11: time()
-        }
+        self._exitButtonLastPush = None
 
     def add_distance_warner(self, distanceWarner):
         self._distanceWarner = distanceWarner
@@ -96,8 +103,11 @@ class XboxControl:
 
         while not threadEvent.is_set():
             for event in pygame.event.get():
-                print(event)
                 buttonAndPressValue = self._get_button_and_press_value_from_event(event)
+                if self._check_for_exit_event(buttonAndPressValue):
+                    self._exit_program(threadEvent)
+                    break
+
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
                 if self._servo:
@@ -141,9 +151,27 @@ class XboxControl:
             buttonPressValue = self._controller.get_axis(axis)
         elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
             buttonNum = self._get_pushed_button()
-
+            button = self._pushButtons[buttonNum]
 
         return (button, buttonPressValue)
+
+    def _exit_program(self, threadEvent):
+        threadEvent.set()
+        print("Exiting program...")
+
+    def _check_for_exit_event(self, buttonAndPressValue):
+        button, pressValue = buttonAndPressValue
+        if button == self._exitButton:
+            if self._exitButtonLastPush:
+                if (time() - self._exitButtonLastPush) < 0.2:
+                    return True
+                else:
+                    self._exitButtonLastPush = time()
+            else:
+                self._exitButtonLastPush = time()
+
+        return False
+
 
     def _get_pushed_button(self):
         for num in list(self._pushButtons.keys()):
