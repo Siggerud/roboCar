@@ -48,9 +48,7 @@ class XboxControl:
             15: "Back"
         }
 
-        self._pushButtonsStates = {
-            11: 0
-        }
+        self._pushButtonsStates = self._create_push_button_states_dict()
 
         self._exitButton = "Start"
 
@@ -173,6 +171,12 @@ class XboxControl:
 
         return False
 
+    def _create_pushed_button_states(self):
+        pushedButtonStates = {}
+        for num in list(self._pushButtons.keys()):
+            pushedButtonStates[num] = 0
+
+        return pushedButtonStates
 
     def _get_pushed_button(self):
         for num in list(self._pushButtons.keys()):
