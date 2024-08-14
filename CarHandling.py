@@ -12,7 +12,7 @@ class CarHandling:
 		self._enB = enB
 
 		self._pwmMinTT = 20 # this needs to be set to the value where the motors start "biting"
-		self._pwmMaxTT = 70
+		self._pwmMaxTT = 60
 
 		self._speed = 0
 
@@ -71,7 +71,11 @@ class CarHandling:
 		return completeDict
 
 	def get_current_speed(self):
-		return int(self._speed)
+		# instead of having the speed from our min and max PWM value, we map it to a corresponding number
+		# between 0 and 100
+		speed = map_value_to_new_scale(self._speed, 0, 100, 0, self._pwmMinTT, self._pwmMaxTT)
+
+		return int(speed)
 
 	def get_current_turn_value(self):
 		if self._turnLeft:
