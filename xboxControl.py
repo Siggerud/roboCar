@@ -171,7 +171,7 @@ class XboxControl:
 
         return False
 
-    def _create_pushed_button_states(self):
+    def _create_push_button_states_dict(self):
         pushedButtonStates = {}
         for num in list(self._pushButtons.keys()):
             pushedButtonStates[num] = 0
