@@ -70,13 +70,13 @@ Then reboot or start pipgio
 sudo systemctl start pigpiod
 ```
 
-### Starting up the program
+## Starting up the program
 1. Power your xbox controller and wait for it to connect to the pi
 2. Connect to your pi via RealVNC
 3. Open this project in a terminal 
 4. Run main.py
 
-### Driving and controlling the car
+## Driving and controlling the car
 To drive the car:<br />
 RT - Gas
 LT - Reverse
@@ -101,6 +101,42 @@ Use the LSB stick to zoom in and out. Letting the stick go will set the zoom to
 To make sure everything is as expected you can run some
 tests written to verify the classes in this project. To test
 you just have to run the test files.
+
+## Appendix
+
+### Wiring
+#### Raspberry Pi to L289
+22 -> IN2 <br />
+18 -> IN1 <br />
+16 -> IN4 <br />
+15 -> IN3 <br />
+11 -> ENA <br />
+13 -> ENB <br /> 
+GND -> GND
+
+#### L289 to motors
+
+#### Arduino to front distance sensor
+A2 -> Echo <br />
+A3 -> Trig <br />
+VCC -> VCC <br />
+GND -> GND
+
+#### Arduino to back distance sensor
+A0 -> Echo <br />
+A1 -> Trig <br />
+VCC -> VCC <br />
+GND -> GND
+
+#### Raspberry pi to servo
+
+#### Raspberry pi to camera
+
+#### Raspberry pi to arduino
+
+
+
+
 
 
 
