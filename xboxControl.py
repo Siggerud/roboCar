@@ -2,7 +2,8 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide" # disable pygame welcome message
 import pygame
 import subprocess
-from threading import Thread, Lock
+from threading import Thread
+from time import time
 
 class XboxControl:
     def __init__(self):
@@ -36,7 +37,18 @@ class XboxControl:
             5: "LT",
         }
 
-        self._exitButton = "Start"
+        self._pushButtons = {
+            11: "Start"
+        }
+
+        self._pushButtonsStates = {
+            11: 0
+        }
+
+        # keeps track of last time exit button was pushed
+        self._exitButton = {
+            11: time()
+        }
 
     def add_distance_warner(self, distanceWarner):
         self._distanceWarner = distanceWarner
@@ -127,10 +139,17 @@ class XboxControl:
             button = self._joyAxisMotionToButtons[axis]
             buttonPressValue = self._controller.get_axis(axis)
         elif eventType == pygame.JOYBUTTONDOWN:
-            print(self._controller.get_button(11))
+            buttonNum = self._get_pushed_button()
+            print(buttonNum)
 
         return (button, buttonPressValue)
 
+    def _get_pushed_button(self):
+        for num in list(self._pushButtons.keys()):
+            if self._controller.get_button(num) != self._pushButtonsStates[num]:
+                self._pushButtonsStates[num] = self._controller.get_button(num)
+
+                return num
 
     def _set_controller(self):
         pygame.init()
