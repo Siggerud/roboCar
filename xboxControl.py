@@ -131,6 +131,9 @@ class XboxControl:
         if self._cameraEnabled:
             print("Camera controls")
             print("Zoom camera: " + self._cameraHelper.camera_buttons()["Zoom"])
+            print()
+
+        print(f"Double tap {self._exitButton} to exit")
 
     def _listen_for_distance_warnings(self, threadEvent):
         while not threadEvent.is_set():

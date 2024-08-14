@@ -94,7 +94,7 @@ Use the LSB stick to zoom in and out. Letting the stick go will set the zoom to
 1x.
 
 ### Exiting the program
-1. When you're finished press Ctrl+C to exit the program safely
+1. When you're finished press Ctrl+C or double tap the specified controller exit button to exit the program in a controlled manner
 2. Power off your xBox controller
 
 ### Running tests
