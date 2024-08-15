@@ -70,6 +70,16 @@ Then reboot or start pipgio
 sudo systemctl start pigpiod
 ```
 
+### Upload code to arduino
+1. Connect the Arduino Uno to your computer via USB cable
+2. Download and install [Arduino IDE](https://www.arduino.cc/en/software).
+3. Open the Arduino IDE
+4. Go to files and open SerialComm.ino from this project
+5. Under Tools -> Boards choose Arduino Uno
+6. Under Tools -> Port choose the port that has Arduino Uno in paranthesis in the name
+7. Press the upload button
+8. Disconnect the Arduino Uno from the PC
+
 ## Starting up the program
 1. Power your xbox controller and wait for it to connect to the pi
 2. Connect to your pi via RealVNC
@@ -115,24 +125,45 @@ you just have to run the test files.
 GND -> GND
 
 #### L289 to motors
+L289 right and left should be based on looking at the
+l289 from above reading the text. <br /> 
+
+L289 MOTORA Left -> Right motor front + <br /> 
+L289 MOTORA Left -> Right motor back + <br /> 
+L289 MOTORA Right -> Right motor back - <br /> 
+L289 MOTORA Right -> Right motor front - <br /> 
+
+L289 MOTORB Right -> Left motor front + <br /> 
+L289 MOTORB Right -> Left motor back + <br /> 
+L289 MOTORB Left -> Left motor back - <br /> 
+L289 MOTORB Left -> Left motor front - <br />
+
+#### L289 to batterypack
+L289 VMS -> Batterypack +-<br />
+L289 GND -> Batterypack -
 
 #### Arduino to front distance sensor
 A2 -> Echo <br />
 A3 -> Trig <br />
-VCC -> VCC <br />
-GND -> GND
+5V -> + <br />
+GND -> -
 
 #### Arduino to back distance sensor
 A0 -> Echo <br />
 A1 -> Trig <br />
-VCC -> VCC <br />
-GND -> GND
+5V -> + <br />
+GND -> -
 
 #### Raspberry pi to servo
+37 -> SignalWire <br />
+3.3V -> + <br />
+GND -> -
 
 #### Raspberry pi to camera
+Cameraslot -> Camera
 
 #### Raspberry pi to arduino
+USB-A -> USB-B
 
 
 
