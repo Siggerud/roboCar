@@ -14,7 +14,7 @@ class XboxControl:
 
         self._car = None
         self._servo = None
-        self._distanceWarner = None
+        self._arduinoCommunicator = None
 
         self._cameraEnabled = False
         self._cameraHelper = None
@@ -55,8 +55,8 @@ class XboxControl:
         # keeps track of last time exit button was pushed
         self._exitButtonLastPush = None
 
-    def add_distance_warner(self, distanceWarner):
-        self._distanceWarner = distanceWarner
+    def add_arduino_communicator(self, arduinoCommunicator):
+        self._arduinoCommunicator = arduinoCommunicator
 
     def add_car(self, car):
         self._car = car
@@ -69,8 +69,8 @@ class XboxControl:
     def add_servo(self, servo):
         self._servo = servo
 
-    def activate_distance_warner(self, event):
-        thread = Thread(target=self._listen_for_distance_warnings, args=(event,))
+    def activate_arduino_communication(self, event):
+        thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
         self._threads.append(thread)
         thread.start()
 
@@ -93,8 +93,8 @@ class XboxControl:
         if self._servo:
             self._servo.cleanup()
 
-        if self._distanceWarner:
-            self._distanceWarner.cleanup()
+        if self._arduinoCommunicator:
+            self._arduinoCommunicator.cleanup()
 
     def _start_controller(self, threadEvent, lock=None):
         self._print_button_explanation()
@@ -135,9 +135,9 @@ class XboxControl:
 
         print(f"Double tap {self._exitButton} to exit")
 
-    def _listen_for_distance_warnings(self, threadEvent):
+    def _listen_for_arduino_communication(self, threadEvent):
         while not threadEvent.is_set():
-            self._distanceWarner.alert_if_too_close()
+            self._arduinoCommunicator.start()
 
     def _get_button_and_press_value_from_event(self, event):
         button = None

@@ -1,5 +1,5 @@
 from CarHandling import CarHandling
-from DistanceWarner import DistanceWarner, InvalidPortError
+from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
 from Camera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
@@ -34,7 +34,8 @@ port = '/dev/ttyACM0'
 baudrate = 115200 # the highest communication rate between a pi and an arduino
 
 try:
-    distanceWarner = DistanceWarner(buzzerPin, port, baudrate)
+    arduinoCommunicator = ArduinoCommunicator(port, baudrate)
+    arduinoCommunicator.activate_distance_sensors(buzzerPin)
 except InvalidPortError as e:
     print_startup_error(e)
     exit()
@@ -55,13 +56,13 @@ cameraHelper.add_servo(servo)
 # add components
 xboxControl.add_car(car)
 xboxControl.add_servo(servo)
-xboxControl.add_distance_warner(distanceWarner)
+xboxControl.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
 myEvent = Event()
 lock = Lock()
 xboxControl.enable_camera(cameraHelper, lock)
-xboxControl.activate_distance_warner(myEvent)
+xboxControl.activate_arduino_communication(myEvent)
 xboxControl.activate_car_controlling(myEvent)
 
 # keep process running until keyboard interrupt
