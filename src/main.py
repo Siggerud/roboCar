@@ -36,6 +36,7 @@ baudrate = 115200 # the highest communication rate between a pi and an arduino
 try:
     arduinoCommunicator = ArduinoCommunicator(port, baudrate)
     arduinoCommunicator.activate_distance_sensors(buzzerPin)
+    arduinoCommunicator.activate_photocell_lights()
 except InvalidPortError as e:
     print_startup_error(e)
     exit()

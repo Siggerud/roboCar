@@ -8,39 +8,49 @@ class ArduinoCommunicator:
         if not self._port_exists(port):
             raise InvalidPortError(f"Port {port} not found. Check connection.")
 
-        self._waitTime = waitTime
-        self._frontSensor = False
-        self._backSensor = False
-        self._honker = None
+        self._serialObj = serial.Serial(port, baudrate)
+        sleep(3)  # give the serial object some time to start communication
 
+        self._waitTime = waitTime
+
+        self._frontSensorActive = False
+        self._backSensorActive = False
+        self._honker = None
         self._frontSensorReading = None
         self._backSensorReading = None
+
+        self._photocellLightsActive = False
+        self._photocellReading = None
 
         self._encodingType = 'utf-8'
 
         self._lastReadTime = None
 
-        self._serialObj = serial.Serial(port, baudrate)
-        sleep(3) # give the serial object some time to start communication
-
     def activate_distance_sensors(self, buzzerPin, front=True, back=True):
-        self._frontSensor = front
-        self._backSensor = back
+        self._frontSensorActive = front
+        self._backSensorActive = back
 
         self._honker = Honker(buzzerPin)
+
+    def activate_photocell_lights(self):
+        self._photocellLightsActive = True
 
     def start(self):
         # if it's been more than the specified wait time since last reading, then
         # do a new reading
         if not self._lastReadTime or (time() - self._lastReadTime) < self._waitTime:
 
-            if self._frontSensor:
+            if self._frontSensorActive:
                 self._frontSensorReading = self._send_command_and_read_response("front")
 
-            if self._backSensor:
+            if self._backSensorActive:
                 self._backSensorReading = self._send_command_and_read_response("back")
 
-            if self._frontSensor or self._backSensor:
+            if self._photocellLightsActive:
+                self._photocellReading = self._send_command_and_read_response("photocell")
+                print(self._photocellReading)
+
+            if self._frontSensorActive or self._backSensorActive:
                 self._honker.prepare_for_honking(
                     [self._frontSensorReading,
                     self._backSensorReading]
@@ -48,7 +58,7 @@ class ArduinoCommunicator:
 
             self._lastReadTime = time()  # update last read time
 
-        if self._frontSensor or self._backSensor:
+        if self._frontSensorActive or self._backSensorActive:
             self._honker.alert_if_too_close()
 
     def cleanup(self):
