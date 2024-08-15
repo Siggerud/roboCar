@@ -25,7 +25,7 @@ class Honker:
             honk = False
         else:
             honk = self._honkCurrentlyOn
-        print(honk)
+
         GPIO.output(self._buzzerPin, honk)
 
     def _set_honk_on_or_off(self, sensors):
@@ -55,6 +55,7 @@ class Honker:
     def _check_if_any_response_is_below_threshold(self, sensors):
         sensors = [sensor for sensor in sensors if sensor] # remove None values
         self._currentLowestDistance = min(sensors)
+        print(self._currentLowestDistance)
         if self._currentLowestDistance < self._distanceTreshold:
             return True
 
