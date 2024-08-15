@@ -18,14 +18,14 @@ class Honker:
         self._highEndTimeBetweenEachHonk = 0.01
 
     def prepare_for_honking(self, sensors):
-        self._set_honk_on_or_off(sensors)
+        self._set_honk_on_or_off(sensors) # check if car is within treshold distance
+        self._set_honk_timing() # update frequency of alarm beeping
 
     def alert_if_too_close(self):
         if not self._withinAlarmDistance:
             honk = False
         else:
             honk = self._honkCurrentlyOn
-            print(honk)
 
         GPIO.output(self._buzzerPin, honk)
 
@@ -46,7 +46,7 @@ class Honker:
                 self._distanceTreshold,
                 0
             )
-            print(timeBetweenEachHonk)
+
             # if time passed is longer than the wait time between the trigger
             # to change, then change
             if (time() - self._lastHonkChangeTime) > timeBetweenEachHonk:
