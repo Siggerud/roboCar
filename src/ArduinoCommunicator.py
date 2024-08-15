@@ -49,7 +49,6 @@ class ArduinoCommunicator:
             self._lastReadTime = time()  # update last read time
 
         if self._frontSensor or self._backSensor:
-            print("honk")
             self._honker.alert_if_too_close()
 
     def cleanup(self):

@@ -25,7 +25,7 @@ class Honker:
             honk = False
         else:
             honk = self._honkCurrentlyOn
-
+        print(honk)
         GPIO.output(self._buzzerPin, honk)
 
     def _set_honk_on_or_off(self, sensors):
