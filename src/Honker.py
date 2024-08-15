@@ -46,7 +46,7 @@ class Honker:
                 self._distanceTreshold,
                 0
             )
-
+            print(timeBetweenEachHonk)
             # if time passed is longer than the wait time between the trigger
             # to change, then change
             if (time() - self._lastHonkChangeTime) > timeBetweenEachHonk:
