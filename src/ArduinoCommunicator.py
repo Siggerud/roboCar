@@ -1,8 +1,6 @@
 from os import path
-import RPi.GPIO as GPIO
 import serial
 from time import sleep, time
-from roboCarHelper import map_value_to_new_scale
 from Honker import Honker
 
 class ArduinoCommunicator:
@@ -51,6 +49,7 @@ class ArduinoCommunicator:
             self._lastReadTime = time()  # update last read time
 
         if self._frontSensor or self._backSensor:
+            print("honk")
             self._honker.alert_if_too_close()
 
     def cleanup(self):
