@@ -2,6 +2,7 @@ from os import path
 import serial
 from time import sleep, time
 from Honker import Honker
+from PhotocellManager import PhotocellManager
 
 class ArduinoCommunicator:
     def __init__(self, port, baudrate, waitTime = 0.1):
@@ -20,6 +21,7 @@ class ArduinoCommunicator:
         self._backSensorReading = None
 
         self._photocellLightsActive = False
+        self._photocellLightsManager = None
         self._photocellReading = None
 
         self._encodingType = 'utf-8'
@@ -32,8 +34,9 @@ class ArduinoCommunicator:
 
         self._honker = Honker(buzzerPin)
 
-    def activate_photocell_lights(self):
+    def activate_photocell_lights(self, lightPins):
         self._photocellLightsActive = True
+        self._photocellLightsManager = PhotocellManager(lightPins)
 
     def start(self):
         # if it's been more than the specified wait time since last reading, then
@@ -48,7 +51,6 @@ class ArduinoCommunicator:
 
             if self._photocellLightsActive:
                 self._photocellReading = self._send_command_and_read_response("photocell")
-                print(self._photocellReading)
 
             if self._frontSensorActive or self._backSensorActive:
                 self._honker.prepare_for_honking(
