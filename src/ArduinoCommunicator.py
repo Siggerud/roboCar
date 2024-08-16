@@ -52,19 +52,30 @@ class ArduinoCommunicator:
             if self._photocellLightsActive:
                 self._photocellReading = self._send_command_and_read_response("photocell")
 
+            # TODO: Add preparation to seperate method
             if self._frontSensorActive or self._backSensorActive:
                 self._honker.prepare_for_honking(
                     [self._frontSensorReading,
                     self._backSensorReading]
                 )
 
+            if self._photocellLightsActive:
+                self._photocellLightsManager.prepare_for_light_adjustment(self._photocellReading)
+
             self._lastReadTime = time()  # update last read time
 
+        # TODO: Add these to seperate method
         if self._frontSensorActive or self._backSensorActive:
             self._honker.alert_if_too_close()
 
+        if self._photocellLightsActive:
+            self._photocellLightsManager.adjust_car_lights_to_external_lights()
+
     def cleanup(self):
         self._serialObj.close()
+
+        if self._photocellLightsManager:
+            self._photocellLightsManager.cleanup()
 
     def _send_command_and_read_response(self, command):
         # send command to arduino

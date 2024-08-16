@@ -16,8 +16,13 @@ leftForward = 16 # IN4
 leftBackward = 15 # IN3
 enA = 11
 enB = 13
+
 servoPin = 26 # BCM
+
 buzzerPin = 29
+
+lightPin1 = 36
+lightPin2 = 31
 
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
@@ -36,7 +41,7 @@ baudrate = 115200 # the highest communication rate between a pi and an arduino
 try:
     arduinoCommunicator = ArduinoCommunicator(port, baudrate)
     arduinoCommunicator.activate_distance_sensors(buzzerPin)
-    arduinoCommunicator.activate_photocell_lights()
+    arduinoCommunicator.activate_photocell_lights([lightPin1, lightPin2])
 except InvalidPortError as e:
     print_startup_error(e)
     exit()
