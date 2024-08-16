@@ -3,15 +3,15 @@ from roboCarHelper import map_value_to_new_scale
 
 class PhotocellManager:
     def __init__(self, lightPins):
-        """
         pwmFrequency = 100
         self._pwms = []
         for pin in lightPins:
-            GPIO.setup(pin, GPIO.OUT)
-
-            pwm = GPIO.PWM(pin, pwmFrequency)
+            #GPIO.setup(pin, GPIO.OUT)
+            
+            pwm = "a"
+            #pwm = GPIO.PWM(pin, pwmFrequency)
             self._pwms.append(pwm)
-        """
+
         self._minLightSensorValue = 0
         self._maxLightSensorValue = 1023
 
