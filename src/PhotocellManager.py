@@ -11,6 +11,8 @@ class PhotocellManager:
             pwm = GPIO.PWM(pin, pwmFrequency)
             self._pwms.append(pwm)
 
+            pwm.start(0)
+
         self._minLightSensorValue = 0
         self._maxLightSensorValue = 1023
 
