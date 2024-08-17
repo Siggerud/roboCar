@@ -6,10 +6,9 @@ class PhotocellManager:
         pwmFrequency = 100
         self._pwms = []
         for pin in lightPins:
-            #GPIO.setup(pin, GPIO.OUT)
-            
-            pwm = "a"
-            #pwm = GPIO.PWM(pin, pwmFrequency)
+            GPIO.setup(pin, GPIO.OUT)
+
+            pwm = GPIO.PWM(pin, pwmFrequency)
             self._pwms.append(pwm)
 
         self._minLightSensorValue = 0
@@ -22,7 +21,7 @@ class PhotocellManager:
 
     def adjust_car_lights_to_external_lights(self):
         for pwm in self._pwms:
-            #pwm.ChangeDutyCycle(self._currentPwmValue)
+            pwm.ChangeDutyCycle(self._currentPwmValue)
             print(self._currentPwmValue)
 
     def prepare_for_light_adjustment(self, lightSensorValue):
@@ -38,7 +37,6 @@ class PhotocellManager:
 
     def cleanup(self):
         for pwm in self._pwms:
-            #pwm.stop()
-            print("messed up loop")
+            pwm.stop()
 
 
