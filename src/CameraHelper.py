@@ -18,16 +18,22 @@ class CameraHelper:
         self._zoomButtonMinValue = 0
         self._zoomButtonMaxValue = -1
 
+        self._hudActive = True
+
         self._controlsDictCamera = {
-            "Zoom": "LSB vertical"
+            "Zoom": "LSB vertical",
+            "HUD": "RB"
         }
 
         self._zoomButton = self._controlsDictCamera["Zoom"]
+        self._hudButton = self._controlsDictCamera["HUD"]
 
-    def handle_xbox_input(self, buttonAndValue):
+    def handle_xbox_input(self, buttonAndValue, lock):
         button, buttonPressValue = buttonAndValue
         if button == self._zoomButton:
-            self._set_zoom_value(buttonPressValue)
+            self._set_zoom_value(buttonPressValue, lock)
+        elif button == self._hudButton and buttonPressValue: # check that button is pushed, not released
+            self._set_hud_on_or_off(lock)
 
     def add_car(self, car):
         self._car = car
@@ -47,6 +53,9 @@ class CameraHelper:
     def get_zoom_value(self):
         return self._zoomValue
 
+    def get_hud_value(self):
+        return self._hudActive
+
     def update_control_values_for_video_feed(self, lock):
         with lock:
             if self._servo:
@@ -59,16 +68,22 @@ class CameraHelper:
     def camera_buttons(self):
         return self._controlsDictCamera
 
-    def _set_zoom_value(self, buttonPressValue):
+    def _set_hud_on_or_off(self, lock):
+        with lock:
+            self._hudActive = not self._hudActive
+
+    def _set_zoom_value(self, buttonPressValue, lock):
         if self._check_if_button_press_within_valid_range(buttonPressValue):
             stickValue = round(buttonPressValue, 1)
         else:
             stickValue = self._zoomButtonMinValue
 
         if stickValue != self._lastStickValue:
-            self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
-                                                     self._zoomButtonMinValue, self._zoomButtonMaxValue)
             self._lastStickValue = stickValue
+            with lock:
+                self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
+                                                     self._zoomButtonMinValue, self._zoomButtonMaxValue)
+
 
     def _check_if_button_press_within_valid_range(self, buttonPressValue):
         if buttonPressValue >= self._zoomButtonMaxValue and buttonPressValue <= self._zoomButtonMinValue:

@@ -30,6 +30,7 @@ class Camera:
         self._speedText = None
         self._turnText = None
         self._zoomValue = 1.0
+        self._hudActive = True
 
         self._fps = 0
         self._weightPrevFps = 0.9
@@ -54,7 +55,8 @@ class Camera:
             im = self._get_zoomed_image(im)
 
         # add control values to cam feed
-        self._add_text_to_cam_feed(im)
+        if self._hudActive:
+            self._add_text_to_cam_feed(im)
 
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
@@ -135,6 +137,7 @@ class Camera:
             self._speedText = self._cameraHelper.get_speed_text()
             self._turnText = self._cameraHelper.get_turn_text()
             self._zoomValue = self._cameraHelper.get_zoom_value()
+            self._hudActive = self._cameraHelper.get_hud_value()
 
     def _get_origin(self, count):
         return self._textPositions[count]

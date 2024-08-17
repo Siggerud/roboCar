@@ -111,7 +111,7 @@ class XboxControl:
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
                 if self._cameraEnabled:
-                    self._cameraHelper.handle_xbox_input(buttonAndPressValue)
+                    self._cameraHelper.handle_xbox_input(buttonAndPressValue, lock)
                     self._cameraHelper.update_control_values_for_video_feed(lock)
 
     def _print_button_explanation(self):
@@ -131,6 +131,7 @@ class XboxControl:
         if self._cameraEnabled:
             print("Camera controls")
             print("Zoom camera: " + self._cameraHelper.camera_buttons()["Zoom"])
+            print("Turn HUD on or off: " + self._cameraHelper.camera_buttons()["HUD"])
             print()
 
         print(f"Double tap {self._exitButton} to exit")
@@ -152,6 +153,7 @@ class XboxControl:
             buttonPressValue = self._controller.get_axis(axis)
         elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
             button = self._get_pushed_button()
+            buttonPressValue = self._pushButtonsStates[button]
 
         return (button, buttonPressValue)
 
@@ -186,7 +188,10 @@ class XboxControl:
     def _get_pushed_button(self):
         for num in list(self._pushButtons.keys()):
             button = self._pushButtons[num]
+
+            # if buttonstates have changed, we have found the button
             if self._controller.get_button(num) != self._pushButtonsStates[button]:
+                # update button state
                 self._pushButtonsStates[button] = self._controller.get_button(num)
 
                 return button
