@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, call
+from unittest.mock import patch
 from Honker import Honker
 import RPi.GPIO as GPIO
 
@@ -12,9 +12,8 @@ class TestHonker(unittest.TestCase):
     def test_init_calls(self, mock_setup):
         honker = self.get_honker_object()
 
-        mock_setup.assert_has_calls(
-            call(self.buzzerPin, GPIO.OUT, False)
-        )
+        mock_setup.assert_called_with(self.buzzerPin, GPIO.OUT, initial=False)
+
 
     def test_check_if_any_response_is_below_treshold(self, mock_setup):
         honker = self.get_honker_object()
