@@ -33,7 +33,7 @@ class TestCarHandling(unittest.TestCase):
         # check that GPIO setup has been called with expected pins
         mock_setup.assert_has_calls(
             [
-            call(self.leftBackward, GPIO.OUT),
+            call(8, GPIO.OUT),
             call(self.leftForward, GPIO.OUT),
             call(self.rightForward, GPIO.OUT),
             call(self.rightBackward, GPIO.OUT),
