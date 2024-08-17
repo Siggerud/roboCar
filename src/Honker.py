@@ -53,9 +53,9 @@ class Honker:
                 self._honkCurrentlyOn = not self._honkCurrentlyOn
                 self._lastHonkChangeTime = time()  # update time of last change
 
-    def _check_if_any_response_is_below_threshold(self, sensors):
-        sensors = [sensor for sensor in sensors if sensor] # remove None values
-        self._currentLowestDistance = min(sensors)
+    def _check_if_any_response_is_below_threshold(self, sensorValues):
+        sensorValues = [sensor for sensor in sensorValues if sensor] # remove None values
+        self._currentLowestDistance = min(sensorValues)
         if self._currentLowestDistance < self._distanceTreshold:
             return True
 
