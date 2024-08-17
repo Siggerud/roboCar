@@ -14,7 +14,6 @@ class TestHonker(unittest.TestCase):
 
         mock_setup.assert_called_with(self.buzzerPin, GPIO.OUT, initial=False)
 
-
     def test_check_if_any_response_is_below_treshold(self, mock_setup):
         honker = self.get_honker_object()
 
