@@ -14,8 +14,7 @@ class TestCarHandling(unittest.TestCase):
     enA = 11
     enB = 13
 
-
-    def test_init(self, mock_pwm, mock_setup):
+    def get_car_object(self):
         car = CarHandling(
             self.leftBackward,
             self.leftForward,
@@ -24,6 +23,11 @@ class TestCarHandling(unittest.TestCase):
             self.enA,
             self.enB
         )
+
+        return car
+
+    def test_init(self, mock_pwm, mock_setup):
+        car = self.get_car_object()
 
         # check that GPIO setup has been called with expected pins
         mock_setup.assert_has_calls(
@@ -48,14 +52,7 @@ class TestCarHandling(unittest.TestCase):
 
     def test_adjust_gpio_values(self, mock_pwm, mock_setup):
         with patch("RPi.GPIO.output") as mock_output:
-            car = CarHandling(
-                self.leftBackward,
-                self.leftForward,
-                self.rightBackward,
-                self.rightForward,
-                self.enA,
-                self.enB
-            )
+            car = self.get_car_object()
 
             # values that will set the GPIO state of each motor
             gpioValues = [True, True, False, False]
@@ -75,14 +72,7 @@ class TestCarHandling(unittest.TestCase):
             )
 
     def test_change_duty_cycle(self, mock_pwm, mock_setup):
-        car = CarHandling(
-            self.leftBackward,
-            self.leftForward,
-            self.rightBackward,
-            self.rightForward,
-            self.enA,
-            self.enB
-        )
+        car = self.get_car_object()
 
         # create mock pwm objects
         mockPwmA = Mock()
