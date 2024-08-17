@@ -12,8 +12,10 @@ a vehicle that can be controlled with a wireless xbox controller via bluetooth.
 It has a camera mounted on a servo that can be turned 90 degrees to both sides.
 It also has a distance sensors in the front and the back of the car, and a warning sound will
 be set off if the vehicle is too close to any object. The closer the car is 
-to an obstacle, the faster the alarm will beep. I've used a serial connection to an arduino
-to read data from the distance sensors.
+to an obstacle, the faster the alarm will beep. 
+The front lights will dim according to the external lights, by reading data from a phototransistor.
+I've used a serial connection to an arduino to read data from the distance sensors and the
+phototransistor.
 
 ## Prerequisites
 

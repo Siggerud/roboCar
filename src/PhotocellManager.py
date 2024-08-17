@@ -19,14 +19,22 @@ class PhotocellManager:
         self._minPwmValue = 0
         self._maxPwmValue = 99
         self._currentPwmValue = 0
+        self._lastPwmValue = 0
 
+    def adjust_lights(self, lightSensorValue):
+        self._prepare_for_light_adjustment(lightSensorValue)
 
-    def adjust_car_lights_to_external_lights(self):
+        if self._currentPwmValue != self._lastPwmValue: # adjust lights if sensor value has changed
+            for pwm in self._pwms:
+                pwm.ChangeDutyCycle(self._currentPwmValue)
+
+            self._lastPwmValue = self._currentPwmValue # update last pwm value to current
+
+    def cleanup(self):
         for pwm in self._pwms:
-            pwm.ChangeDutyCycle(self._currentPwmValue)
-            print(self._currentPwmValue)
+            pwm.stop()
 
-    def prepare_for_light_adjustment(self, lightSensorValue):
+    def _prepare_for_light_adjustment(self, lightSensorValue):
         # the car lights pwm value have an inverse relationship to the light sensor value
         self._currentPwmValue = map_value_to_new_scale(
             lightSensorValue,
@@ -37,8 +45,5 @@ class PhotocellManager:
             self._minLightSensorValue
         )
 
-    def cleanup(self):
-        for pwm in self._pwms:
-            pwm.stop()
 
 

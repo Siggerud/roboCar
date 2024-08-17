@@ -52,24 +52,28 @@ class ArduinoCommunicator:
             if self._photocellLightsActive:
                 self._photocellReading = self._send_command_and_read_response("photocell")
 
-            # TODO: Add preparation to seperate method
-            if self._frontSensorActive or self._backSensorActive:
-                self._honker.prepare_for_honking(
-                    [self._frontSensorReading,
-                    self._backSensorReading]
-                )
-
-            if self._photocellLightsActive:
-                self._photocellLightsManager.prepare_for_light_adjustment(self._photocellReading)
+            # run objects that only need to be updated per reading
+            self._run_arduino_connected_objects_per_reading()
 
             self._lastReadTime = time()  # update last read time
 
-        # TODO: Add these to seperate method
+        # run objects that need to be updated continuously
+        self._run_arduino_connected_objects_continuously()
+
+    def _run_arduino_connected_objects_continuously(self):
         if self._frontSensorActive or self._backSensorActive:
             self._honker.alert_if_too_close()
 
+    def _run_arduino_connected_objects_per_reading(self):
+        # prepare honking values
+        if self._frontSensorActive or self._backSensorActive:
+            self._honker.prepare_for_honking(
+                [self._frontSensorReading,
+                 self._backSensorReading]
+            )
+
         if self._photocellLightsActive:
-            self._photocellLightsManager.adjust_car_lights_to_external_lights()
+            self._photocellLightsManager.adjust_lights(self._photocellReading)
 
     def cleanup(self):
         self._serialObj.close()
