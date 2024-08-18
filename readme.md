@@ -167,6 +167,29 @@ Cameraslot -> Camera
 #### Raspberry pi to arduino
 USB-A -> USB-B
 
+### Parts list
+
+#### Car handling
+Battery pack holding 6AA batteries <br />
+4 TT motors <br />
+L289N motor driver <br />
+4 wheels that attach to motors <br />
+
+#### Sensors
+2 HC-SR04 distance sensors
+Phototransistor
+
+#### Other
+Raspberry Pi 4 model B
+Arduino Uno
+Arduino Sensor Shield V5.0
+Passive buzzer
+Breadboard
+2 yellow LED lights
+
+
+
+
 
 
 
