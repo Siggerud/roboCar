@@ -102,11 +102,11 @@ class XboxControl:
                 self._pushButtonsStates[button] = self._controller.get_button(num)
 
                 return button
-    
+
     def _create_button_state_dict(self, otherDict):
         buttonStateDict = {}
-        for num in list(otherDict):
-            buttonStateDict[num] = 0
+        for button in list(otherDict.values()):
+            buttonStateDict[button] = 0
 
         return buttonStateDict
 
