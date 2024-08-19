@@ -3,7 +3,7 @@ from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
 from Camera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
-from xboxControl import XboxControl, X11ForwardingError, NoControllerDetected
+from carControl import CarControl, X11ForwardingError, NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 from time import sleep
@@ -29,7 +29,7 @@ GPIO.setmode(GPIO.BOARD)
 
 # set up car controller
 try:
-    xboxControl = XboxControl()
+    xboxControl = CarControl()
 except (X11ForwardingError, NoControllerDetected) as e:
     print_startup_error(e)
     exit()

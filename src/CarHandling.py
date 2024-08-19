@@ -56,7 +56,7 @@ class CarHandling:
 	def handle_xbox_input(self, buttonAndPressValue):
 		button, buttonPressValue = buttonAndPressValue
 		if button in self._turnButtons:
-			self._prepare_car_for_turning(button)
+			self._prepare_car_for_turning(button, buttonPressValue)
 			self._move_car()
 		elif button == self._turnButtonReleased:
 			self._prepare_car_to_stop_turning()
@@ -122,16 +122,23 @@ class CarHandling:
 		self._turnLeft = False
 		self._turnRight = False
 
-	def _prepare_car_for_turning(self, button):
-		if button == "D-PAD left":
+	def _prepare_car_for_turning(self, button, buttonState):
+		stopTurning = False
+
+		if button == "D-PAD left" and buttonState == 1:
 			self._turnLeft = True
 			self._turnRight = False
-		elif button == "D-PAD right":
+		elif button == "D-PAD right" and buttonState == 1:
 			self._turnLeft = False
 			self._turnRight = True
+		else:
+			self._turnLeft = False
+			self._turnRight = False
+			stopTurning = True
 
-		if not self._goForward and not self._goReverse:
-			self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
+		if not stopTurning:
+			if not self._goForward and not self._goReverse:
+				self._change_duty_cycle([self._pwmA, self._pwmB], self._pwmMaxTT)
 
 	def _prepare_car_for_throttle(self, button, buttonPressValue):
 		speed = map_value_to_new_scale(
