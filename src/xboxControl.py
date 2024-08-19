@@ -12,7 +12,7 @@ class XboxControl:
             1: "D-PAD right",
         }
 
-        self._dpad_button_states = self._create_dpad_button_states_dict()
+        self._dpad_button_states = self._create_button_state_dict(self._joyHatMotionToButtons)
 
         self._joyAxisMotionToButtons = {
             0: "LSB horizontal",
@@ -34,7 +34,7 @@ class XboxControl:
             15: "Back"
         }
 
-        self._pushButtonsStates = self._create_push_button_states_dict()
+        self._pushButtonsStates = self._create_button_state_dict(self._pushButtons)
 
         self._exitButton = "Start"
         self._exitButtonLastPush = None # keeps track of last time exit button was pushed
@@ -102,20 +102,13 @@ class XboxControl:
                 self._pushButtonsStates[button] = self._controller.get_button(num)
 
                 return button
+    
+    def _create_button_state_dict(self, otherDict):
+        buttonStateDict = {}
+        for num in list(otherDict):
+            buttonStateDict[num] = 0
 
-    def _create_push_button_states_dict(self):
-        pushedButtonStates = {}
-        for num in list(self._pushButtons.values()):
-            pushedButtonStates[num] = 0
-
-        return pushedButtonStates
-
-    def _create_dpad_button_states_dict(self):
-        dpadButtonStates = {}
-        for num in list(self._joyHatMotionToButtons.values()):
-            dpadButtonStates[num] = 0
-
-        return dpadButtonStates
+        return buttonStateDict
 
     def _set_controller(self):
         pygame.init()
