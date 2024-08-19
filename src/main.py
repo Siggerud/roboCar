@@ -3,10 +3,10 @@ from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
 from Camera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
-from carControl import CarControl, X11ForwardingError, NoControllerDetected
+from carControl import CarControl, X11ForwardingError
+from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
-from time import sleep
 from threading import Event, Lock
 
 # define GPIO pins
