@@ -4,7 +4,7 @@ from Camera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
-from carControl import NoControllerDetected
+from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 from threading import Event, Lock
@@ -29,7 +29,7 @@ GPIO.setmode(GPIO.BOARD)
 
 # set up car controller
 try:
-    carControl = CarControl()
+    carController = CarControl()
 except (X11ForwardingError, NoControllerDetected) as e:
     print_startup_error(e)
     exit()
@@ -60,16 +60,16 @@ cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
 # add components
-carControl.add_car(car)
-carControl.add_servo(servo)
-carControl.add_arduino_communicator(arduinoCommunicator)
+carController.add_car(car)
+carController.add_servo(servo)
+carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
 myEvent = Event()
 lock = Lock()
-carControl.enable_camera(cameraHelper, lock)
-carControl.activate_arduino_communication(myEvent)
-carControl.activate_car_handling(myEvent)
+carController.enable_camera(cameraHelper, lock)
+carController.activate_arduino_communication(myEvent)
+carController.activate_car_handling(myEvent)
 
 # keep process running until keyboard interrupt
 try:
@@ -79,7 +79,7 @@ try:
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
-    carControl.cleanup() # cleanup to finish all threads and close processes
+    carController.cleanup() # cleanup to finish all threads and close processes
     camera.cleanup()
     GPIO.cleanup()
 
