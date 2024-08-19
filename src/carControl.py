@@ -38,11 +38,11 @@ class CarControl:
         self._threads.append(thread)
         thread.start()
 
-    def activate_car_controlling(self, event):
+    def activate_car_handling(self, event):
         if self._cameraEnabled:
-            thread = Thread(target=self._start_controller, args=(event, self._threadLock))
+            thread = Thread(target=self._start_car_handling, args=(event, self._threadLock))
         else:
-            thread = Thread(target=self._start_controller, args=(event,))
+            thread = Thread(target=self._start_car_handling, args=(event,))
         self._threads.append(thread)
         thread.start()
 
@@ -60,7 +60,7 @@ class CarControl:
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
 
-    def _start_controller(self, threadEvent, lock=None):
+    def _start_car_handling(self, threadEvent, lock=None):
         self._print_button_explanation()
 
         while not threadEvent.is_set():
