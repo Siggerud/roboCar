@@ -19,7 +19,6 @@ class TestHonker(unittest.TestCase):
     def get_honker_object(self):
         return Honker(self.buzzerPin)
 
-
     def test_init_calls(self, mock_setup):
         honker = self.get_honker_object()
 

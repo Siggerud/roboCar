@@ -7,7 +7,8 @@ from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
-from threading import Event, Lock
+#from threading import Event, Lock
+from multiprocessing import Event, Lock, Array
 
 # define GPIO pins
 rightForward = 22 # IN2 
@@ -26,6 +27,8 @@ lightPin2 = 31
 
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
+
+shared_dict = Array("i", {"angle": 0, "speed": 0, "turn": "", "zoom": 1.0})
 
 # set up car controller
 try:
@@ -55,9 +58,10 @@ servo = ServoHandling(servoPin)
 # define camera aboard car
 resolution = (384, 288)
 cameraHelper = CameraHelper()
-camera = Camera(resolution, cameraHelper)
+camera = Camera(resolution, shared_dict)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
+#cameraHelper.add_shared_data(shared_dict)
 
 # add components
 carController.add_car(car)

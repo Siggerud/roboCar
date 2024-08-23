@@ -76,6 +76,11 @@ class CarHandling:
 		else:
 			return "-"
 
+	def update_control_values_for_video_feed(self, lock, shared_dict):
+		with lock:
+			shared_dict["speed"] = int(self._speed)
+			shared_dict["turn"] = self.get_current_turn_value()
+
 	def _change_duty_cycle(self, pwms, speed):
 		for pwm in pwms:
 			pwm.ChangeDutyCycle(speed)

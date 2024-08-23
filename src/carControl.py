@@ -1,5 +1,6 @@
 import subprocess
-from threading import Thread
+#from threading import Thread
+from multiprocessing import Process
 from xboxControl import XboxControl
 
 class CarControl:
@@ -34,15 +35,18 @@ class CarControl:
         self._servo = servo
 
     def activate_arduino_communication(self, event):
-        thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
+        #thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
+        thread = Process(target=self._listen_for_arduino_communication, args=(event, ))
         self._threads.append(thread)
         thread.start()
 
-    def activate_car_handling(self, event):
+    def activate_car_handling(self, event, shared_dict):
         if self._cameraEnabled:
-            thread = Thread(target=self._start_car_handling, args=(event, self._threadLock))
+            #thread = Thread(target=self._start_car_handling, args=(event, self._threadLock))
+            thread = Process(target=self._start_car_handling, args=(event, shared_dict, self._threadLock))
         else:
-            thread = Thread(target=self._start_car_handling, args=(event,))
+            #thread = Thread(target=self._start_car_handling, args=(event,))
+            thread = Process(target=self._start_car_handling, args=(event, shared_dict))
         self._threads.append(thread)
         thread.start()
 
@@ -60,7 +64,7 @@ class CarControl:
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
 
-    def _start_car_handling(self, threadEvent, lock=None):
+    def _start_car_handling(self, threadEvent, shared_dict, lock=None):
         self._print_button_explanation()
 
         while not threadEvent.is_set():
@@ -72,11 +76,13 @@ class CarControl:
 
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
+                    self._car.update_control_values_for_video_feed(lock, shared_dict)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
+                    self._servo.update_control_values_for_video_feed(lock, shared_dict)
                 if self._cameraEnabled:
-                    self._cameraHelper.handle_xbox_input(buttonAndPressValue, lock)
-                    self._cameraHelper.update_control_values_for_video_feed(lock)
+                    self._cameraHelper.handle_xbox_input(buttonAndPressValue, lock, shared_dict)
+                    #self._cameraHelper.update_control_values_for_video_feed(lock)
 
     def _print_button_explanation(self):
         print()

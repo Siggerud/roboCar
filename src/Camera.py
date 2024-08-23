@@ -5,11 +5,11 @@ from picamera2 import Picamera2
 from time import time
 
 class Camera:
-    def __init__(self, resolution, cameraHelper, rotation=True):
+    def __init__(self, resolution, shared_dict, rotation=True):
         self._dispW, self._dispH = resolution
         self._centerX = int(self._dispW / 2)
         self._centerY = int(self._dispH / 2)
-        self._cameraHelper = cameraHelper
+        #self._cameraHelper = cameraHelper
         self._rotation = rotation
 
         self._picam2 = Picamera2()
@@ -25,6 +25,8 @@ class Camera:
         self._font = cv2.FONT_HERSHEY_SIMPLEX
         self._scale = 1
         self._thickness = 1
+
+        self._shared_dict = shared_dict
 
         self._angleText = None
         self._speedText = None
@@ -133,11 +135,15 @@ class Camera:
 
     def _read_control_values_for_video_feed(self, lock):
         with lock:
-            self._angleText = self._cameraHelper.get_angle_text()
-            self._speedText = self._cameraHelper.get_speed_text()
-            self._turnText = self._cameraHelper.get_turn_text()
-            self._zoomValue = self._cameraHelper.get_zoom_value()
-            self._hudActive = self._cameraHelper.get_hud_value()
+            self._angleText = self._shared_dict["angle"]
+            self._speedText = self._shared_dict["speed"]
+            self._turnText = self._shared_dict["turn"]
+            self._zoomValue = self._shared_dict["zoom"]
+            #self._angleText = self._cameraHelper.get_angle_text()
+            #self._speedText = self._cameraHelper.get_speed_text()
+            #self._turnText = self._cameraHelper.get_turn_text()
+            #self._zoomValue = self._cameraHelper.get_zoom_value()
+            #self._hudActive = self._cameraHelper.get_hud_value()
 
     def _get_origin(self, count):
         return self._textPositions[count]

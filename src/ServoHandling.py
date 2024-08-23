@@ -26,6 +26,10 @@ class ServoHandling:
             self._prepare_for_servo_movement(buttonPressValue)
             self._move_servo()
 
+    def update_control_values_for_video_feed(self, shared_dict, lock):
+        with lock:
+            shared_dict["angle"] = self.get_current_servo_angle()
+
     def servo_buttons(self):
         return self._controlsDictServo
 
