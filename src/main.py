@@ -8,7 +8,7 @@ from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 #from threading import Event, Lock
-from multiprocessing import Event, Lock, Array
+from multiprocessing import Event, Lock, Manager
 
 # define GPIO pins
 rightForward = 22 # IN2 
@@ -28,7 +28,8 @@ lightPin2 = 31
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
 
-shared_dict = Array('i', {'angle': 0, 'speed': 0, 'turn': '', 'zoom': 1.0})
+with Manager() as manager:
+    shared_dict = manager.dict({'angle': 0, 'speed': 0, 'turn': '', 'zoom': 1.0})
 
 # set up car controller
 try:
