@@ -50,15 +50,15 @@ class Camera:
             im = self._rotate_image(im)
 
         # read control values from external classes
-        self._read_control_values_for_video_feed(lock)
+        #self._read_control_values_for_video_feed(lock)
 
         # resize image when zooming
-        if self._zoomValue != 1.0:
-            im = self._get_zoomed_image(im)
+        #if self._zoomValue != 1.0:
+        #    im = self._get_zoomed_image(im)
 
         # add control values to cam feed
-        if self._hudActive:
-            self._add_text_to_cam_feed(im)
+        #if self._hudActive:
+        #    self._add_text_to_cam_feed(im)
 
         cv2.imshow("Camera", im)
         cv2.waitKey(1)

@@ -76,10 +76,10 @@ class CarControl:
 
                 if self._car:
                     self._car.handle_xbox_input(buttonAndPressValue)
-                    self._car.update_control_values_for_video_feed(lock, shared_dict)
+                    #self._car.update_control_values_for_video_feed(lock, shared_dict)
                 if self._servo:
                     self._servo.handle_xbox_input(buttonAndPressValue)
-                    self._servo.update_control_values_for_video_feed(lock, shared_dict)
+                    #self._servo.update_control_values_for_video_feed(lock, shared_dict)
                 if self._cameraEnabled:
                     self._cameraHelper.handle_xbox_input(buttonAndPressValue, lock, shared_dict)
                     #self._cameraHelper.update_control_values_for_video_feed(lock)
