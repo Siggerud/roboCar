@@ -57,8 +57,8 @@ class Camera:
         #    im = self._get_zoomed_image(im)
 
         # add control values to cam feed
-        #if self._hudActive:
-        #    self._add_text_to_cam_feed(im)
+        if self._hudActive:
+            self._add_text_to_cam_feed(im)
 
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
