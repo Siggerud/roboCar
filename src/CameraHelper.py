@@ -91,10 +91,9 @@ class CameraHelper:
         if stickValue != self._lastStickValue:
             self._lastStickValue = stickValue
             with lock:
-                #self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
-                                                    # self._zoomButtonMinValue, self._zoomButtonMaxValue)
-                shared_dict['zoom'] = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
+                self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
                                                      self._zoomButtonMinValue, self._zoomButtonMaxValue)
+
 
     def _check_if_button_press_within_valid_range(self, buttonPressValue):
         if buttonPressValue >= self._zoomButtonMaxValue and buttonPressValue <= self._zoomButtonMinValue:

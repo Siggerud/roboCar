@@ -16,6 +16,7 @@ class CarControl:
 
         self._cameraEnabled = False
         self._cameraHelper = None
+        self._camera = None
 
         self._threads = []
         self._threadLock = None
@@ -31,12 +32,21 @@ class CarControl:
         self._cameraHelper = cameraHelper
         self._threadLock = lock
 
+    def add_camera(self, camera):
+        self._camera = camera
+
     def add_servo(self, servo):
         self._servo = servo
 
     def activate_arduino_communication(self, event):
         #thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
         thread = Process(target=self._listen_for_arduino_communication, args=(event, ))
+        self._threads.append(thread)
+        thread.start()
+
+    def activate_camera(self, event, lock):
+        #thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
+        thread = Process(target=self._start_camera, args=(event, lock))
         self._threads.append(thread)
         thread.start()
 
@@ -109,6 +119,10 @@ class CarControl:
     def _listen_for_arduino_communication(self, threadEvent):
         while not threadEvent.is_set():
             self._arduinoCommunicator.start()
+
+    def _start_camera(self, threadEvent, lock):
+        while not threadEvent.is_set():
+            self._camera.show_camera_feed(lock)
 
 
     def _exit_program(self, threadEvent):

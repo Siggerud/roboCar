@@ -8,6 +8,7 @@ from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
 #from threading import Event, Lock
+from time import sleep
 from multiprocessing import Event, Lock, Manager
 
 # define GPIO pins
@@ -62,6 +63,7 @@ cameraHelper = CameraHelper()
 camera = Camera(resolution, shared_dict)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
+carController.add_camera(camera)
 #cameraHelper.add_shared_data(shared_dict)
 
 # add components
@@ -75,12 +77,14 @@ lock = Lock()
 carController.enable_camera(cameraHelper, lock)
 carController.activate_arduino_communication(myEvent)
 carController.activate_car_handling(myEvent, shared_dict)
+carController.activate_camera(myEvent, lock)
 
 # keep process running until keyboard interrupt
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed(lock)
+        #camera.show_camera_feed(lock)
+        sleep(0.5)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
