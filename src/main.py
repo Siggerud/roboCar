@@ -74,7 +74,7 @@ myEvent = Event()
 lock = Lock()
 carController.enable_camera(cameraHelper, lock)
 carController.activate_arduino_communication(myEvent)
-carController.activate_car_handling(myEvent)
+carController.activate_car_handling(myEvent, shared_dict)
 
 # keep process running until keyboard interrupt
 try:
