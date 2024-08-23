@@ -28,7 +28,7 @@ lightPin2 = 31
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
 
-shared_dict = Array("i", {"angle": 0, "speed": 0, "turn": "", "zoom": 1.0})
+shared_dict = Array('i', {'angle': 0, 'speed': 0, 'turn': '', 'zoom': 1.0})
 
 # set up car controller
 try:

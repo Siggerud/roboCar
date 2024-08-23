@@ -65,13 +65,13 @@ class CameraHelper:
         with lock:
             if self._servo:
                 #self._angleText = "Angle: " + str(self._servo.get_current_servo_angle())
-                self._angleText = "Angle: " + str(self._shared_dict["angle"])
+                self._angleText = "Angle: " + str(self._shared_dict['angle'])
 
             if self._car:
                 #self._speedText = "Speed: " + str(self._car.get_current_speed()) + "%"
-                self._speedText = "Speed: " + str(self._shared_dict["speed"]) + "%"
+                self._speedText = "Speed: " + str(self._shared_dict['speed']) + "%"
                 #self._turnText = "Turn: " + self._car.get_current_turn_value()
-                self._turnText = "Turn: " + self._shared_dict["turn"]
+                self._turnText = "Turn: " + self._shared_dict['turn']
 
 
     def camera_buttons(self):
@@ -80,7 +80,7 @@ class CameraHelper:
     def _set_hud_on_or_off(self, lock, shared_dict):
         with lock:
             #self._hudActive = not self._hudActive
-            shared_dict["hud"] = not shared_dict["hud"]
+            shared_dict['hud'] = not shared_dict['hud']
 
     def _set_zoom_value(self, buttonPressValue, lock, shared_dict):
         if self._check_if_button_press_within_valid_range(buttonPressValue):
@@ -93,7 +93,7 @@ class CameraHelper:
             with lock:
                 #self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
                                                     # self._zoomButtonMinValue, self._zoomButtonMaxValue)
-                shared_dict["zoom"] = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
+                shared_dict['zoom'] = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
                                                      self._zoomButtonMinValue, self._zoomButtonMaxValue)
 
     def _check_if_button_press_within_valid_range(self, buttonPressValue):

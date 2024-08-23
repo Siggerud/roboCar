@@ -135,10 +135,10 @@ class Camera:
 
     def _read_control_values_for_video_feed(self, lock):
         with lock:
-            self._angleText = self._shared_dict["angle"]
-            self._speedText = self._shared_dict["speed"]
-            self._turnText = self._shared_dict["turn"]
-            self._zoomValue = self._shared_dict["zoom"]
+            self._angleText = self._shared_dict['angle']
+            self._speedText = self._shared_dict['speed']
+            self._turnText = self._shared_dict['turn']
+            self._zoomValue = self._shared_dict['zoom']
             #self._angleText = self._cameraHelper.get_angle_text()
             #self._speedText = self._cameraHelper.get_speed_text()
             #self._turnText = self._cameraHelper.get_turn_text()
