@@ -44,7 +44,7 @@ class Camera:
             draw = ImageDraw.Draw(image)
 
             # Position for the number (bottom-right corner)
-
+            """
 
             self._read_control_values_for_video_feed()
 
@@ -54,15 +54,15 @@ class Camera:
 
             if self._turnText:
                 text_position = (image.width - 100, image.height - 100)
-                draw.text(text_position, self._speedText, font=self._font, fill=(255, 255, 255))
+                draw.text(text_position, self._turnText, font=self._font, fill=(255, 255, 255))
 
             if self._angleText:
                 text_position = (image.width - 100, image.height - 150)
                 draw.text(text_position, self._angleText, font=self._font, fill=(255, 255, 255))
 
             text_position = (image.width - 100, image.height - 200)
-            draw.text(text_position, self._angleText, font=self._font, fill=(255, 255, 255))
-
+            draw.text(text_position, "Zoom: " + str(self._zoomValue) + "x", font=self._font, fill=(255, 255, 255))
+            """
             text_position = (image.width - 100, 50)
             draw.text(text_position, self._get_fps(), font=self._font, fill=(255, 255, 255))
 
