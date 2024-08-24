@@ -2,6 +2,7 @@ from picamera2 import Picamera2
 from flask import Response
 import io
 from PIL import Image, ImageDraw, ImageFont
+from time import time
 
 class Camera:
     def __init__(self, resolution, cameraHelper, lock):
@@ -18,6 +19,10 @@ class Camera:
         self._zoomValue = 1.0
         self._hudActive = True
 
+        self._fps = 0
+        self._weightPrevFps = 0.9
+        self._weightNewFps = 0.1
+
     def _start_camera(self, resolution):
         config = self._picam.create_still_configuration(main={"size": resolution})
         self._picam.configure(config)
@@ -28,6 +33,8 @@ class Camera:
         stream = io.BytesIO()
 
         while True:
+            tStart = time()  # start timer for calculating fps
+
             stream.seek(0)
             self._picam.capture_file(stream, format='jpeg')
 
@@ -37,12 +44,27 @@ class Camera:
             draw = ImageDraw.Draw(image)
 
             # Position for the number (bottom-right corner)
-            text_position = (image.width - 100, image.height - 50)
+
 
             self._read_control_values_for_video_feed()
 
-            # Draw the text on the image
-            draw.text(text_position, self._speedText, font=self._font, fill=(255, 255, 255))
+            if self._speedText:
+                text_position = (image.width - 100, image.height - 50)
+                draw.text(text_position, self._speedText, font=self._font, fill=(255, 255, 255))
+
+            if self._turnText:
+                text_position = (image.width - 100, image.height - 100)
+                draw.text(text_position, self._speedText, font=self._font, fill=(255, 255, 255))
+
+            if self._angleText:
+                text_position = (image.width - 100, image.height - 150)
+                draw.text(text_position, self._angleText, font=self._font, fill=(255, 255, 255))
+
+            text_position = (image.width - 100, image.height - 200)
+            draw.text(text_position, self._angleText, font=self._font, fill=(255, 255, 255))
+
+            text_position = (image.width - 100, 50)
+            draw.text(text_position, self._get_fps(), font=self._font, fill=(255, 255, 255))
 
             # Save the modified image back to the stream
             stream = io.BytesIO()
@@ -53,6 +75,17 @@ class Camera:
             stream.seek(0)
 
             stream.truncate()
+
+            self._calculate_fps(tStart)
+
+    def _calculate_fps(self, startTime):
+        endTime = time()
+        loopTime = endTime - startTime
+
+        self._fps = self._weightPrevFps * self._fps + self._weightNewFps * (1 / loopTime)
+
+    def _get_fps(self):
+        return str(int(self._fps)) + " FPS"
 
     def _read_control_values_for_video_feed(self):
         with self._lock:
