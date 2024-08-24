@@ -1,6 +1,8 @@
 from CarHandling import CarHandling
 from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
-from Camera import Camera
+#from Camera import Camera
+from flask import Flask
+from newCamera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
@@ -55,7 +57,9 @@ servo = ServoHandling(servoPin)
 # define camera aboard car
 resolution = (384, 288)
 cameraHelper = CameraHelper()
-camera = Camera(resolution, cameraHelper)
+#camera = Camera(resolution, cameraHelper)
+app = Flask(__name__)
+app.add_url_rule('/video_feed', 'video_feed', Camera.video_feed)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
@@ -73,14 +77,15 @@ carController.activate_car_handling(myEvent)
 
 # keep process running until keyboard interrupt
 try:
-    while not myEvent.is_set(): # listen for any threads setting the event
+    #while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed(lock)
+        #camera.show_camera_feed(lock)
+    app.run(host='0.0.0.0', port=5000, threaded=True)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
     carController.cleanup() # cleanup to finish all threads and close processes
-    camera.cleanup()
+    #camera.cleanup()
     GPIO.cleanup()
 
 
