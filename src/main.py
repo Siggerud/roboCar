@@ -58,8 +58,6 @@ servo = ServoHandling(servoPin)
 resolution = (640, 480)
 cameraHelper = CameraHelper()
 #camera = Camera(resolution, cameraHelper)
-app = Flask(__name__)
-app.add_url_rule('/video_feed', 'video_feed', camera.video_feed)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
@@ -75,6 +73,8 @@ carController.enable_camera(cameraHelper, lock)
 carController.activate_arduino_communication(myEvent)
 carController.activate_car_handling(myEvent)
 camera = Camera(resolution, cameraHelper, lock)
+app = Flask(__name__)
+app.add_url_rule('/video_feed', 'video_feed', camera.video_feed)
 
 # keep process running until keyboard interrupt
 try:
