@@ -33,6 +33,7 @@ class Camera:
         stream = io.BytesIO()
 
         while True:
+            """
             tStart = time()  # start timer for calculating fps
 
             stream.seek(0)
@@ -44,7 +45,7 @@ class Camera:
             draw = ImageDraw.Draw(image)
 
             # Position for the number (bottom-right corner)
-            """
+            
 
             self._read_control_values_for_video_feed()
 
@@ -62,7 +63,7 @@ class Camera:
 
             text_position = (image.width - 100, image.height - 200)
             draw.text(text_position, "Zoom: " + str(self._zoomValue) + "x", font=self._font, fill=(255, 255, 255))
-            """
+            
             text_position = (image.width - 100, 50)
             draw.text(text_position, self._get_fps(), font=self._font, fill=(255, 255, 255))
 
@@ -77,6 +78,16 @@ class Camera:
             stream.truncate()
 
             self._calculate_fps(tStart)
+            """
+            tStart = time()
+            stream.seek(0)
+            self._picam.capture_file(stream, format='jpeg')
+            yield b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + stream.getvalue() + b'\r\n'
+            stream.seek(0)
+            stream.truncate()
+
+            self._calculate_fps(tStart)
+            print(self._get_fps())
 
     def _calculate_fps(self, startTime):
         endTime = time()
