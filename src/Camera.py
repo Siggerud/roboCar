@@ -45,6 +45,7 @@ class Camera:
 
     def show_camera_feed(self, shared_dict):
         tStart = time() # start timer for calculating fps
+        print("a")
 
         # get raw image
         im = self._picam2.capture_array()
@@ -63,7 +64,7 @@ class Camera:
         # add control values to cam feed
         if self._hudActive:
             self._add_text_to_cam_feed(im)
-        print("a")
+
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
 
