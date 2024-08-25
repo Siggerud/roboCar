@@ -28,11 +28,11 @@ class CameraHelper:
         self._zoomButton = self._controlsDictCamera["Zoom"]
         self._hudButton = self._controlsDictCamera["HUD"]
 
-    def handle_xbox_input(self, button, pressValue, shared_dict):
+    def handle_xbox_input(self, button, pressValue):
         if button == self._zoomButton:
-            self._set_zoom_value(pressValue, shared_dict)
+            self._set_zoom_value(pressValue)
         elif button == self._hudButton and pressValue: # check that button is pushed, not released
-            self._set_hud_on_or_off(shared_dict)
+            self._set_hud_on_or_off()
 
     def add_car(self, car):
         self._car = car
