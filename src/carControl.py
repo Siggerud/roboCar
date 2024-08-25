@@ -22,7 +22,7 @@ class CarControl:
 
         self._buttonToObjectDict = {
         }
-        self.shared_dict = Array('i', (0, 0, 0))
+        self.shared_dict = Array('i', (0, 0, 0, 0))
 
     def add_arduino_communicator(self, arduinoCommunicator):
         self._arduinoCommunicator = arduinoCommunicator
