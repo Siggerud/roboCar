@@ -146,7 +146,7 @@ class Camera:
         print("speed")
         self._turnText = "Turn: " + self._get_turn_value(shared_dict[2])
         print("turn")
-        self._hudActive = shared_dict[4]
+        self._hudActive = shared_dict[3]
         print("hud")
         #self._zoomValue = shared_dict[5]
 
