@@ -53,6 +53,7 @@ class CarHandling:
         self._gasAndReverseButtons = list(self._controlsDictThrottle.values())
 
     def handle_xbox_input(self, button, pressValue):
+        print(button)
         if button in self._turnButtons:
             self._prepare_car_for_turning(button, pressValue)
             self._move_car()
