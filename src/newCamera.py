@@ -34,7 +34,7 @@ class Camera:
                         self._thickness)
             cv2.putText(m.array, self._turnText, (10, self._dispH - 150), self._font, self._scale, self._colour,
                         self._thickness)
-            cv2.putText(m.array, "Zoom: " + str(self._zoomValue) + "x", (10, self._dispH - 150), self._font, self._scale, self._colour,
+            cv2.putText(m.array, "Zoom: " + str(self._zoomValue) + "x", (10, self._dispH - 200), self._font, self._scale, self._colour,
                         self._thickness)
 
     def _set_up_picam(self, resolution):
