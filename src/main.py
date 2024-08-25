@@ -1,6 +1,7 @@
 from CarHandling import CarHandling
 from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
-from Camera import Camera
+#from Camera import Camera
+from newCamera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
@@ -53,9 +54,10 @@ car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, e
 servo = ServoHandling(servoPin)
 
 # define camera aboard car
-resolution = (384, 288)
+#resolution = (384, 288)
 cameraHelper = CameraHelper()
-camera = Camera(resolution, cameraHelper)
+#camera = Camera(resolution, cameraHelper)
+camera = Camera()
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
@@ -75,13 +77,15 @@ carController.activate_car_handling(myEvent)
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed(lock)
+        camera.start_video_feed(myEvent)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
     carController.cleanup() # cleanup to finish all threads and close processes
     camera.cleanup()
     GPIO.cleanup()
+
+# ffplay tcp://<your-pi-ip-address>:9999 -fflags nobuffer -flags low_delay -framedrop
 
 
 
