@@ -48,7 +48,7 @@ class Camera:
 
         # get raw image
         im = self._picam2.capture_array()
-  
+
         # rotate/flip image
         if self._rotation:
             im = self._rotate_image(im)
