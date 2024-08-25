@@ -77,7 +77,7 @@ carController.activate_car_handling(myEvent)
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.start_video_feed(myEvent)
+        camera.start_video_feed(lock)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
@@ -85,7 +85,7 @@ finally:
     camera.cleanup()
     GPIO.cleanup()
 
-# ffplay tcp://<your-pi-ip-address>:9999 -fflags nobuffer -flags low_delay -framedrop
+# ffplay tcp://192.168.0.41:9999 -fflags nobuffer -flags low_delay -framedrop
 
 
 
