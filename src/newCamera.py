@@ -27,7 +27,8 @@ class Camera:
     def apply_text(self, request):
         self._read_control_values_for_video_feed()
         with MappedArray(request, "main") as m:
-            cv2.putText(m.array, self._angleText, (100, 100), self._font, self._scale, self._colour, self._thickness)
+            cv2.putText(m.array, self._angleText, (10, 100), self._font, self._scale, self._colour, self._thickness)
+            cv2.putText(m.array, self._speedText, (10, 150), self._font, self._scale, self._colour, self._thickness)
 
 
     def _set_up_picam(self):
