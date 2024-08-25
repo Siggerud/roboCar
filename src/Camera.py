@@ -63,7 +63,7 @@ class Camera:
         # add control values to cam feed
         if self._hudActive:
             self._add_text_to_cam_feed(im)
-
+        print("a")
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
 
