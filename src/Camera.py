@@ -37,7 +37,7 @@ class Camera:
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
-    def show_camera_feed(self, lock):
+    def show_camera_feed(self):
         tStart = time() # start timer for calculating fps
 
         # get raw image
@@ -131,13 +131,12 @@ class Camera:
     def _get_fps(self):
         return str(int(self._fps)) + " FPS"
 
-    def _read_control_values_for_video_feed(self, lock):
-        with lock:
-            self._angleText = self._cameraHelper.get_angle_text()
-            self._speedText = self._cameraHelper.get_speed_text()
-            self._turnText = self._cameraHelper.get_turn_text()
-            self._zoomValue = self._cameraHelper.get_zoom_value()
-            self._hudActive = self._cameraHelper.get_hud_value()
+    def _read_control_values_for_video_feed(self):
+        self._angleText = self._cameraHelper.get_angle_text()
+        self._speedText = self._cameraHelper.get_speed_text()
+        self._turnText = self._cameraHelper.get_turn_text()
+        self._zoomValue = self._cameraHelper.get_zoom_value()
+        self._hudActive = self._cameraHelper.get_hud_value()
 
     def _get_origin(self, count):
         return self._textPositions[count]

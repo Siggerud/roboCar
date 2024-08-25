@@ -56,7 +56,6 @@ class CameraHelper:
         return self._hudActive
 
     def update_control_values_for_video_feed(self):
-        #with lock:
         if self._servo:
             self._angleText = "Angle: " + str(self._servo.get_current_servo_angle())
 
@@ -68,7 +67,6 @@ class CameraHelper:
         return self._controlsDictCamera
 
     def _set_hud_on_or_off(self):
-        #with lock:
         self._hudActive = not self._hudActive
 
     def _set_zoom_value(self, buttonPressValue):
