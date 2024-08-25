@@ -45,25 +45,25 @@ class Camera:
 
     def show_camera_feed(self, shared_dict):
         tStart = time() # start timer for calculating fps
-        print("a")
+
         # get raw image
         im = self._picam2.capture_array()
-        print("b")
+  
         # rotate/flip image
         if self._rotation:
             im = self._rotate_image(im)
-        print("c")
+
         # read control values from external classes
         self._read_control_values_for_video_feed(shared_dict)
-        print("d")
+
         # resize image when zooming
         if self._zoomValue != 1.0:
             im = self._get_zoomed_image(im)
-        print("e")
+
         # add control values to cam feed
         if self._hudActive:
             self._add_text_to_cam_feed(im)
-        print("f")
+
         cv2.imshow("Camera", im)
         cv2.waitKey(1)
 
@@ -141,13 +141,9 @@ class Camera:
 
     def _read_control_values_for_video_feed(self, shared_dict):
         self._angleText = "Angle: " + str(shared_dict[0])
-        print("Angle")
         self._speedText = "Speed: " + str(shared_dict[1]) + "%"
-        print("speed")
         self._turnText = "Turn: " + self._get_turn_value(shared_dict[2])
-        print("turn")
         self._hudActive = shared_dict[3]
-        print("hud")
         #self._zoomValue = shared_dict[5]
 
 
