@@ -43,7 +43,7 @@ class CarControl:
         thread.start()
 
     def activate_car_handling(self, event):
-        thread = Process(target=self._start_car_handling, args=(event, self.shared_dict))
+        thread = Process(target=self._start_car_handling, args=(event,))
         self._threads.append(thread)
         thread.start()
 
