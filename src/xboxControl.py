@@ -58,10 +58,9 @@ class XboxControl:
             button = self._get_pushed_button()
             buttonPressValue = self._pushButtonsStates[button]
 
-        return (button, buttonPressValue)
+        return button, buttonPressValue
 
-    def check_for_exit_event(self, buttonAndPressValue):
-        button, pressValue = buttonAndPressValue
+    def check_for_exit_event(self, button):
         if button == self._exitButton:
             # check if exit button has been pushed
             if self._pushButtonsStates[self._exitButton] == 1:

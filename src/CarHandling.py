@@ -51,13 +51,12 @@ class CarHandling:
 
 		self._gasAndReverseButtons = list(self._controlsDictThrottle.values())
 
-	def handle_xbox_input(self, buttonAndPressValue):
-		button, buttonPressValue = buttonAndPressValue
+	def handle_xbox_input(self, button, pressValue):
 		if button in self._turnButtons:
-			self._prepare_car_for_turning(button, buttonPressValue)
+			self._prepare_car_for_turning(button, pressValue)
 			self._move_car()
 		elif button in self._gasAndReverseButtons:
-			self._prepare_car_for_throttle(button, buttonPressValue)
+			self._prepare_car_for_throttle(button, pressValue)
 			self._move_car()
 
 	def car_buttons(self):

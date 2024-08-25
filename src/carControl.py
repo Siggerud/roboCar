@@ -19,6 +19,10 @@ class CarControl:
         self._threads = []
         self._threadLock = None
 
+        self._buttonToObjectDict = {
+
+        }
+
     def add_arduino_communicator(self, arduinoCommunicator):
         self._arduinoCommunicator = arduinoCommunicator
 
@@ -62,20 +66,22 @@ class CarControl:
 
     def _start_car_handling(self, threadEvent, lock=None):
         self._print_button_explanation()
+        self._map_all_objects_to_buttons()
+        print(self._buttonToObjectDict)
 
         while not threadEvent.is_set():
             for event in self._xboxControl.get_controller_events():
-                buttonAndPressValue = self._xboxControl.get_button_and_press_value_from_event(event)
-                if self._xboxControl.check_for_exit_event(buttonAndPressValue):
+                button, pressValue = self._xboxControl.get_button_and_press_value_from_event(event)
+                if self._xboxControl.check_for_exit_event(button):
                     self._exit_program(threadEvent)
                     break
 
                 if self._car:
-                    self._car.handle_xbox_input(buttonAndPressValue)
+                    self._car.handle_xbox_input(button, pressValue)
                 if self._servo:
-                    self._servo.handle_xbox_input(buttonAndPressValue)
+                    self._servo.handle_xbox_input(button, pressValue)
                 if self._cameraEnabled:
-                    self._cameraHelper.handle_xbox_input(buttonAndPressValue, lock)
+                    self._cameraHelper.handle_xbox_input(button, pressValue, lock)
                     self._cameraHelper.update_control_values_for_video_feed(lock)
 
     def _print_button_explanation(self):
@@ -99,6 +105,20 @@ class CarControl:
             print()
 
         print(f"Double tap {self._xboxControl.get_exit_button()} to exit")
+
+    def _map_all_objects_to_buttons(self):
+        if self._car:
+            self._add_object_to_buttons(self._car.car_buttons(), self._car)
+
+        if self._servo:
+            self._add_object_to_buttons(self._servo.servo_buttons(), self._servo)
+
+        if self._cameraEnabled:
+            self._add_object_to_buttons(self._cameraHelper.camera_buttons(), self._cameraHelper)
+
+    def _add_object_to_buttons(self, buttonDict, roboObject):
+        for button in list(buttonDict.values()):
+            self._buttonToObjectDict[button] = roboObject
 
     def _listen_for_arduino_communication(self, threadEvent):
         while not threadEvent.is_set():

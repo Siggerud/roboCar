@@ -20,10 +20,9 @@ class ServoHandling:
 
         self._moveServoButton = self._controlsDictServo["Servo"]
 
-    def handle_xbox_input(self, buttonAndPressValue):
-        button, buttonPressValue = buttonAndPressValue
+    def handle_xbox_input(self, button, pressValue):
         if button == self._moveServoButton:
-            self._prepare_for_servo_movement(buttonPressValue)
+            self._prepare_for_servo_movement(pressValue)
             self._move_servo()
 
     def servo_buttons(self):
