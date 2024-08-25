@@ -24,9 +24,10 @@ class Camera:
         self._thickness = 1
 
     def apply_text(self, request):
-        with MappedArray(request, 'main') as m:
+        self._read_control_values_for_video_feed()
+        with MappedArray(request, "main") as m:
             cv2.putText(m.array, self._angleText, (100, 100), self._font, self._scale, self._colour, self._thickness)
-            print("i")
+        
 
     def _set_up_picam(self):
         self._config = self._picam.create_video_configuration(transform=Transform(hflip=1, vflip=1))
