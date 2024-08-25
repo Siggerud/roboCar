@@ -32,6 +32,11 @@ class Camera:
         self._zoomValue = 1.0
         self._hudActive = True
 
+        self._number_to_turnValue = {
+            0: "Left",
+            1: "Right"
+        }
+
         self._fps = 0
         self._weightPrevFps = 0.9
         self._weightNewFps = 0.1
@@ -115,7 +120,7 @@ class Camera:
                         self._thickness)
             counter += 1
             print(self._angleText)
-        """
+
         if self._speedText:
             cv2.putText(image, self._speedText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
@@ -125,7 +130,7 @@ class Camera:
             cv2.putText(image, self._turnText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
             counter += 1
-        """
+
         # display fps
         cv2.putText(image, self._get_fps(), self._fpsPos, self._font, self._scale, self._colour,
                     self._thickness)
@@ -135,10 +140,14 @@ class Camera:
 
     def _read_control_values_for_video_feed(self, shared_dict):
         self._angleText = "Angle: " + str(shared_dict[0])
-        #self._speedText = shared_dict["Speed"]
-        #self._turnText = shared_dict["Turn"]
-        #self._zoomValue = shared_dict["Zoom"]
-        #self._hudActive = shared_dict["HUD"]
+        self._speedText = "Speed: " + str(shared_dict[1]) + "%"
+        self._turnText = "Turn: " + self._get_turn_value(shared_dict[2])
+        self._hudActive = shared_dict[4]
+        #self._zoomValue = shared_dict[5]
+
+
+    def _get_turn_value(self, number):
+        return self._number_to_turnValue[number]
 
     def _get_origin(self, count):
         return self._textPositions[count]

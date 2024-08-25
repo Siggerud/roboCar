@@ -67,14 +67,14 @@ class CameraHelper:
         """
         if self._servo:
             shared_dict[0] = self._servo.get_current_servo_angle()
-        """
-        if self._car:
-            shared_dict["Speed"] = "Speed: " + str(self._car.get_current_speed()) + "%"
-            shared_dict["Turn"] = "Turn: " + self._car.get_current_turn_value()
 
-        shared_dict["Zoom"] = self._zoomValue
-        shared_dict["HUD"] = self._hudActive
-        """
+        if self._car:
+            shared_dict[1] = self._car.get_current_speed()
+            shared_dict[2] = self._car.get_current_turn_value()
+
+        #shared_dict[3] = self._zoomValue
+        #shared_dict[4] = self._hudActive
+
 
     def camera_buttons(self):
         return self._controlsDictCamera
