@@ -18,7 +18,7 @@ class Camera:
         self._hudActive = True
 
     def _set_up_picam(self):
-        self._config = self._picam.create_video_configuration(transform='hflip')
+        self._config = self._picam.create_video_configuration(transform=Transform(hflip=1, vflip=1))
         self._picam.configure(self._config) # flip the image
         self._encoder = H264Encoder(10000000)
 
