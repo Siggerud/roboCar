@@ -29,10 +29,9 @@ class CarControl:
     def add_car(self, car):
         self._car = car
 
-    def enable_camera(self, cameraHelper, lock):
+    def enable_camera(self, cameraHelper):
         self._cameraEnabled = True
         self._cameraHelper = cameraHelper
-        self._threadLock = lock
 
     def add_servo(self, servo):
         self._servo = servo
@@ -43,10 +42,7 @@ class CarControl:
         thread.start()
 
     def activate_car_handling(self, event):
-        if self._cameraEnabled:
-            thread = Thread(target=self._start_car_handling, args=(event, self._threadLock))
-        else:
-            thread = Thread(target=self._start_car_handling, args=(event,))
+        thread = Thread(target=self._start_car_handling, args=(event,))
         self._threads.append(thread)
         thread.start()
 
@@ -64,7 +60,7 @@ class CarControl:
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
 
-    def _start_car_handling(self, threadEvent, lock=None):
+    def _start_car_handling(self, threadEvent):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
@@ -74,18 +70,11 @@ class CarControl:
                 if self._xboxControl.check_for_exit_event(button):
                     self._exit_program(threadEvent)
                     break
-                """
-                if self._car:
-                    self._car.handle_xbox_input(button, pressValue)
-                if self._servo:
-                    self._servo.handle_xbox_input(button, pressValue)
-                if self._cameraEnabled:
-                    self._cameraHelper.handle_xbox_input(button, pressValue, lock)
-                    self._cameraHelper.update_control_values_for_video_feed(lock)
-                """
+
+                # get the object to take action based on the button pushed
                 try:
                     self._buttonToObjectDict[button].handle_xbox_input(button, pressValue)
-                except KeyError:
+                except KeyError: # if key does not correspond to object, then go to next event
                     continue
 
                 if self._cameraEnabled:

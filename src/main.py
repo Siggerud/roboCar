@@ -7,7 +7,7 @@ from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
-from threading import Event, Lock
+from threading import Event
 
 # define GPIO pins
 rightForward = 22 # IN2 
@@ -66,8 +66,7 @@ carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
 myEvent = Event()
-lock = Lock()
-carController.enable_camera(cameraHelper, lock)
+carController.enable_camera(cameraHelper)
 carController.activate_arduino_communication(myEvent)
 carController.activate_car_handling(myEvent)
 
@@ -75,7 +74,7 @@ carController.activate_car_handling(myEvent)
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed(lock)
+        camera.show_camera_feed()
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
