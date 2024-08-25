@@ -3,6 +3,7 @@ from roboCarHelper import map_value_to_new_scale
 from itertools import chain
 
 
+
 class CarHandling:
     def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
         self._leftBackward = leftBackward
@@ -79,7 +80,6 @@ class CarHandling:
     def _change_duty_cycle(self, pwms, speed):
         for pwm in pwms:
             pwm.ChangeDutyCycle(speed)
-            print(speed)
 
     def _adjust_gpio_values(self, gpioValues):
         leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
