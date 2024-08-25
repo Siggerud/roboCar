@@ -57,7 +57,7 @@ servo = ServoHandling(servoPin)
 #resolution = (384, 288)
 cameraHelper = CameraHelper()
 #camera = Camera(resolution, cameraHelper)
-camera = Camera()
+camera = Camera(cameraHelper)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
