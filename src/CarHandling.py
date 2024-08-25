@@ -2,8 +2,6 @@ import RPi.GPIO as GPIO
 from roboCarHelper import map_value_to_new_scale
 from itertools import chain
 
-
-
 class CarHandling:
     def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
         self._leftBackward = leftBackward
