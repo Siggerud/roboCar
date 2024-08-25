@@ -48,7 +48,7 @@ class Camera:
             im = self._rotate_image(im)
 
         # read control values from external classes
-        self._read_control_values_for_video_feed(lock)
+        self._read_control_values_for_video_feed()
 
         # resize image when zooming
         if self._zoomValue != 1.0:
