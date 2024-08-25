@@ -67,7 +67,6 @@ class CarControl:
     def _start_car_handling(self, threadEvent, lock=None):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
-        print(self._buttonToObjectDict)
 
         while not threadEvent.is_set():
             for event in self._xboxControl.get_controller_events():
@@ -75,13 +74,18 @@ class CarControl:
                 if self._xboxControl.check_for_exit_event(button):
                     self._exit_program(threadEvent)
                     break
-
+                """
                 if self._car:
                     self._car.handle_xbox_input(button, pressValue)
                 if self._servo:
                     self._servo.handle_xbox_input(button, pressValue)
                 if self._cameraEnabled:
                     self._cameraHelper.handle_xbox_input(button, pressValue, lock)
+                    self._cameraHelper.update_control_values_for_video_feed(lock)
+                """
+                self._buttonToObjectDict[button].handle_xbox_input(button, pressValue)
+
+                if self._cameraEnabled:
                     self._cameraHelper.update_control_values_for_video_feed(lock)
 
     def _print_button_explanation(self):
