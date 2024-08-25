@@ -45,8 +45,7 @@ class Camera:
 
     def show_camera_feed(self, shared_dict):
         tStart = time() # start timer for calculating fps
-        print("a")
-
+        print("start")
         # get raw image
         im = self._picam2.capture_array()
 
