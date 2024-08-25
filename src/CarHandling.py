@@ -53,7 +53,6 @@ class CarHandling:
         self._gasAndReverseButtons = list(self._controlsDictThrottle.values())
 
     def handle_xbox_input(self, button, pressValue):
-        print(button)
         if button in self._turnButtons:
             self._prepare_car_for_turning(button, pressValue)
             self._move_car()
@@ -80,6 +79,7 @@ class CarHandling:
     def _change_duty_cycle(self, pwms, speed):
         for pwm in pwms:
             pwm.ChangeDutyCycle(speed)
+            print(speed)
 
     def _adjust_gpio_values(self, gpioValues):
         leftForwardValue, rightForwardValue, leftBackwardValue, rightBackwardValue = gpioValues
