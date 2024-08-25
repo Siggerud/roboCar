@@ -73,7 +73,7 @@ carController.activate_arduino_communication(myEvent)
 carController.activate_car_handling(myEvent)
 
 resolution = (1280, 720)
-camera = Camera(cameraHelper, lock)
+camera = Camera(cameraHelper, lock, resolution)
 
 # keep process running until keyboard interrupt
 try:
