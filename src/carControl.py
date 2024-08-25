@@ -89,7 +89,7 @@ class CarControl:
                     continue
 
                 if self._cameraEnabled:
-                    self._cameraHelper.update_control_values_for_video_feed(lock)
+                    self._cameraHelper.update_control_values_for_video_feed()
 
     def _print_button_explanation(self):
         print()
