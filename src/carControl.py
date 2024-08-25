@@ -22,7 +22,7 @@ class CarControl:
 
         self._buttonToObjectDict = {
         }
-        self._shared_dict = Manager.dict()
+        self._shared_dict = Manager().dict()
         self._shared_dict["Angle"] = None
         self._shared_dict["Speed"] = None
         self._shared_dict["Turn"] = None
