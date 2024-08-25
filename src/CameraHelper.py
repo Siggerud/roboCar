@@ -28,6 +28,12 @@ class CameraHelper:
         self._zoomButton = self._controlsDictCamera["Zoom"]
         self._hudButton = self._controlsDictCamera["HUD"]
 
+        self._turnValue_to_number = {
+            "-": 0,
+            "Left": 1,
+            "Right": 2
+        }
+
     def handle_xbox_input(self, button, pressValue):
         if button == self._zoomButton:
             self._set_zoom_value(pressValue)

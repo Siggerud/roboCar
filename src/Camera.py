@@ -33,8 +33,9 @@ class Camera:
         self._hudActive = True
 
         self._number_to_turnValue = {
-            0: "Left",
-            1: "Right"
+            0: "-",
+            1: "Left",
+            2: "Right"
         }
 
         self._fps = 0
