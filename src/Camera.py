@@ -134,7 +134,7 @@ class Camera:
         return str(int(self._fps)) + " FPS"
 
     def _read_control_values_for_video_feed(self, shared_dict):
-        self._angleText = "Angle" + shared_dict[0]
+        self._angleText = "Angle: " + str(shared_dict[0])
         #self._speedText = shared_dict["Speed"]
         #self._turnText = shared_dict["Turn"]
         #self._zoomValue = shared_dict["Zoom"]
