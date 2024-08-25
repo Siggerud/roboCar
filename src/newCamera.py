@@ -4,6 +4,7 @@ from picamera2 import Picamera2, MappedArray
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
 from libcamera import Transform
+import cv2
 
 class Camera:
     def __init__(self, cameraHelper):
@@ -16,6 +17,17 @@ class Camera:
         self._turnText = None
         self._zoomValue = 1.0
         self._hudActive = True
+
+        self._font = cv2.FONT_HERSHEY_SIMPLEX
+        self._scale = 1
+        self._colour = (0, 255, 0)
+        self._thickness = 1
+
+        self._picam.pre_callback = self.apply_text
+
+    def apply_text(self, request):
+        with MappedArray(request, 'main') as m:
+            cv2.putText(m.array(), self._angleText, (10, 10), self._font, self._scale, self._colour, self._thickness)
 
     def _set_up_picam(self):
         self._config = self._picam.create_video_configuration(transform=Transform(hflip=1, vflip=1))
@@ -32,19 +44,7 @@ class Camera:
             output = FileOutput(stream)
 
             self._picam.start_recording(self._encoder, output)
-
-            try:
-                while True:
-                    self._read_control_values_for_video_feed(lock)
-
-                    with MappedArray(self._picam.create_overlay(self._config), 'main') as m:
-                        m.array[:50, :300] = [0, 0, 0, 255]  # Create a black rectangle for better visibility
-                        m.array[:50, :300] = [255, 255, 255, 255]  # Set the FPS text color (white)
-                        m.put_text(self._angleText, 10, 10, scale=3, color=[255, 255, 255, 255])  # Position at (10, 10)
-
-                    time.sleep(0.01)
-            except KeyboardInterrupt:
-                self.cleanup()
+            time.sleep(30)
 
     def cleanup(self):
         self._picam.stop_recording()

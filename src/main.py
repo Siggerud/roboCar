@@ -82,7 +82,7 @@ except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
     carController.cleanup() # cleanup to finish all threads and close processes
-    #camera.cleanup()
+    camera.cleanup()
     GPIO.cleanup()
 
 # ffplay tcp://192.168.0.41:9999 -fflags nobuffer -flags low_delay -framedrop
