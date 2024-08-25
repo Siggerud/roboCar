@@ -114,6 +114,7 @@ class Camera:
             cv2.putText(image, self._angleText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
             counter += 1
+            print(self._angleText)
         """
         if self._speedText:
             cv2.putText(image, self._speedText, self._get_origin(counter), self._font, self._scale, self._colour,
