@@ -1,6 +1,6 @@
 import subprocess
 #from threading import Thread
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Array
 from xboxControl import XboxControl
 
 class CarControl:
@@ -22,12 +22,7 @@ class CarControl:
 
         self._buttonToObjectDict = {
         }
-        self.shared_dict = Manager().dict()
-        self.shared_dict["Angle"] = None
-        self.shared_dict["Speed"] = None
-        self.shared_dict["Turn"] = None
-        self.shared_dict["Zoom"] = None
-        self.shared_dict["HUD"] = True
+        self.shared_dict = Array('i', (0))
 
     def add_arduino_communicator(self, arduinoCommunicator):
         self._arduinoCommunicator = arduinoCommunicator
