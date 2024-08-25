@@ -57,7 +57,6 @@ servo = ServoHandling(servoPin)
 #resolution = (384, 288)
 cameraHelper = CameraHelper()
 #camera = Camera(resolution, cameraHelper)
-camera = Camera(cameraHelper)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
@@ -72,6 +71,8 @@ lock = Lock()
 carController.enable_camera(cameraHelper, lock)
 carController.activate_arduino_communication(myEvent)
 carController.activate_car_handling(myEvent)
+
+camera = Camera(cameraHelper, lock)
 
 # keep process running until keyboard interrupt
 try:

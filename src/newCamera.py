@@ -7,10 +7,11 @@ from libcamera import Transform
 import cv2
 
 class Camera:
-    def __init__(self, cameraHelper):
+    def __init__(self, cameraHelper, lock):
         self._picam = Picamera2()
         self._cameraHelper = cameraHelper
         self._set_up_picam()
+        self._lock = lock
 
         self._angleText = None
         self._speedText = None
@@ -27,7 +28,7 @@ class Camera:
         self._read_control_values_for_video_feed()
         with MappedArray(request, "main") as m:
             cv2.putText(m.array, self._angleText, (100, 100), self._font, self._scale, self._colour, self._thickness)
-        
+
 
     def _set_up_picam(self):
         self._config = self._picam.create_video_configuration(transform=Transform(hflip=1, vflip=1))
@@ -49,8 +50,8 @@ class Camera:
     def cleanup(self):
         self._picam.stop_recording()
 
-    def _read_control_values_for_video_feed(self, lock):
-        with lock:
+    def _read_control_values_for_video_feed(self):
+        with self._lock:
             self._angleText = self._cameraHelper.get_angle_text()
             self._speedText = self._cameraHelper.get_speed_text()
             self._turnText = self._cameraHelper.get_turn_text()
