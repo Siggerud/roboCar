@@ -76,7 +76,7 @@ class CameraHelper:
 
         if self._car:
             shared_dict[1] = self._car.get_current_speed()
-            shared_dict[2] = self._car.get_current_turn_value()
+            shared_dict[2] = self._turnValue_to_number[self._car.get_current_turn_value()]
 
         #shared_dict[3] = self._zoomValue
         #shared_dict[4] = self._hudActive
