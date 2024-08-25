@@ -43,7 +43,7 @@ class CarControl:
         thread.start()
 
     def activate_car_handling(self, event):
-        thread = Process(target=self._start_car_handling, args=(event,self.shared_dict))
+        thread = Process(target=self._start_car_handling, args=(event, self.shared_dict))
         self._threads.append(thread)
         thread.start()
 
@@ -61,7 +61,7 @@ class CarControl:
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
 
-    def _start_car_handling(self, threadEvent, shared_dict):
+    def _start_car_handling(self, threadEvent):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
@@ -79,7 +79,7 @@ class CarControl:
                     continue
 
                 if self._cameraEnabled:
-                    self._cameraHelper.update_control_values_for_video_feed(shared_dict)
+                    self._cameraHelper.update_control_values_for_video_feed(self.shared_dict)
 
     def _print_button_explanation(self):
         print()
