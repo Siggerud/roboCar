@@ -33,12 +33,18 @@ class Camera:
 
             self._picam.start_recording(self._encoder, output)
 
-            self._read_control_values_for_video_feed(lock)
+            try:
+                while True:
+                    self._read_control_values_for_video_feed(lock)
 
-            with MappedArray(self._picam.create_overlay(self._config), 'main') as m:
-                m.array[:50, :300] = [0, 0, 0, 255]  # Create a black rectangle for better visibility
-                m.array[:50, :300] = [255, 255, 255, 255]  # Set the FPS text color (white)
-                m.put_text(self._angleText, 10, 10, scale=3, color=[255, 255, 255, 255])  # Position at (10, 10)
+                    with MappedArray(self._picam.create_overlay(self._config), 'main') as m:
+                        m.array[:50, :300] = [0, 0, 0, 255]  # Create a black rectangle for better visibility
+                        m.array[:50, :300] = [255, 255, 255, 255]  # Set the FPS text color (white)
+                        m.put_text(self._angleText, 10, 10, scale=3, color=[255, 255, 255, 255])  # Position at (10, 10)
+
+                    time.sleep(0.01)
+            except KeyboardInterrupt:
+                self.cleanup()
 
     def cleanup(self):
         self._picam.stop_recording()
