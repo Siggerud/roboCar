@@ -28,11 +28,11 @@ class CameraHelper:
         self._zoomButton = self._controlsDictCamera["Zoom"]
         self._hudButton = self._controlsDictCamera["HUD"]
 
-    def handle_xbox_input(self, button, pressValue):
+    def handle_xbox_input(self, button, pressValue, shared_dict):
         if button == self._zoomButton:
-            self._set_zoom_value(pressValue)
+            self._set_zoom_value(pressValue, shared_dict)
         elif button == self._hudButton and pressValue: # check that button is pushed, not released
-            self._set_hud_on_or_off()
+            self._set_hud_on_or_off(shared_dict)
 
     def add_car(self, car):
         self._car = car
@@ -55,20 +55,30 @@ class CameraHelper:
     def get_hud_value(self):
         return self._hudActive
 
-    def update_control_values_for_video_feed(self):
+    def update_control_values_for_video_feed(self, shared_dict):
         #with lock:
+        """
         if self._servo:
             self._angleText = "Angle: " + str(self._servo.get_current_servo_angle())
 
         if self._car:
             self._speedText = "Speed: " + str(self._car.get_current_speed()) + "%"
             self._turnText = "Turn: " + self._car.get_current_turn_value()
+        """
+        if self._servo:
+            shared_dict["Angle"] = "Angle: " + str(self._servo.get_current_servo_angle())
+
+        if self._car:
+            shared_dict["Speed"] = "Speed: " + str(self._car.get_current_speed()) + "%"
+            shared_dict["Turn"] = "Turn: " + self._car.get_current_turn_value()
+
+        shared_dict["Zoom"] = self._zoomValue
+        shared_dict["HUD"] = self._hudActive
 
     def camera_buttons(self):
         return self._controlsDictCamera
 
     def _set_hud_on_or_off(self):
-        #with lock:
         self._hudActive = not self._hudActive
 
     def _set_zoom_value(self, buttonPressValue):
@@ -79,7 +89,6 @@ class CameraHelper:
 
         if stickValue != self._lastStickValue:
             self._lastStickValue = stickValue
-            #with lock:
             self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
                                                      self._zoomButtonMinValue, self._zoomButtonMaxValue)
 

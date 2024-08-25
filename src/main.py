@@ -70,11 +70,12 @@ carController.enable_camera(cameraHelper)
 carController.activate_arduino_communication(myEvent)
 carController.activate_car_handling(myEvent)
 
+
 # keep process running until keyboard interrupt
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed()
+        camera.show_camera_feed(carController._shared_dict)
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:

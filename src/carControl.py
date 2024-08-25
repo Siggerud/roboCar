@@ -1,5 +1,6 @@
 import subprocess
-from threading import Thread
+#from threading import Thread
+from multiprocessing import Process, Manager
 from xboxControl import XboxControl
 
 class CarControl:
@@ -20,8 +21,13 @@ class CarControl:
         self._threadLock = None
 
         self._buttonToObjectDict = {
-
         }
+        self._shared_dict = Manager.dict()
+        self._shared_dict["Angle"] = None
+        self._shared_dict["Speed"] = None
+        self._shared_dict["Turn"] = None
+        self._shared_dict["Zoom"] = None
+        self._shared_dict["HUD"] = True
 
     def add_arduino_communicator(self, arduinoCommunicator):
         self._arduinoCommunicator = arduinoCommunicator
@@ -37,12 +43,12 @@ class CarControl:
         self._servo = servo
 
     def activate_arduino_communication(self, event):
-        thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
+        thread = Process(target=self._listen_for_arduino_communication, args=(event,))
         self._threads.append(thread)
         thread.start()
 
     def activate_car_handling(self, event):
-        thread = Thread(target=self._start_car_handling, args=(event,))
+        thread = Process(target=self._start_car_handling, args=(event,))
         self._threads.append(thread)
         thread.start()
 

@@ -37,7 +37,7 @@ class Camera:
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
-    def show_camera_feed(self, lock):
+    def show_camera_feed(self, shared_dict):
         tStart = time() # start timer for calculating fps
 
         # get raw image
@@ -48,7 +48,7 @@ class Camera:
             im = self._rotate_image(im)
 
         # read control values from external classes
-        self._read_control_values_for_video_feed(lock)
+        self._read_control_values_for_video_feed(shared_dict)
 
         # resize image when zooming
         if self._zoomValue != 1.0:
@@ -131,13 +131,12 @@ class Camera:
     def _get_fps(self):
         return str(int(self._fps)) + " FPS"
 
-    def _read_control_values_for_video_feed(self, lock):
-        with lock:
-            self._angleText = self._cameraHelper.get_angle_text()
-            self._speedText = self._cameraHelper.get_speed_text()
-            self._turnText = self._cameraHelper.get_turn_text()
-            self._zoomValue = self._cameraHelper.get_zoom_value()
-            self._hudActive = self._cameraHelper.get_hud_value()
+    def _read_control_values_for_video_feed(self, shared_dict):
+        self._angleText = shared_dict["Angle"]
+        self._speedText = shared_dict["Speed"]
+        self._turnText = shared_dict["Turn"]
+        self._zoomValue = shared_dict["Zoom"]
+        self._hudActive = shared_dict["HUD"]
 
     def _get_origin(self, count):
         return self._textPositions[count]
