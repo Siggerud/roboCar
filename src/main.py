@@ -75,9 +75,7 @@ carController.activate_car_handling(myEvent)
 try:
     while not myEvent.is_set(): # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        print("a")
         camera.show_camera_feed(carController.shared_dict)
-        print("b")
 except KeyboardInterrupt:
     myEvent.set() # set event to stop all active processes
 finally:
