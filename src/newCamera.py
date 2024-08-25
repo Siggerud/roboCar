@@ -23,11 +23,9 @@ class Camera:
         self._colour = (0, 255, 0)
         self._thickness = 1
 
-        self._picam.pre_callback = self.apply_text
-
     def apply_text(self, request):
         with MappedArray(request, 'main') as m:
-            cv2.putText(m.array, self._angleText, (10, 10), self._font, self._scale, self._colour, self._thickness)
+            cv2.putText(m.array, self._angleText, (100, 100), self._font, self._scale, self._colour, self._thickness)
 
     def _set_up_picam(self):
         self._config = self._picam.create_video_configuration(transform=Transform(hflip=1, vflip=1))
@@ -42,7 +40,7 @@ class Camera:
             conn, addr = sock.accept()
             stream = conn.makefile("wb")
             output = FileOutput(stream)
-
+            self._picam.pre_callback = self.apply_text
             self._picam.start_recording(self._encoder, output)
             time.sleep(30)
 
