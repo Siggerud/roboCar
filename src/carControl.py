@@ -83,7 +83,10 @@ class CarControl:
                     self._cameraHelper.handle_xbox_input(button, pressValue, lock)
                     self._cameraHelper.update_control_values_for_video_feed(lock)
                 """
-                self._buttonToObjectDict[button].handle_xbox_input(button, pressValue)
+                try:
+                    self._buttonToObjectDict[button].handle_xbox_input(button, pressValue)
+                except KeyError:
+                    continue
 
                 if self._cameraEnabled:
                     self._cameraHelper.update_control_values_for_video_feed(lock)
