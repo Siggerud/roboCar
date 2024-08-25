@@ -22,7 +22,7 @@ class CarControl:
 
         self._buttonToObjectDict = {
         }
-        self.shared_dict = Array('i', (0))
+        self.shared_dict = Array('i', (0, 1))
 
     def add_arduino_communicator(self, arduinoCommunicator):
         self._arduinoCommunicator = arduinoCommunicator
@@ -43,7 +43,7 @@ class CarControl:
         thread.start()
 
     def activate_car_handling(self, event):
-        thread = Process(target=self._start_car_handling, args=(event,))
+        thread = Process(target=self._start_car_handling, args=(event,self.shared_dict))
         self._threads.append(thread)
         thread.start()
 
@@ -61,7 +61,7 @@ class CarControl:
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
 
-    def _start_car_handling(self, threadEvent):
+    def _start_car_handling(self, threadEvent, shared_dict):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
@@ -79,7 +79,7 @@ class CarControl:
                     continue
 
                 if self._cameraEnabled:
-                    self._cameraHelper.update_control_values_for_video_feed(self.shared_dict)
+                    self._cameraHelper.update_control_values_for_video_feed(shared_dict)
 
     def _print_button_explanation(self):
         print()
