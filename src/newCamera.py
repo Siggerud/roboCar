@@ -7,10 +7,11 @@ from libcamera import Transform
 import cv2
 
 class Camera:
-    def __init__(self, cameraHelper, lock):
+    def __init__(self, cameraHelper, lock, resolution):
+        self._dispW, self._dispH = resolution
         self._picam = Picamera2()
         self._cameraHelper = cameraHelper
-        self._set_up_picam()
+        self._set_up_picam(resolution)
         self._lock = lock
 
         self._angleText = None
@@ -27,12 +28,17 @@ class Camera:
     def apply_text(self, request):
         self._read_control_values_for_video_feed()
         with MappedArray(request, "main") as m:
-            cv2.putText(m.array, self._angleText, (10, 100), self._font, self._scale, self._colour, self._thickness)
-            cv2.putText(m.array, self._speedText, (10, 150), self._font, self._scale, self._colour, self._thickness)
+            cv2.putText(m.array, self._angleText, (10, self._dispH - 50), self._font, self._scale, self._colour,
+                        self._thickness)
+            cv2.putText(m.array, self._speedText, (10, self._dispH - 100), self._font, self._scale, self._colour,
+                        self._thickness)
+            cv2.putText(m.array, self._turnText, (10, self._dispH - 150), self._font, self._scale, self._colour,
+                        self._thickness)
+            cv2.putText(m.array, "Zoom: " + str(self._zoomValue) + "x", (10, self._dispH - 150), self._font, self._scale, self._colour,
+                        self._thickness)
 
-
-    def _set_up_picam(self):
-        self._config = self._picam.create_video_configuration(transform=Transform(hflip=1, vflip=1))
+    def _set_up_picam(self, resolution):
+        self._config = self._picam.create_video_configuration(main={"size": resolution}, transform=Transform(hflip=1, vflip=1))
         self._picam.configure(self._config) # flip the image
         self._encoder = H264Encoder(10000000)
 
