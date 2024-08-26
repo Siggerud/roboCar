@@ -66,20 +66,22 @@ carController.add_servo(servo)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
-myEvent = Event()
+#myEvent = Event()
 carController.enable_camera(cameraHelper)
-carController.activate_arduino_communication(myEvent)
-carController.activate_car_handling(myEvent)
+carController.activate_arduino_communication()
+carController.activate_car_handling()
+
+flag = carController.shared_flag
 
 
 # keep process running until keyboard interrupt
 try:
-    while not myEvent.is_set(): # listen for any threads setting the event
+    while not flag.value: # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
         camera.show_camera_feed(carController.shared_dict)
     print("Exiting camera")
 except KeyboardInterrupt:
-    myEvent.set() # set event to stop all active processes
+    flag.value = True # set event to stop all active processes
 finally:
     carController.cleanup() # cleanup to finish all threads and close processes
     camera.cleanup()

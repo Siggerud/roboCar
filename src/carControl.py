@@ -1,6 +1,6 @@
 import subprocess
 #from threading import Thread
-from multiprocessing import Process, Array
+from multiprocessing import Process, Array, Value
 from xboxControl import XboxControl
 
 class CarControl:
@@ -23,6 +23,7 @@ class CarControl:
         self._buttonToObjectDict = {
         }
         self.shared_dict = Array('i', (0, 0, 0, 0))
+        self.shared_flag = Value('b', False)
 
     def add_arduino_communicator(self, arduinoCommunicator):
         self._arduinoCommunicator = arduinoCommunicator
@@ -37,13 +38,13 @@ class CarControl:
     def add_servo(self, servo):
         self._servo = servo
 
-    def activate_arduino_communication(self, event):
-        thread = Process(target=self._listen_for_arduino_communication, args=(event,))
+    def activate_arduino_communication(self):
+        thread = Process(target=self._listen_for_arduino_communication, args=(self.shared_flag,))
         self._threads.append(thread)
         thread.start()
 
-    def activate_car_handling(self, event):
-        thread = Process(target=self._start_car_handling, args=(event,))
+    def activate_car_handling(self):
+        thread = Process(target=self._start_car_handling, args=(self.shared_flag,))
         self._threads.append(thread)
         thread.start()
 
@@ -61,15 +62,15 @@ class CarControl:
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
 
-    def _start_car_handling(self, threadEvent):
+    def _start_car_handling(self, flag):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
-        while not threadEvent.is_set():
+        while not flag.value:
             for event in self._xboxControl.get_controller_events():
                 button, pressValue = self._xboxControl.get_button_and_press_value_from_event(event)
                 if self._xboxControl.check_for_exit_event(button):
-                    self._exit_program(threadEvent)
+                    self._exit_program(flag)
                     break
 
                 # get the object to take action based on the button pushed
@@ -118,14 +119,14 @@ class CarControl:
         for button in list(buttonDict.values()):
             self._buttonToObjectDict[button] = roboObject
 
-    def _listen_for_arduino_communication(self, threadEvent):
-        while not threadEvent.is_set():
+    def _listen_for_arduino_communication(self, flag):
+        while not flag.value:
             self._arduinoCommunicator.start()
         print("Exiting arduino")
 
 
-    def _exit_program(self, threadEvent):
-        threadEvent.set()
+    def _exit_program(self, flag):
+        flag.value = True
         print("Exiting program...")
 
     def _check_if_X11_connected(self):
