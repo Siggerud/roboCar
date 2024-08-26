@@ -7,8 +7,6 @@ from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
 import RPi.GPIO as GPIO
-#from threading import Event
-from multiprocessing import Event
 
 # define GPIO pins
 rightForward = 22 # IN2 
@@ -58,11 +56,11 @@ resolution = (384, 288)
 cameraHelper = CameraHelper()
 camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)
-cameraHelper.add_servo(servo)
+#cameraHelper.add_servo(servo)
 
 # add components
 carController.add_car(car)
-carController.add_servo(servo)
+#carController.add_servo(servo)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
@@ -72,7 +70,6 @@ carController.activate_arduino_communication()
 carController.activate_car_handling()
 
 flag = carController.shared_flag
-
 
 # keep process running until keyboard interrupt
 try:
