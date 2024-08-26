@@ -80,6 +80,7 @@ class CarControl:
 
                 if self._cameraEnabled:
                     self._cameraHelper.update_control_values_for_video_feed(self.shared_dict)
+        print("Exiting car handling")
 
     def _print_button_explanation(self):
         print()
@@ -120,6 +121,7 @@ class CarControl:
     def _listen_for_arduino_communication(self, threadEvent):
         while not threadEvent.is_set():
             self._arduinoCommunicator.start()
+        print("Exiting arduino")
 
 
     def _exit_program(self, threadEvent):
