@@ -6,8 +6,8 @@ from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
-#import RPi.GPIO as GPIO
-from threading import Event
+import RPi.GPIO as GPIO
+#from threading import Event
 from multiprocessing import Event
 
 # define GPIO pins
