@@ -2,7 +2,7 @@ from CarHandling import CarHandling
 from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
 from Camera import Camera
 from CameraHelper import CameraHelper
-#from ServoHandling import ServoHandling
+from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
@@ -49,18 +49,18 @@ except InvalidPortError as e:
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 
 # define servo aboard car
-#servo = ServoHandling(servoPin)
+servo = ServoHandling(servoPin)
 
 # define camera aboard car
 resolution = (384, 288)
 cameraHelper = CameraHelper()
 camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)
-#cameraHelper.add_servo(servo)
+cameraHelper.add_servo(servo)
 
 # add components
 carController.add_car(car)
-#carController.add_servo(servo)
+carController.add_servo(servo)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
