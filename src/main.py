@@ -55,8 +55,8 @@ servoHorizontal = ServoHandling(servoPinHorizontal, "horizontal")
 servoVertical = ServoHandling(
     servoPinVertical,
     "vertical",
-    -45,
-    45
+    -60,
+    60
 )
 
 # define camera aboard car
