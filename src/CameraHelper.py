@@ -56,6 +56,7 @@ class CameraHelper:
         return self._hudActive
 
     def update_control_values_for_video_feed(self):
+        #TODO: add option for multiple servos
         if self._servo:
             self._angleText = "Angle: " + str(self._servo.get_current_servo_angle())
 
