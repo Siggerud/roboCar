@@ -17,7 +17,8 @@ leftBackward = 15 # IN3
 enA = 11
 enB = 13
 
-servoPin = 26 # BCM
+servoPinHorizontal = 26 # BCM
+servoPinVertical = None # BCM
 
 buzzerPin = 29
 
@@ -49,19 +50,20 @@ except InvalidPortError as e:
 # define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 
-# define servo aboard car
-servo = ServoHandling(servoPin)
+# define servos aboard car
+servoHorizontal = ServoHandling(servoPinHorizontal, "horizontal")
+servoVertical = ServoHandling(servoPinVertical, "vertical")
 
 # define camera aboard car
 resolution = (384, 288)
 cameraHelper = CameraHelper()
 camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)
-cameraHelper.add_servo(servo)
+cameraHelper.add_servo(servoHorizontal)
 
 # add components
 carController.add_car(car)
-carController.add_servo(servo)
+carController.add_servo(servoHorizontal)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling

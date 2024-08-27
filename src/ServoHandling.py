@@ -2,20 +2,43 @@ from roboCarHelper import map_value_to_new_scale
 import pigpio
 
 class ServoHandling:
-    def __init__(self, servoPin):
+
+    pigpioPwm = pigpio.pi()
+    pwmMinServo = 2500
+    pwmMaxServo = 500
+
+    def __init__(self, servoPin, plane, minAngle=-90, maxAngle=90):
         self._servoPin = servoPin
-        self._pigpioPwm = pigpio.pi()
-        self._pigpioPwm.set_mode(servoPin, pigpio.OUTPUT)
-        self._pigpioPwm.set_PWM_frequency(servoPin, 50)
+        self._plane = plane
+        self._minAngle = minAngle
+        self._maxAngle = maxAngle
+
+        ServoHandling.pigpioPwm.set_mode(servoPin, pigpio.OUTPUT)
+        ServoHandling.pigpioPwm.set_PWM_frequency(servoPin, 50)
 
         self._lastServoStickValue = 0
         self._servoValueChanged = False
-        self._servoPwmValue = 1500
-        self._pwmMinServo = 2500
-        self._pwmMaxServo = 500
 
+        self._servoPwmValue = 1500 # neutral (0 degrees)
+        self._pwmMinServo = map_value_to_new_scale(
+            minAngle,
+            ServoHandling.pwmMinServo,
+            ServoHandling.pwmMaxServo,
+            1,
+            - 90,
+            90
+        )
+        self._pwmMaxServo = map_value_to_new_scale(
+            maxAngle,
+            ServoHandling.pwmMinServo,
+            ServoHandling.pwmMaxServo,
+            1,
+            - 90,
+            90
+        )
+        
         self._controlsDictServo = {
-            "Servo": "RSB horizontal"
+            "Servo": self._get_servo_button_corresponding_to_axis(plane)
         }
 
         self._moveServoButton = self._controlsDictServo["Servo"]
@@ -28,14 +51,30 @@ class ServoHandling:
     def servo_buttons(self):
         return self._controlsDictServo
 
+    def get_plane(self):
+        return self._plane
+
     def get_current_servo_angle(self):
-        current_servo_angle = int(map_value_to_new_scale(self._servoPwmValue, -90, 90, 0, self._pwmMinServo, self._pwmMaxServo))
+        current_servo_angle = int(map_value_to_new_scale(
+            self._servoPwmValue,
+            self._minAngle,
+            self._maxAngle,
+            0,
+            self._pwmMinServo,
+            self._pwmMaxServo)
+        )
 
         return current_servo_angle
 
     def _move_servo(self):
         if self._servoValueChanged:
-            self._pigpioPwm.set_servo_pulsewidth(self._servoPin, self._servoPwmValue)
+            ServoHandling.pigpioPwm.set_servo_pulsewidth(self._servoPin, self._servoPwmValue)
+
+    def _get_servo_button_corresponding_to_axis(self, plane):
+        if plane == "horizontal":
+            return "RSB horizontal"
+        elif plane == "vertical":
+            return "RSB vertical"
 
     def _prepare_for_servo_movement(self, buttonPressValue):
         stickValue = round(buttonPressValue, 1)
@@ -48,5 +87,5 @@ class ServoHandling:
             self._lastServoStickValue = stickValue
 
     def cleanup(self):
-        self._pigpioPwm.set_PWM_dutycycle(self._servoPin, 0)
-        self._pigpioPwm.set_PWM_frequency(self._servoPin, 0)
+        ServoHandling.pigpioPwm.set_PWM_dutycycle(self._servoPin, 0)
+        ServoHandling.pigpioPwm.set_PWM_frequency(self._servoPin, 0)

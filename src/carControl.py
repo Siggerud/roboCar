@@ -10,7 +10,8 @@ class CarControl:
         self._xboxControl = XboxControl()
 
         self._car = None
-        self._servo = None
+        self._servoEnabled = False
+        self._servos = []
         self._arduinoCommunicator = None
 
         self._cameraEnabled = False
@@ -34,7 +35,9 @@ class CarControl:
         self._cameraHelper = cameraHelper
 
     def add_servo(self, servo):
-        self._servo = servo
+        self._servos.append(servo)
+        if not self._servoEnabled:
+            self._servoEnabled = True
 
     def activate_arduino_communication(self, event):
         thread = Thread(target=self._listen_for_arduino_communication, args=(event,))
@@ -54,8 +57,9 @@ class CarControl:
         if self._car:
             self._car.cleanup()
 
-        if self._servo:
-            self._servo.cleanup()
+        if self._servoEnabled:
+            for servo in self._servos:
+                servo.cleanup()
 
         if self._arduinoCommunicator:
             self._arduinoCommunicator.cleanup()
@@ -90,9 +94,10 @@ class CarControl:
             print("Drive forward: " + self._car.car_buttons()["Gas"])
             print("Reverse: " + self._car.car_buttons()["Reverse"])
             print()
-        if self._servo:
+        if self._servoEnabled:
             print("Servo controls:")
-            print("Turn servo: " + self._servo.servo_buttons()["Servo"])
+            for servo in self._servos:
+                print("Turn servo" + servo.get_plane() + ": " + servo.servo_buttons()["Servo"])
             print()
         if self._cameraEnabled:
             print("Camera controls")
@@ -106,8 +111,9 @@ class CarControl:
         if self._car:
             self._add_object_to_buttons(self._car.car_buttons(), self._car)
 
-        if self._servo:
-            self._add_object_to_buttons(self._servo.servo_buttons(), self._servo)
+        if self._servoEnabled:
+            for servo in self._servos:
+                self._add_object_to_buttons(servo.servo_buttons(), servo)
 
         if self._cameraEnabled:
             self._add_object_to_buttons(self._cameraHelper.camera_buttons(), self._cameraHelper)
