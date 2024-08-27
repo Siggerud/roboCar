@@ -52,7 +52,12 @@ car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, e
 
 # define servos aboard car
 servoHorizontal = ServoHandling(servoPinHorizontal, "horizontal")
-servoVertical = ServoHandling(servoPinVertical, "vertical")
+servoVertical = ServoHandling(
+    servoPinVertical,
+    "vertical",
+    45,
+    45
+)
 
 # define camera aboard car
 resolution = (384, 288)
