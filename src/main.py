@@ -64,7 +64,7 @@ cameraHelper.add_servo(servoHorizontal)
 # add components
 carController.add_car(car)
 carController.add_servo(servoHorizontal)
-carController.add_servo(servoPinVertical)
+carController.add_servo(servoVertical)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
