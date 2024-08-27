@@ -36,7 +36,7 @@ class ServoHandling:
             - 90,
             90
         )
-        
+
         self._controlsDictServo = {
             "Servo": self._get_servo_button_corresponding_to_axis(plane)
         }

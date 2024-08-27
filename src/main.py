@@ -5,7 +5,7 @@ from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
-from roboCarHelper import print_startup_error
+from roboCarHelper import print_startup_error, convert_from_board_number_to_bcm_number
 import RPi.GPIO as GPIO
 from threading import Event
 
@@ -17,8 +17,8 @@ leftBackward = 15 # IN3
 enA = 11
 enB = 13
 
-servoPinHorizontal = 26 # BCM
-servoPinVertical = None # BCM
+servoPinHorizontal = convert_from_board_number_to_bcm_number(37)
+#servoPinVertical = convert_from_board_number_to_bcm_number(33)
 
 buzzerPin = 29
 
@@ -52,7 +52,7 @@ car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, e
 
 # define servos aboard car
 servoHorizontal = ServoHandling(servoPinHorizontal, "horizontal")
-servoVertical = ServoHandling(servoPinVertical, "vertical")
+#servoVertical = ServoHandling(servoPinVertical, "vertical")
 
 # define camera aboard car
 resolution = (384, 288)
@@ -64,6 +64,7 @@ cameraHelper.add_servo(servoHorizontal)
 # add components
 carController.add_car(car)
 carController.add_servo(servoHorizontal)
+carController.add_servo(servoPinVertical)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
