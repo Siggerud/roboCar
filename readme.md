@@ -9,7 +9,8 @@ Camera feed screenshot from camera onboard robocar
 
 This is a project where I've built
 a vehicle that can be controlled with a wireless xbox controller via bluetooth.
-It has a camera mounted on a servo that can be turned 90 degrees to both sides.
+It has a camera mounted on a servo that can be turned left and right, and it can be tilted back- and
+forward.
 It also has a distance sensors in the front and the back of the car, and a warning sound will
 be set off if the vehicle is too close to any object. The closer the car is 
 to an obstacle, the faster the alarm will beep. 
