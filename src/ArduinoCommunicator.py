@@ -91,7 +91,7 @@ class ArduinoCommunicator:
 
     def cleanup(self):
         self._serialObj.close()
-
+        GPIO.cleanup()
         if self._photocellLightsManager:
             self._photocellLightsManager.cleanup()
 

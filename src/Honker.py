@@ -7,7 +7,7 @@ class Honker:
         self._buzzerPin = buzzerPin
         self._withinAlarmDistance = False
         GPIO.setup(buzzerPin, GPIO.OUT, initial=self._withinAlarmDistance)
-        print("a")
+  
         self._distanceTreshold = 10
         self._currentLowestDistance = None
 
