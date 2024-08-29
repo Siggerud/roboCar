@@ -3,6 +3,7 @@ import serial
 from time import sleep, time
 from Honker import Honker
 from PhotocellManager import PhotocellManager
+import RPi.GPIO as GPIO
 
 class ArduinoCommunicator:
     def __init__(self, port, baudrate, waitTime = 0.1):
@@ -11,6 +12,8 @@ class ArduinoCommunicator:
 
         self._serialObj = serial.Serial(port, baudrate)
         sleep(3)  # give the serial object some time to start communication
+
+        GPIO.setmode(GPIO.BOARD)
 
         self._waitTime = waitTime
 
