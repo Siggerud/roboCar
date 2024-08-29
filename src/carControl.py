@@ -123,7 +123,7 @@ class CarControl:
 
     def _listen_for_arduino_communication(self, flag):
         while not flag.value:
-            self._arduinoCommunicator.start()
+            self._arduinoCommunicator.start(flag)
         print("Exiting arduino")
 
 
