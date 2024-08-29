@@ -38,7 +38,7 @@ except (X11ForwardingError, NoControllerDetected) as e:
 port = '/dev/ttyACM0'
 baudrate = 115200 # the highest communication rate between a pi and an arduino
 
-"""
+
 try:
     arduinoCommunicator = ArduinoCommunicator(port, baudrate)
     arduinoCommunicator.activate_distance_sensors(buzzerPin)
@@ -46,7 +46,7 @@ try:
 except InvalidPortError as e:
     print_startup_error(e)
     exit()
-"""
+
 # define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 """
@@ -68,7 +68,7 @@ carController.add_car(car)
 # activate distance warning, camera and car controlling
 #myEvent = Event()
 #carController.enable_camera(cameraHelper)
-#carController.activate_arduino_communication()
+carController.activate_arduino_communication()
 carController.activate_car_handling()
 
 flag = carController.shared_flag

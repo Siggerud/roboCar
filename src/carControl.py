@@ -67,9 +67,7 @@ class CarControl:
         self._map_all_objects_to_buttons()
 
         while not flag.value:
-            print(self._xboxControl)
             for event in self._xboxControl.get_controller_events():
-                print("b")
                 button, pressValue = self._xboxControl.get_button_and_press_value_from_event(event)
                 if self._xboxControl.check_for_exit_event(button):
                     self._exit_program(flag)
