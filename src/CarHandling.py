@@ -22,20 +22,10 @@ class CarHandling:
 		self._goForward = False
 		self._goReverse = False
 
-		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
+		self._gpioThrottle = None
 
-		GPIO.setup(leftBackward, GPIO.OUT)
-		GPIO.setup(leftForward, GPIO.OUT)
-		GPIO.setup(rightBackward, GPIO.OUT)
-		GPIO.setup(rightForward, GPIO.OUT)
-		GPIO.setup(enA, GPIO.OUT)
-		GPIO.setup(enB, GPIO.OUT)
-
-		self._pwmA = GPIO.PWM(enA, 100)
-		self._pwmB = GPIO.PWM(enB, 100)
-
-		self._pwmA.start(0)
-		self._pwmB.start(0)
+		self._pwmA = None
+		self._pwmB = None
 
 		self._controlsDictTurnButtons = {
 			"Left": "D-PAD left",
@@ -50,6 +40,24 @@ class CarHandling:
 		self._turnButtons = list(self._controlsDictTurnButtons.values())
 
 		self._gasAndReverseButtons = list(self._controlsDictThrottle.values())
+
+	def setup_gpio(self):
+		GPIO.setmode(GPIO.BOARD)
+
+		GPIO.setup(self._leftBackward, GPIO.OUT)
+		GPIO.setup(self._leftForward, GPIO.OUT)
+		GPIO.setup(self._rightBackward, GPIO.OUT)
+		GPIO.setup(self._rightForward, GPIO.OUT)
+		GPIO.setup(self._enA, GPIO.OUT)
+		GPIO.setup(self._enB, GPIO.OUT)
+
+		self._pwmA = GPIO.PWM(self._enA, 100)
+		self._pwmB = GPIO.PWM(self._enB, 100)
+
+		self._pwmA.start(0)
+		self._pwmB.start(0)
+
+		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
 
 	def handle_xbox_input(self, button, pressValue):
 		if button in self._turnButtons:
@@ -156,3 +164,4 @@ class CarHandling:
 	def cleanup(self):
 		self._pwmA.stop()
 		self._pwmB.stop()
+		GPIO.cleanup()

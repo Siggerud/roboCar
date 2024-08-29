@@ -44,31 +44,30 @@ except InvalidPortError as e:
     exit()
 
 
-"""
+
 # define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
 
 # define servo aboard car
-servo = ServoHandling(servoPin)
-
+#servo = ServoHandling(servoPin)
+"""
 # define camera aboard car
 resolution = (384, 288)
 cameraHelper = CameraHelper()
 camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
-
-# add components
-#carController.add_car(car)
-#carController.add_servo(servo)
 """
+# add components
+carController.add_car(car)
+#carController.add_servo(servo)
+
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
-#myEvent = Event()
 #carController.enable_camera(cameraHelper)
 carController.activate_arduino_communication()
-#carController.activate_car_handling()
+carController.activate_car_handling()
 
 flag = carController.shared_flag
 

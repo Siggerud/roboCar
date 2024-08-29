@@ -54,14 +54,14 @@ class CarControl:
         for thread in self._threads:
             thread.join()
 
-        if self._car:
-            self._car.cleanup()
+        #if self._car:
+        #    self._car.cleanup()
 
         if self._servo:
             self._servo.cleanup()
 
-        if self._arduinoCommunicator:
-            self._arduinoCommunicator.cleanup()
+        #if self._arduinoCommunicator:
+        #    self._arduinoCommunicator.cleanup()
 
     def _start_car_handling(self, flag):
         self._print_button_explanation()
@@ -69,7 +69,6 @@ class CarControl:
 
         while not flag.value:
             for event in self._xboxControl.get_controller_events():
-                print("a")
                 button, pressValue = self._xboxControl.get_button_and_press_value_from_event(event)
                 if self._xboxControl.check_for_exit_event(button):
                     self._exit_program(flag)
@@ -83,6 +82,7 @@ class CarControl:
 
                 if self._cameraEnabled:
                     self._cameraHelper.update_control_values_for_video_feed(self.shared_dict)
+        self._car.cleanup()
         print("Exiting car handling")
 
     def _print_button_explanation(self):

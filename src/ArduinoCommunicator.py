@@ -73,7 +73,7 @@ class ArduinoCommunicator:
 
             # run objects that need to be updated continuously
             self._run_arduino_connected_objects_continuously()
-
+        # TODO: move cleanup to carcontrol
         self.cleanup()
 
     def _run_arduino_connected_objects_continuously(self):
