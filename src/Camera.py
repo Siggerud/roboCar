@@ -11,13 +11,6 @@ class Camera:
         self._centerY = int(self._dispH / 2)
         self._rotation = rotation
 
-        self._picam2 = Picamera2()
-        self._picam2.preview_configuration.main.size = resolution
-        self._picam2.preview_configuration.main.format = "RGB888"
-        self._picam2.preview_configuration.align()
-        self._picam2.configure("preview")
-        self._picam2.start()
-
         # text on video properties
         self._colour = (0, 255, 0)
         self._textPositions = self._set_text_positions()
@@ -41,6 +34,14 @@ class Camera:
         self._weightPrevFps = 0.9
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
+
+    def setup(self, resolution):
+        self._picam2 = Picamera2()
+        self._picam2.preview_configuration.main.size = (self._dispW, self._dispH)
+        self._picam2.preview_configuration.main.format = "RGB888"
+        self._picam2.preview_configuration.align()
+        self._picam2.configure("preview")
+        self._picam2.start()
 
     def show_camera_feed(self, shared_dict):
         tStart = time() # start timer for calculating fps

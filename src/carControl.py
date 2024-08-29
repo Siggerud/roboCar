@@ -68,6 +68,8 @@ class CarControl:
             self._servo.cleanup()
 
     def _start_camera(self, shared_dict, shared_flag):
+        self._camera.setup()
+        
         while not shared_flag.value:
             self._camera.show_camera_feed(shared_dict)
 
