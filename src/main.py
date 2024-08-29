@@ -76,7 +76,7 @@ try:
     while not flag.value: # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
         #camera.show_camera_feed(carController.shared_dict)
-    sleep(0.5)
+        sleep(0.5)
     print("Exiting camera")
 except KeyboardInterrupt:
     flag.value = True # set event to stop all active processes
