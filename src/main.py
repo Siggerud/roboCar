@@ -68,7 +68,7 @@ carController.add_car(car)
 # activate distance warning, camera and car controlling
 #myEvent = Event()
 #carController.enable_camera(cameraHelper)
-carController.activate_arduino_communication()
+#carController.activate_arduino_communication()
 carController.activate_car_handling()
 
 flag = carController.shared_flag
