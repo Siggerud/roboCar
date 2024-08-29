@@ -1,5 +1,5 @@
 from CarHandling import CarHandling
-#from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
+from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
 from Camera import Camera
 from CameraHelper import CameraHelper
 from ServoHandling import ServoHandling
@@ -24,16 +24,12 @@ buzzerPin = 29
 lightPin1 = 36
 lightPin2 = 31
 
-# set GPIO layout
-#GPIO.setmode(GPIO.BOARD)
-
-# set up car controller
 try:
     carController = CarControl()
 except (X11ForwardingError, NoControllerDetected) as e:
     print_startup_error(e)
     exit()
-"""
+
 # define distance warning system for car
 port = '/dev/ttyACM0'
 baudrate = 115200 # the highest communication rate between a pi and an arduino
@@ -46,7 +42,7 @@ try:
 except InvalidPortError as e:
     print_startup_error(e)
     exit()
-"""
+
 
 """
 # define car handling

@@ -26,8 +26,8 @@ class CarControl:
         self.shared_dict = Array('i', (0, 0, 0, 0))
         self.shared_flag = Value('b', False)
 
-    #def add_arduino_communicator(self, arduinoCommunicator):
-    #    self._arduinoCommunicator = arduinoCommunicator
+    def add_arduino_communicator(self, arduinoCommunicator):
+        self._arduinoCommunicator = arduinoCommunicator
 
     def add_car(self, car):
         self._car = car
@@ -122,19 +122,8 @@ class CarControl:
             self._buttonToObjectDict[button] = roboObject
 
     def _listen_for_arduino_communication(self, flag):
-        # define distance warning system for car
-        port = '/dev/ttyACM0'
-        baudrate = 115200  # the highest communication rate between a pi and an arduino
-        buzzerPin = 29
-        lightPin1 = 36
-        lightPin2 = 31
-
-        arduinoCommunicator = ArduinoCommunicator(port, baudrate)
-        arduinoCommunicator.activate_distance_sensors(buzzerPin)
-        arduinoCommunicator.activate_photocell_lights([lightPin1, lightPin2])
-
         while not flag.value:
-            arduinoCommunicator.start()
+            self._arduinoCommunicator.start()
         print("Exiting arduino")
 
 
