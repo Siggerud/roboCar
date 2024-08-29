@@ -51,7 +51,7 @@ class ArduinoCommunicator:
 
     def start(self, flag):
         self._setup_GPIO()
-
+        print(flag)
         while not flag:
             # if it's been more than the specified wait time since last reading, then
             # do a new reading
