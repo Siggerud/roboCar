@@ -25,7 +25,7 @@ lightPin1 = 36
 lightPin2 = 31
 
 # set GPIO layout
-GPIO.setmode(GPIO.BOARD)
+#GPIO.setmode(GPIO.BOARD)
 
 # set up car controller
 try:
