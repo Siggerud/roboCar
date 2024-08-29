@@ -125,6 +125,9 @@ class CarControl:
         # define distance warning system for car
         port = '/dev/ttyACM0'
         baudrate = 115200  # the highest communication rate between a pi and an arduino
+        buzzerPin = 29
+        lightPin1 = 36
+        lightPin2 = 31
 
         arduinoCommunicator = ArduinoCommunicator(port, baudrate)
         arduinoCommunicator.activate_distance_sensors(buzzerPin)
