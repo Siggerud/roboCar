@@ -74,6 +74,8 @@ class ArduinoCommunicator:
             # run objects that need to be updated continuously
             self._run_arduino_connected_objects_continuously()
 
+        self.cleanup()
+
     def _run_arduino_connected_objects_continuously(self):
         if self._frontSensorActive or self._backSensorActive:
             self._honker.alert_if_too_close()
