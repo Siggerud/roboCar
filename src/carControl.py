@@ -16,6 +16,7 @@ class CarControl:
         self._servo = None
         self._arduinoCommunicator = None
 
+        self._camera = None
         self._cameraEnabled = False
         self._cameraHelper = None
 
@@ -33,21 +34,17 @@ class CarControl:
     def add_car(self, car):
         self._car = car
 
-    def start_camera(self, resolution):
-        thread = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag, resolution))
+    def add_camera(self, camera):
+        self._camera = camera
+
+    def activate_camera(self):
+        thread = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag))
         self._threads.append(thread)
         thread.start()
 
     def enable_camera(self, cameraHelper):
         self._cameraEnabled = True
         self._cameraHelper = cameraHelper
-
-    def _start_camera(self, shared_dict, shared_flag, resolution):
-        camera = Camera(resolution)
-        while not shared_flag.value:
-            camera.show_camera_feed(shared_dict)
-
-        camera.cleanup()
 
     def add_servo(self, servo):
         self._servo = servo
@@ -67,14 +64,14 @@ class CarControl:
         for thread in self._threads:
             thread.join()
 
-        #if self._car:
-        #    self._car.cleanup()
-
         if self._servo:
             self._servo.cleanup()
 
-        #if self._arduinoCommunicator:
-        #    self._arduinoCommunicator.cleanup()
+    def _start_camera(self, shared_dict, shared_flag):
+        while not shared_flag.value:
+            self._camera.show_camera_feed(shared_dict)
+
+        self._camera.cleanup()
 
     def _start_car_handling(self, flag):
         self._print_button_explanation()

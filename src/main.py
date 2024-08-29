@@ -54,11 +54,12 @@ cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 
 resolution = (384, 288)
-#camera = Camera(resolution)
+camera = Camera(resolution)
 
 # add components
 carController.add_car(car)
 carController.add_servo(servo)
+carController.add_camera(camera)
 
 carController.add_arduino_communicator(arduinoCommunicator)
 
@@ -66,16 +67,13 @@ carController.add_arduino_communicator(arduinoCommunicator)
 carController.enable_camera(cameraHelper)
 carController.activate_arduino_communication()
 carController.activate_car_handling()
+carController.activate_camera()
 
 flag = carController.shared_flag
 
-carController.start_camera(resolution)
-
 # keep process running until keyboard interrupt
 try:
-    while not flag.value: # listen for any threads setting the event
-        # camera module will be run from main module, since cv2 is not thread safe
-        #camera.show_camera_feed(carController.shared_dict)
+    while not flag.value: # listen for any processes setting the event
         sleep(0.5)
     print("Exiting camera")
 except KeyboardInterrupt:

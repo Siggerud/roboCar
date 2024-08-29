@@ -138,12 +138,11 @@ class Camera:
         return str(int(self._fps)) + " FPS"
 
     def _read_control_values_for_video_feed(self, shared_dict):
-        self._angleText = "Angle: " + str(shared_dict[0])
-        self._speedText = "Speed: " + str(shared_dict[1]) + "%"
+        self._angleText = "Angle: " + str(int(shared_dict[0]))
+        self._speedText = "Speed: " + str(int(shared_dict[1])) + "%"
         self._turnText = "Turn: " + self._get_turn_value(shared_dict[2])
         self._hudActive = shared_dict[3]
         self._zoomValue = shared_dict[4]
-
 
     def _get_turn_value(self, number):
         return self._number_to_turnValue[number]
