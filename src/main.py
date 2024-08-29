@@ -61,8 +61,9 @@ cameraHelper.add_servo(servo)
 # add components
 #carController.add_car(car)
 #carController.add_servo(servo)
-carController.add_arduino_communicator(arduinoCommunicator)
 """
+carController.add_arduino_communicator(arduinoCommunicator)
+
 # activate distance warning, camera and car controlling
 #myEvent = Event()
 #carController.enable_camera(cameraHelper)
