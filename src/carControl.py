@@ -84,7 +84,12 @@ class CarControl:
 
                 if self._cameraEnabled:
                     self._cameraHelper.update_control_values_for_video_feed(self.shared_dict)
-        self._car.cleanup()
+        if self._car:
+            self._car.cleanup()
+
+        if self._servo:
+            self._servo.cleanup()
+        
         print("Exiting car handling")
 
     def _print_button_explanation(self):
