@@ -7,9 +7,9 @@ from time import time
 class Camera:
     def __init__(self, resolution, rotation=True):
         self._dispW, self._dispH = resolution
+        self._rotation = rotation
         self._centerX = int(self._dispW / 2)
         self._centerY = int(self._dispH / 2)
-        self._rotation = rotation
 
         # text on video properties
         self._colour = (0, 255, 0)
@@ -35,7 +35,8 @@ class Camera:
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
-    def setup(self):
+    def setup(self, ipc):
+        self._ipc = ipc
         self._picam2 = Picamera2()
         self._picam2.preview_configuration.main.size = (self._dispW, self._dispH)
         self._picam2.preview_configuration.main.format = "RGB888"

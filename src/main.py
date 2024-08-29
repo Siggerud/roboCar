@@ -64,7 +64,7 @@ carController.add_camera(camera)
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
-carController.enable_camera(cameraHelper)
+carController.add_camera_helper(cameraHelper)
 carController.activate_arduino_communication()
 carController.activate_car_handling()
 carController.activate_camera()

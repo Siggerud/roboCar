@@ -23,7 +23,6 @@ class ArduinoCommunicator:
 
         self._photocellLightsActive = False
         self._photocellLightsManager = None
-        self._lightPins = None
         self._photocellReading = None
 
         self._encodingType = 'utf-8'
@@ -34,47 +33,42 @@ class ArduinoCommunicator:
         self._frontSensorActive = front
         self._backSensorActive = back
 
-        self._buzzerPin = buzzerPin
+        self._honker = Honker(buzzerPin)
 
     def activate_photocell_lights(self, lightPins):
         self._photocellLightsActive = True
-        self._lightPins = lightPins
+        self._photocellLightsManager = PhotocellManager(lightPins)
 
-    def _setup_GPIO(self):
+    def _setup(self):
         GPIO.setmode(GPIO.BOARD)
 
         if self._photocellLightsActive:
-            self._photocellLightsManager = PhotocellManager(self._lightPins)
+            self._photocellLightsManager.setup()
 
         if self._frontSensorActive or self._backSensorActive:
-            self._honker = Honker(self._buzzerPin)
+            self._honker.setup()
 
-    def start(self, flag):
-        self._setup_GPIO()
+    def start(self):
+        # if it's been more than the specified wait time since last reading, then
+        # do a new reading
+        if not self._lastReadTime or (time() - self._lastReadTime) < self._waitTime:
 
-        while not flag.value:
-            # if it's been more than the specified wait time since last reading, then
-            # do a new reading
-            if not self._lastReadTime or (time() - self._lastReadTime) < self._waitTime:
+            if self._frontSensorActive:
+                self._frontSensorReading = self._send_command_and_read_response("front")
 
-                if self._frontSensorActive:
-                    self._frontSensorReading = self._send_command_and_read_response("front")
+            if self._backSensorActive:
+                self._backSensorReading = self._send_command_and_read_response("back")
 
-                if self._backSensorActive:
-                    self._backSensorReading = self._send_command_and_read_response("back")
+            if self._photocellLightsActive:
+                self._photocellReading = self._send_command_and_read_response("photocell")
 
-                if self._photocellLightsActive:
-                    self._photocellReading = self._send_command_and_read_response("photocell")
+            # run objects that only need to be updated per reading
+            self._run_arduino_connected_objects_per_reading()
 
-                # run objects that only need to be updated per reading
-                self._run_arduino_connected_objects_per_reading()
+            self._lastReadTime = time()  # update last read time
 
-                self._lastReadTime = time()  # update last read time
-
-            # run objects that need to be updated continuously
-            self._run_arduino_connected_objects_continuously()
-        # TODO: move cleanup to carcontrol
-        self.cleanup()
+        # run objects that need to be updated continuously
+        self._run_arduino_connected_objects_continuously()
 
     def _run_arduino_connected_objects_continuously(self):
         if self._frontSensorActive or self._backSensorActive:

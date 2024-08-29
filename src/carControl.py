@@ -1,9 +1,7 @@
 import subprocess
-#from threading import Thread
 from multiprocessing import Process, Array, Value
 from xboxControl import XboxControl
-from ArduinoCommunicator import ArduinoCommunicator
-from Camera import Camera
+from time import sleep
 
 class CarControl:
     def __init__(self):
@@ -17,11 +15,9 @@ class CarControl:
         self._arduinoCommunicator = None
 
         self._camera = None
-        self._cameraEnabled = False
         self._cameraHelper = None
 
-        self._threads = []
-        self._threadLock = None
+        self._processes = []
 
         self._buttonToObjectDict = {
         }
@@ -37,43 +33,54 @@ class CarControl:
     def add_camera(self, camera):
         self._camera = camera
 
-    def activate_camera(self):
-        thread = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag))
-        self._threads.append(thread)
-        thread.start()
-
-    def enable_camera(self, cameraHelper):
-        self._cameraEnabled = True
+    def add_camera_helper(self, cameraHelper):
         self._cameraHelper = cameraHelper
 
     def add_servo(self, servo):
         self._servo = servo
 
+    def activate_camera(self):
+        if self._cameraHelper:
+            ipc = True
+        else:
+            ipc = False
+
+        process = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag, ipc))
+        self._processes.append(process)
+        process.start()
+
     def activate_arduino_communication(self):
-        thread = Process(target=self._listen_for_arduino_communication, args=(self.shared_flag,))
-        self._threads.append(thread)
-        thread.start()
+        process = Process(target=self._listen_for_arduino_communication, args=(self.shared_flag,))
+        self._processes.append(process)
+        process.start()
 
     def activate_car_handling(self):
-        thread = Process(target=self._start_car_handling, args=(self.shared_flag,))
-        self._threads.append(thread)
-        thread.start()
+        process = Process(target=self._start_car_handling, args=(self.shared_flag,))
+        self._processes.append(process)
+        process.start()
 
     def cleanup(self):
-        # close all threads
-        for thread in self._threads:
-            thread.join()
+        # close all processes
+        for process in self._processes:
+            process.join()
 
-        if self._servo:
-            self._servo.cleanup()
+    def _start_camera(self, shared_dict, flag, ipc):
+        self._camera.setup(ipc)
 
-    def _start_camera(self, shared_dict, shared_flag):
-        self._camera.setup()
-
-        while not shared_flag.value:
+        while not flag.value:
             self._camera.show_camera_feed(shared_dict)
 
         self._camera.cleanup()
+
+    def _listen_for_arduino_communication(self, flag):
+        while not flag.value:
+            # start the communicator
+            self._arduinoCommunicator.start(flag)
+            sleep(0.01) # sleep too not use too much CPU resources
+
+        # cleanup when flag is set to true
+        self._arduinoCommunicator.cleanup()
+        print("Exiting arduino")
 
     def _start_car_handling(self, flag):
         self._print_button_explanation()
@@ -94,8 +101,9 @@ class CarControl:
                 except KeyError: # if key does not correspond to object, then go to next event
                     continue
 
-                if self._cameraEnabled:
+                if self._cameraHelper:
                     self._cameraHelper.update_control_values_for_video_feed(self.shared_dict)
+
         if self._car:
             self._car.cleanup()
 
@@ -118,7 +126,7 @@ class CarControl:
             print("Servo controls:")
             print("Turn servo: " + self._servo.servo_buttons()["Servo"])
             print()
-        if self._cameraEnabled:
+        if self._camera:
             print("Camera controls")
             print("Zoom camera: " + self._cameraHelper.camera_buttons()["Zoom"])
             print("Turn HUD on or off: " + self._cameraHelper.camera_buttons()["HUD"])
@@ -133,17 +141,12 @@ class CarControl:
         if self._servo:
             self._add_object_to_buttons(self._servo.servo_buttons(), self._servo)
 
-        if self._cameraEnabled:
+        if self._cameraHelper:
             self._add_object_to_buttons(self._cameraHelper.camera_buttons(), self._cameraHelper)
 
     def _add_object_to_buttons(self, buttonDict, roboObject):
         for button in list(buttonDict.values()):
             self._buttonToObjectDict[button] = roboObject
-
-    def _listen_for_arduino_communication(self, flag):
-        self._arduinoCommunicator.start(flag)
-        print("Exiting arduino")
-
 
     def _exit_program(self, flag):
         flag.value = True
