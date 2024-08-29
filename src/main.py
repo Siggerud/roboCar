@@ -25,7 +25,7 @@ lightPin1 = 36
 lightPin2 = 31
 
 # set GPIO layout
-#GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BOARD)
 
 # set up car controller
 try:
@@ -40,17 +40,16 @@ baudrate = 115200 # the highest communication rate between a pi and an arduino
 
 
 try:
-    pass
-    #arduinoCommunicator = ArduinoCommunicator(port, baudrate)
-    #arduinoCommunicator.activate_distance_sensors(buzzerPin)
-    #arduinoCommunicator.activate_photocell_lights([lightPin1, lightPin2])
+    arduinoCommunicator = ArduinoCommunicator(port, baudrate)
+    arduinoCommunicator.activate_distance_sensors(buzzerPin)
+    arduinoCommunicator.activate_photocell_lights([lightPin1, lightPin2])
 except InvalidPortError as e:
     print_startup_error(e)
     exit()
-
+"""
 # define car handling
 car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
-"""
+
 # define servo aboard car
 servo = ServoHandling(servoPin)
 
@@ -62,15 +61,15 @@ cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
 """
 # add components
-carController.add_car(car)
+#carController.add_car(car)
 #carController.add_servo(servo)
-#carController.add_arduino_communicator(arduinoCommunicator)
+carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
 #myEvent = Event()
 #carController.enable_camera(cameraHelper)
-#carController.activate_arduino_communication()
-carController.activate_car_handling()
+carController.activate_arduino_communication()
+#carController.activate_car_handling()
 
 flag = carController.shared_flag
 
