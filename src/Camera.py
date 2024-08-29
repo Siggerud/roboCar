@@ -109,12 +109,12 @@ class Camera:
     def _add_text_to_cam_feed(self, image):
         # add control values to camera feed
         counter = 0
-        """
+
         cv2.putText(image, "Zoom: " + str(self._zoomValue) + "x", self._get_origin(counter), self._font, self._scale,
                     self._colour,
                     self._thickness)
         counter += 1
-        """
+
         if self._angleText:
             cv2.putText(image, self._angleText, self._get_origin(counter), self._font, self._scale, self._colour,
                         self._thickness)
@@ -142,7 +142,7 @@ class Camera:
         self._speedText = "Speed: " + str(shared_dict[1]) + "%"
         self._turnText = "Turn: " + self._get_turn_value(shared_dict[2])
         self._hudActive = shared_dict[3]
-        #self._zoomValue = shared_dict[5]
+        self._zoomValue = shared_dict[4]
 
 
     def _get_turn_value(self, number):

@@ -62,23 +62,15 @@ class CameraHelper:
         return self._hudActive
 
     def update_control_values_for_video_feed(self, shared_dict):
-        #with lock:
-        """
-        if self._servo:
-            self._angleText = "Angle: " + str(self._servo.get_current_servo_angle())
-
-        if self._car:
-            self._speedText = "Speed: " + str(self._car.get_current_speed()) + "%"
-            self._turnText = "Turn: " + self._car.get_current_turn_value()
-        """
         if self._servo:
             shared_dict[0] = self._servo.get_current_servo_angle()
 
         if self._car:
             shared_dict[1] = self._car.get_current_speed()
             shared_dict[2] = self._turnValue_to_number[self._car.get_current_turn_value()]
-            shared_dict[3] = int(self._hudActive)
-        #shared_dict[3] = self._zoomValue
+
+        shared_dict[3] = float(self._hudActive)
+        shared_dict[4] = self._zoomValue
 
 
     def camera_buttons(self):
