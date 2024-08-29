@@ -49,11 +49,12 @@ car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, e
 servo = ServoHandling(servoPin)
 
 # define camera aboard car
-resolution = (384, 288)
 cameraHelper = CameraHelper()
-camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servo)
+
+resolution = (384, 288)
+#camera = Camera(resolution)
 
 # add components
 carController.add_car(car)
@@ -68,17 +69,20 @@ carController.activate_car_handling()
 
 flag = carController.shared_flag
 
+carController.start_camera(resolution)
+
 # keep process running until keyboard interrupt
 try:
     while not flag.value: # listen for any threads setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed(carController.shared_dict)
+        #camera.show_camera_feed(carController.shared_dict)
+    sleep(0.5)
     print("Exiting camera")
 except KeyboardInterrupt:
     flag.value = True # set event to stop all active processes
 finally:
     print("finished!")
-    camera.cleanup()
+    #camera.cleanup()
 
 
 

@@ -3,6 +3,7 @@ import subprocess
 from multiprocessing import Process, Array, Value
 from xboxControl import XboxControl
 from ArduinoCommunicator import ArduinoCommunicator
+from Camera import Camera
 
 class CarControl:
     def __init__(self):
@@ -32,9 +33,21 @@ class CarControl:
     def add_car(self, car):
         self._car = car
 
+    def start_camera(self, resolution):
+        thread = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag, resolution))
+        self._threads.append(thread)
+        thread.start()
+
     def enable_camera(self, cameraHelper):
         self._cameraEnabled = True
         self._cameraHelper = cameraHelper
+
+    def _start_camera(self, shared_dict, shared_flag, resolution):
+        camera = Camera(resolution)
+        while not shared_flag.value:
+            camera.show_camera_feed(shared_dict)
+
+        camera.cleanup()
 
     def add_servo(self, servo):
         self._servo = servo
@@ -89,7 +102,7 @@ class CarControl:
 
         if self._servo:
             self._servo.cleanup()
-        
+
         print("Exiting car handling")
 
     def _print_button_explanation(self):
@@ -145,7 +158,6 @@ class CarControl:
             print("Succesful connection to forwarded X11 server")
 
         return not returnCode
-
 
 class X11ForwardingError(Exception):
     pass

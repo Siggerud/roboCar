@@ -5,11 +5,10 @@ from picamera2 import Picamera2
 from time import time
 
 class Camera:
-    def __init__(self, resolution, cameraHelper, rotation=True):
+    def __init__(self, resolution, rotation=True):
         self._dispW, self._dispH = resolution
         self._centerX = int(self._dispW / 2)
         self._centerY = int(self._dispH / 2)
-        self._cameraHelper = cameraHelper
         self._rotation = rotation
 
         self._picam2 = Picamera2()
