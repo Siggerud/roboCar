@@ -35,8 +35,7 @@ class Camera:
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
-    def setup(self, ipc):
-        self._ipc = ipc
+    def setup(self):
         self._picam2 = Picamera2()
         self._picam2.preview_configuration.main.size = (self._dispW, self._dispH)
         self._picam2.preview_configuration.main.format = "RGB888"

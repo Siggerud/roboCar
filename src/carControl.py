@@ -40,12 +40,7 @@ class CarControl:
         self._servo = servo
 
     def activate_camera(self):
-        if self._cameraHelper:
-            ipc = True
-        else:
-            ipc = False
-
-        process = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag, ipc))
+        process = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag))
         self._processes.append(process)
         process.start()
 
@@ -64,8 +59,8 @@ class CarControl:
         for process in self._processes:
             process.join()
 
-    def _start_camera(self, shared_dict, flag, ipc):
-        self._camera.setup(ipc)
+    def _start_camera(self, shared_dict, flag):
+        self._camera.setup()
 
         while not flag.value:
             self._camera.show_camera_feed(shared_dict)

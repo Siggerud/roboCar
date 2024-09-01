@@ -6,7 +6,6 @@ from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error
-#import RPi.GPIO as GPIO
 from time import sleep
 
 # define GPIO pins
@@ -60,7 +59,6 @@ camera = Camera(resolution)
 carController.add_car(car)
 carController.add_servo(servo)
 carController.add_camera(camera)
-
 carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
@@ -80,7 +78,6 @@ except KeyboardInterrupt:
     flag.value = True # set event to stop all active processes
 finally:
     print("finished!")
-    #camera.cleanup()
 
 
 
