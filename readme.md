@@ -1,6 +1,7 @@
 # Robocar
 ![Alt text](Images/robocar.jpg)
 The robocar with Xbox controller
+#Todo: add updated picture
 <br />
 <br />
 ![Alt text](Images/camFeedScreenshot.png)
@@ -127,6 +128,35 @@ you just have to run the test files.
 13 -> ENB <br /> 
 GND -> GND
 
+#### Raspberry pi to horizontal servo
+37 -> SignalWire <br />
+3.3V -> + <br />
+GND -> -
+
+#### Raspberry pi to vertical servo
+33 -> SignalWire <br />
+3.3V -> + <br />
+GND -> -
+
+#### Raspberry pi to camera
+Cameraslot -> Camera
+
+#### Raspberry pi to arduino
+USB-A -> USB-B
+
+#### Raspberry pi to passive buzzer
+29 -> +
+GND -> -
+
+#### Raspberry pi to LEDs
+LED 1<br />
+36 -> +
+GND -> -
+<br />
+LED 2<br />
+31 -> +
+GND -> -
+
 #### L289 to motors
 L289 right and left should be based on looking at the
 l289 from above reading the text. <br /> 
@@ -157,16 +187,8 @@ A1 -> Trig <br />
 5V -> + <br />
 GND -> -
 
-#### Raspberry pi to servo
-37 -> SignalWire <br />
-3.3V -> + <br />
-GND -> -
-
-#### Raspberry pi to camera
-Cameraslot -> Camera
-
-#### Raspberry pi to arduino
-USB-A -> USB-B
+#### Arduino to phototransistor
+<img src="images/ArduinoToPhotoresistors.png" alt="drawing" width="150"/>
 
 ### Parts list
 
@@ -177,18 +199,31 @@ L289N motor driver <br />
 4 wheels that attach to motors <br />
 
 #### Sensors
-2 HC-SR04 distance sensors
-Phototransistor
+2 HC-SR04 distance sensors <br />
+Photoresistor
 
-#### Other
-Raspberry Pi 4 model B
-Arduino Uno
-Arduino Sensor Shield V5.0
-Passive buzzer
-Breadboard
-2 yellow LED lights
+#### Other electrical components
+Raspberry Pi 4 model B <br />
+Raspberry pi Camera Module V2 <br />
+Powerbank 10000mah <br />
+Arduino Uno <br />
+Arduino Sensor Shield V5.0 <br />
+2 SG90 servos <br />
+Passive buzzer <br />
+Breadboard <br />
+2 yellow LED lights <br />
+1 10K Ohm resistor <br />
+2 220 Ohm resistor
 
-
+#### Structural components
+3D printed parts <br />
+6x M3 40 mm spacers <br />
+12x M3 10 mm spacers <br />
+4 metal brackets for motors <br />
+#TODO: write down number of screws
+#TODO: write down number of nuts
+#TODO: write down number of female to female wires
+#TODO: write down number of male to female wires
 
 
 
