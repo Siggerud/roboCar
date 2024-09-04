@@ -8,22 +8,120 @@ from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error, convert_from_board_number_to_bcm_number
 import RPi.GPIO as GPIO
 from threading import Event
+from configparser import ConfigParser
 
-# define GPIO pins
-rightForward = 22 # IN2 
-rightBackward = 18 # IN1
-leftForward = 16 # IN4
-leftBackward = 15 # IN3
-enA = 11
-enB = 13
+def setup_camera(parser, cameraHelper):
+    cameraSpecs = parser["Camera.specs"]
 
-servoPinHorizontal = convert_from_board_number_to_bcm_number(37)
-servoPinVertical = convert_from_board_number_to_bcm_number(33)
+    resolutionWidth = cameraSpecs.get("ResolutionWidth")
+    resolutionHeight = cameraSpecs.get("ResolutionHeight")
 
-buzzerPin = 29
+    if not resolutionWidth or not resolutionHeight:
+        return None
 
-lightPin1 = 36
-lightPin2 = 31
+    resolution = (int(resolutionWidth), int(resolutionHeight))
+    camera = Camera(resolution, cameraHelper)
+
+    return camera
+
+
+def setup_arduino_communicator(parser):
+    arduinoCommunicatorData = parser["Arduino.specs"]
+
+    port = arduinoCommunicatorData.get("Port")
+    baudrate = arduinoCommunicatorData.get("Baudrate", 9600)
+
+    if not port:
+        return None
+
+    try:
+        arduinoCommunicator = ArduinoCommunicator(port, int(baudrate))
+    except InvalidPortError as e:
+        print_startup_error(e)
+        exit()
+
+    buzzerPin = parser["Distance.buzzer.pin"].get("Buzzer")
+
+    if buzzerPin:
+        arduinoCommunicator.activate_distance_sensors(buzzerPin)
+
+    progressiveLightPins = []
+    lightPins = parser["Progressive.light.pins"]
+    for key in lightPins:
+        progressiveLightPins.append(int(lightPins[key]))
+
+    if len(progressiveLightPins) != 0:
+        arduinoCommunicator.activate_photocell_lights(progressiveLightPins)
+
+    return arduinoCommunicator
+
+
+def setup_servo(parser, plane):
+    servoData = parser[f"Servo.handling.specs.{plane}"]
+
+    servoPin = servoData.get("ServoPin")
+    minAngle = servoData.get("MinAngle", -90)
+    maxAngle = servoData("MaxAngle", 90)
+
+    if not servoPin:
+        return None
+
+    servoPin = int(servoPin)
+    servoPin = convert_from_board_number_to_bcm_number(servoPin)
+
+    servo = ServoHandling(
+        servoPin,
+        plane,
+        int(minAngle),
+        int(maxAngle)
+    )
+
+    return servo
+
+
+def setup_car(parser):
+    carHandlingPins = parser["Car.handling.pins"]
+
+    # define GPIO pins
+    rightForward = carHandlingPins.get("RightForward")  # IN2
+    rightBackward = carHandlingPins.get("RightBackward")  # IN1
+    leftForward = carHandlingPins.get("LeftForward")  # IN4
+    leftBackward = carHandlingPins.get("LeftBackward")  # IN3
+    enA = carHandlingPins.get("EnA")
+    enB = carHandlingPins.get("EnB")
+
+    allPins = [
+        rightForward,
+        rightBackward,
+        leftForward,
+        leftBackward,
+        enA,
+        enB
+    ]
+
+    if None in allPins:
+        return None
+
+    allPins = [int(pin) for pin in allPins]
+
+    # define car handling
+    car = CarHandling(
+        allPins[0],
+        allPins[1],
+        allPins[2],
+        allPins[3],
+        allPins[4],
+        allPins[5]
+    )
+
+    return car
+
+
+# set up parser to read input values
+parser = ConfigParser()
+parser.read("config.ini")
+
+car = setup_car(parser)
 
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
@@ -35,36 +133,18 @@ except (X11ForwardingError, NoControllerDetected) as e:
     print_startup_error(e)
     exit()
 
-# define distance warning system for car
-port = '/dev/ttyACM0'
-baudrate = 115200 # the highest communication rate between a pi and an arduino
-
-try:
-    arduinoCommunicator = ArduinoCommunicator(port, baudrate)
-    arduinoCommunicator.activate_distance_sensors(buzzerPin)
-    arduinoCommunicator.activate_photocell_lights([lightPin1, lightPin2])
-except InvalidPortError as e:
-    print_startup_error(e)
-    exit()
-
-# define car handling
-car = CarHandling(leftBackward, leftForward, rightBackward, rightForward, enA, enB)
+arduinoCommunicator = setup_arduino_communicator(parser)
 
 # define servos aboard car
-servoHorizontal = ServoHandling(servoPinHorizontal, "horizontal")
-servoVertical = ServoHandling(
-    servoPinVertical,
-    "vertical",
-    -60,
-    60
-)
+servoHorizontal = setup_servo(parser, "horizontal")
+servoVertical = setup_servo(parser, "vertical")
 
-# define camera aboard car
-resolution = (384, 288)
 cameraHelper = CameraHelper()
-camera = Camera(resolution, cameraHelper)
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servoHorizontal)
+
+camera = setup_camera(parser, cameraHelper)
+
 
 # add components
 carController.add_car(car)
@@ -89,6 +169,10 @@ finally:
     carController.cleanup() # cleanup to finish all threads and close processes
     camera.cleanup()
     GPIO.cleanup()
+
+
+
+
 
 
 
