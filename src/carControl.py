@@ -74,10 +74,9 @@ class CarControl:
         self._camera.cleanup()
 
     def _listen_for_arduino_communication(self, flag):
-        print("start arduino")
         while not flag.value:
             # start the communicator
-            self._arduinoCommunicator.start(flag)
+            self._arduinoCommunicator.start()
             sleep(0.01) # sleep too not use too much CPU resources
 
         # cleanup when flag is set to true
