@@ -74,6 +74,8 @@ class CarControl:
         self._camera.cleanup()
 
     def _listen_for_arduino_communication(self, flag):
+        self._arduinoCommunicator.setup_gpio()
+
         while not flag.value:
             # start the communicator
             self._arduinoCommunicator.start()
