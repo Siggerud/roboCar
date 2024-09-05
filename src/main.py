@@ -131,8 +131,9 @@ arduinoCommunicator = setup_arduino_communicator(parser)
 
 # define servos aboard car
 servoHorizontal = setup_servo(parser, "horizontal")
+print(servoHorizontal)
 servoVertical = setup_servo(parser, "vertical")
-
+print(servoVertical)
 cameraHelper = CameraHelper()
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servoHorizontal)
@@ -158,7 +159,7 @@ if camera:
     carController.enable_camera(cameraHelper)
 if arduinoCommunicator:
     carController.activate_arduino_communication(myEvent)
-    
+
 carController.activate_car_handling(myEvent)
 
 # keep process running until keyboard interrupt
