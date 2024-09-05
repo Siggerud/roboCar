@@ -84,6 +84,7 @@ def setup_servo(parser, plane):
 
 
 def setup_car(parser):
+    print(parser.sections())
     if not parser["Components.enabled"].getboolean("CarHandling"):
         return None
 
