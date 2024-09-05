@@ -84,6 +84,13 @@ sudo systemctl start pigpiod
 7. Press the upload button
 8. Disconnect the Arduino Uno from the PC
 
+### Add changes to config file if necessary
+All user tweaking will be done in the config file. Here you can add or remove
+components installed on the car, change pin numbers and other limit values for the car
+1. Turn off any components you have not added to the car under Components.enabled
+2. Change any pin connections that are deviating from the wiring list given below
+3. Add or remove progressive lights if need be
+
 ## Starting up the program
 1. Power your xbox controller and wait for it to connect to the pi
 2. Connect to your pi via RealVNC

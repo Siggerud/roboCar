@@ -131,15 +131,12 @@ arduinoCommunicator = setup_arduino_communicator(parser)
 
 # define servos aboard car
 servoHorizontal = setup_servo(parser, "horizontal")
-print(servoHorizontal)
 servoVertical = setup_servo(parser, "vertical")
-print(servoVertical)
 cameraHelper = CameraHelper()
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servoHorizontal)
 
 camera = setup_camera(parser, cameraHelper)
-
 
 # add components
 if car:
