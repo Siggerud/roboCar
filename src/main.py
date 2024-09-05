@@ -12,7 +12,7 @@ from configparser import ConfigParser
 import os
 
 def setup_camera(parser, cameraHelper):
-    if not parser["Components.enabled"]["Camera"]:
+    if not parser["Components.enabled"].getboolean("Camera"):
         return None
 
     cameraSpecs = parser["Camera.specs"]
@@ -27,7 +27,7 @@ def setup_camera(parser, cameraHelper):
 
 
 def setup_arduino_communicator(parser):
-    if not parser["Components.enabled"]["ArduinoCommunicator"]:
+    if not parser["Components.enabled"].getboolean("ArduinoCommunicator"):
         return None
 
     arduinoCommunicatorData = parser["Arduino.specs"]
@@ -43,10 +43,10 @@ def setup_arduino_communicator(parser):
 
     buzzerPin = parser["Distance.buzzer.pin"].getint("Buzzer")
 
-    if parser["Components.enabled"]["DistanceBuzzer"]:
+    if parser["Components.enabled"].getboolean("DistanceBuzzer"):
         arduinoCommunicator.activate_distance_sensors(buzzerPin)
 
-    if parser["Components.enabled"]["ProgressiveLights"]:
+    if parser["Components.enabled"].getboolean("ProgressiveLights"):
         progressiveLightPins = []
         lightPins = parser["Progressive.light.pins"]
         for key in lightPins:
@@ -59,17 +59,17 @@ def setup_arduino_communicator(parser):
 
 def setup_servo(parser, plane):
     if plane == "horizontal":
-        if not parser["Components.enabled"]["ServoHorizontal"]:
+        if not parser["Components.enabled"].getboolean("ServoHorizontal"):
             return None
     elif plane == "vertical":
-        if not parser["Components.enabled"]["ServoVertical"]:
+        if not parser["Components.enabled"].getboolean("ServoVertical"):
             return None
 
     servoData = parser[f"Servo.handling.specs.{plane}"]
 
     servoPin = servoData.getint("ServoPin")
-    minAngle = servoData.getint("MinAngle", -90)
-    maxAngle = servoData.getint("MaxAngle", 90)
+    minAngle = servoData.getint("MinAngle")
+    maxAngle = servoData.getint("MaxAngle")
 
     servoPin = servoPin
     servoPin = convert_from_board_number_to_bcm_number(servoPin)
