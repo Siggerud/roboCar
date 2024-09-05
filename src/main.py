@@ -141,15 +141,24 @@ camera = setup_camera(parser, cameraHelper)
 
 
 # add components
-carController.add_car(car)
-carController.add_servo(servoHorizontal)
-carController.add_servo(servoVertical)
-carController.add_arduino_communicator(arduinoCommunicator)
+if car:
+    carController.add_car(car)
+if servoHorizontal:
+    carController.add_servo(servoHorizontal)
+
+if servoVertical:
+    carController.add_servo(servoVertical)
+
+if arduinoCommunicator:
+    carController.add_arduino_communicator(arduinoCommunicator)
 
 # activate distance warning, camera and car controlling
 myEvent = Event()
-carController.enable_camera(cameraHelper)
-carController.activate_arduino_communication(myEvent)
+if camera:
+    carController.enable_camera(cameraHelper)
+if arduinoCommunicator:
+    carController.activate_arduino_communication(myEvent)
+    
 carController.activate_car_handling(myEvent)
 
 # keep process running until keyboard interrupt
