@@ -27,9 +27,6 @@ class CarHandling:
 		self._pwmA = None
 		self._pwmB = None
 
-		self._pwmA.start(0)
-		self._pwmB.start(0)
-
 		self._controlsDictTurnButtons = {
 			"Left": "D-PAD left",
 			"Right": "D-PAD right",
