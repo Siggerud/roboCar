@@ -7,11 +7,11 @@ from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error, convert_from_board_number_to_bcm_number
 import RPi.GPIO as GPIO
-from threading import Event
+from time import sleep
 from configparser import ConfigParser
 import os
 
-def setup_camera(parser, cameraHelper):
+def setup_camera(parser):
     if not parser["Components.enabled"].getboolean("Camera"):
         return None
 
@@ -21,7 +21,7 @@ def setup_camera(parser, cameraHelper):
     resolutionHeight = cameraSpecs.getint("ResolutionHeight")
 
     resolution = (resolutionWidth, resolutionHeight)
-    camera = Camera(resolution, cameraHelper)
+    camera = Camera(resolution)
 
     return camera
 
@@ -115,9 +115,6 @@ def setup_car(parser):
 parser = ConfigParser()
 parser.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
 
-# set GPIO layout
-GPIO.setmode(GPIO.BOARD)
-
 # set up car controller
 try:
     carController = CarControl()
@@ -132,11 +129,13 @@ arduinoCommunicator = setup_arduino_communicator(parser)
 # define servos aboard car
 servoHorizontal = setup_servo(parser, "horizontal")
 servoVertical = setup_servo(parser, "vertical")
+
+camera = setup_camera(parser)
+
+#TODO: add this to a function
 cameraHelper = CameraHelper()
 cameraHelper.add_car(car)
 cameraHelper.add_servo(servoHorizontal)
-
-camera = setup_camera(parser, cameraHelper)
 
 # add components
 if car:
@@ -150,26 +149,29 @@ if servoVertical:
 if arduinoCommunicator:
     carController.add_arduino_communicator(arduinoCommunicator)
 
-# activate distance warning, camera and car controlling
-myEvent = Event()
 if camera:
-    carController.enable_camera(cameraHelper)
-if arduinoCommunicator:
-    carController.activate_arduino_communication(myEvent)
+    carController.add_camera(camera)
+    carController.add_camera_helper(cameraHelper)
 
-carController.activate_car_handling(myEvent)
+# activate distance warning, camera and car controlling
+if camera:
+    carController.activate_camera()
+if arduinoCommunicator:
+    carController.activate_arduino_communication()
+
+carController.activate_car_handling()
+
+flag = carController.shared_flag
 
 # keep process running until keyboard interrupt
 try:
-    while not myEvent.is_set(): # listen for any threads setting the event
+    while not flag.value: # listen for any processes setting the event
         # camera module will be run from main module, since cv2 is not thread safe
-        camera.show_camera_feed()
+        sleep(0.5)
 except KeyboardInterrupt:
-    myEvent.set() # set event to stop all active processes
+    flag.value = True # set event to stop all active processes
 finally:
-    carController.cleanup() # cleanup to finish all threads and close processes
-    camera.cleanup()
-    GPIO.cleanup()
+    print("Finished")
 
 
 

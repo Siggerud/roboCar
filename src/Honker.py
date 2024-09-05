@@ -6,7 +6,6 @@ class Honker:
     def __init__(self, buzzerPin):
         self._buzzerPin = buzzerPin
         self._withinAlarmDistance = False
-        GPIO.setup(buzzerPin, GPIO.OUT, initial=self._withinAlarmDistance)
 
         self._distanceTreshold = 10
         self._currentLowestDistance = None
@@ -16,6 +15,9 @@ class Honker:
 
         self._lowEndTimeBetweenEachHonk = 0.4
         self._highEndTimeBetweenEachHonk = 0.01
+
+    def setup(self):
+        GPIO.setup(self._buzzerPin, GPIO.OUT, initial=self._withinAlarmDistance)
 
     def prepare_for_honking(self, sensors):
         self._set_honk_on_or_off(sensors) # check if car is within treshold distance

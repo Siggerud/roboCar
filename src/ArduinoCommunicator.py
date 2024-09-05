@@ -3,6 +3,7 @@ import serial
 from time import sleep, time
 from Honker import Honker
 from PhotocellManager import PhotocellManager
+import RPi.GPIO as GPIO
 
 class ArduinoCommunicator:
     def __init__(self, port, baudrate, waitTime = 0.1):
@@ -28,6 +29,15 @@ class ArduinoCommunicator:
 
         self._lastReadTime = None
 
+    def setup_gpio(self):
+        GPIO.setmode(GPIO.BOARD)
+
+        if self._photocellLightsActive:
+            self._photocellLightsManager.setup()
+
+        if self._frontSensorActive or self._backSensorActive:
+            self._honker.setup()
+
     def activate_distance_sensors(self, buzzerPin, front=True, back=True):
         self._frontSensorActive = front
         self._backSensorActive = back
@@ -37,6 +47,14 @@ class ArduinoCommunicator:
     def activate_photocell_lights(self, lightPins):
         self._photocellLightsActive = True
         self._photocellLightsManager = PhotocellManager(lightPins)
+
+    def cleanup(self):
+        self._serialObj.close()
+
+        if self._photocellLightsManager:
+            self._photocellLightsManager.cleanup()
+
+        GPIO.cleanup()
 
     def start(self):
         # if it's been more than the specified wait time since last reading, then
@@ -74,12 +92,6 @@ class ArduinoCommunicator:
 
         if self._photocellLightsActive:
             self._photocellLightsManager.adjust_lights(self._photocellReading)
-
-    def cleanup(self):
-        self._serialObj.close()
-
-        if self._photocellLightsManager:
-            self._photocellLightsManager.cleanup()
 
     def _send_command_and_read_response(self, command):
         # send command to arduino

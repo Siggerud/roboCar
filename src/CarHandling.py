@@ -22,17 +22,10 @@ class CarHandling:
 		self._goForward = False
 		self._goReverse = False
 
-		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
+		self._gpioThrottle = None
 
-		GPIO.setup(leftBackward, GPIO.OUT)
-		GPIO.setup(leftForward, GPIO.OUT)
-		GPIO.setup(rightBackward, GPIO.OUT)
-		GPIO.setup(rightForward, GPIO.OUT)
-		GPIO.setup(enA, GPIO.OUT)
-		GPIO.setup(enB, GPIO.OUT)
-
-		self._pwmA = GPIO.PWM(enA, 100)
-		self._pwmB = GPIO.PWM(enB, 100)
+		self._pwmA = None
+		self._pwmB = None
 
 		self._pwmA.start(0)
 		self._pwmB.start(0)
@@ -51,6 +44,24 @@ class CarHandling:
 
 		self._gasAndReverseButtons = list(self._controlsDictThrottle.values())
 
+	def setup_gpio(self):
+		GPIO.setmode(GPIO.BOARD)
+
+		GPIO.setup(self._leftBackward, GPIO.OUT)
+		GPIO.setup(self._leftForward, GPIO.OUT)
+		GPIO.setup(self._rightBackward, GPIO.OUT)
+		GPIO.setup(self._rightForward, GPIO.OUT)
+		GPIO.setup(self._enA, GPIO.OUT)
+		GPIO.setup(self._enB, GPIO.OUT)
+
+		self._pwmA = GPIO.PWM(self._enA, 100)
+		self._pwmB = GPIO.PWM(self._enB, 100)
+
+		self._pwmA.start(0)
+		self._pwmB.start(0)
+
+		self._gpioThrottle = {True: GPIO.HIGH, False: GPIO.LOW}
+
 	def handle_xbox_input(self, button, pressValue):
 		if button in self._turnButtons:
 			self._prepare_car_for_turning(button, pressValue)
@@ -58,6 +69,11 @@ class CarHandling:
 		elif button in self._gasAndReverseButtons:
 			self._prepare_car_for_throttle(button, pressValue)
 			self._move_car()
+
+	def cleanup(self):
+		self._pwmA.stop()
+		self._pwmB.stop()
+		GPIO.cleanup()
 
 	def car_buttons(self):
 		completeDict = dict(chain(self._controlsDictThrottle.items(), self._controlsDictTurnButtons.items()))
@@ -153,6 +169,4 @@ class CarHandling:
 		self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 		self._speed = speed
 
-	def cleanup(self):
-		self._pwmA.stop()
-		self._pwmB.stop()
+

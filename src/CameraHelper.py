@@ -28,6 +28,12 @@ class CameraHelper:
         self._zoomButton = self._controlsDictCamera["Zoom"]
         self._hudButton = self._controlsDictCamera["HUD"]
 
+        self._turnValue_to_number = {
+            "-": 0,
+            "Left": 1,
+            "Right": 2
+        }
+
     def handle_xbox_input(self, button, pressValue):
         if button == self._zoomButton:
             self._set_zoom_value(pressValue)
@@ -55,14 +61,18 @@ class CameraHelper:
     def get_hud_value(self):
         return self._hudActive
 
-    def update_control_values_for_video_feed(self):
-        #TODO: add option for multiple servos
+    def update_control_values_for_video_feed(self, shared_dict):
+        #TODO: add some more clean checks on active components in the beginning. Maybe a shared library
+        # based on active components
         if self._servo:
-            self._angleText = "Angle: " + str(self._servo.get_current_servo_angle())
+            shared_dict[0] = self._servo.get_current_servo_angle()
 
         if self._car:
-            self._speedText = "Speed: " + str(self._car.get_current_speed()) + "%"
-            self._turnText = "Turn: " + self._car.get_current_turn_value()
+            shared_dict[1] = self._car.get_current_speed()
+            shared_dict[2] = self._turnValue_to_number[self._car.get_current_turn_value()]
+
+        shared_dict[3] = float(self._hudActive)
+        shared_dict[4] = self._zoomValue
 
     def camera_buttons(self):
         return self._controlsDictCamera
