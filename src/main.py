@@ -11,107 +11,100 @@ from threading import Event
 from configparser import ConfigParser
 
 def setup_camera(parser, cameraHelper):
-    cameraSpecs = parser["Camera.specs"]
-
-    resolutionWidth = cameraSpecs.get("ResolutionWidth")
-    resolutionHeight = cameraSpecs.get("ResolutionHeight")
-
-    if not resolutionWidth or not resolutionHeight:
+    if not parser["Components.enabled"]["Camera"]:
         return None
 
-    resolution = (int(resolutionWidth), int(resolutionHeight))
+    cameraSpecs = parser["Camera.specs"]
+
+    resolutionWidth = cameraSpecs.getint("ResolutionWidth")
+    resolutionHeight = cameraSpecs.getint("ResolutionHeight")
+
+    resolution = (resolutionWidth, resolutionHeight)
     camera = Camera(resolution, cameraHelper)
 
     return camera
 
 
 def setup_arduino_communicator(parser):
+    if not parser["Components.enabled"]["ArduinoCommunicator"]:
+        return None
+
     arduinoCommunicatorData = parser["Arduino.specs"]
 
     port = arduinoCommunicatorData.get("Port")
-    baudrate = arduinoCommunicatorData.get("Baudrate", 9600)
-
-    if not port:
-        return None
+    baudrate = arduinoCommunicatorData.getint("Baudrate", 9600)
 
     try:
-        arduinoCommunicator = ArduinoCommunicator(port, int(baudrate))
+        arduinoCommunicator = ArduinoCommunicator(port, baudrate)
     except InvalidPortError as e:
         print_startup_error(e)
         exit()
 
-    buzzerPin = parser["Distance.buzzer.pin"].get("Buzzer")
+    buzzerPin = parser["Distance.buzzer.pin"].getint("Buzzer")
 
-    if buzzerPin:
+    if parser["Components.enabled"]["DistanceBuzzer"]:
         arduinoCommunicator.activate_distance_sensors(buzzerPin)
 
-    progressiveLightPins = []
-    lightPins = parser["Progressive.light.pins"]
-    for key in lightPins:
-        progressiveLightPins.append(int(lightPins[key]))
+    if parser["Components.enabled"]["ProgressiveLights"]:
+        progressiveLightPins = []
+        lightPins = parser["Progressive.light.pins"]
+        for key in lightPins:
+            progressiveLightPins.append(lightPins.getint(key))
 
-    if len(progressiveLightPins) != 0:
         arduinoCommunicator.activate_photocell_lights(progressiveLightPins)
 
     return arduinoCommunicator
 
 
 def setup_servo(parser, plane):
+    if plane == "horizontal":
+        if not parser["Components.enabled"]["ServoHorizontal"]:
+            return None
+    elif plane == "vertical":
+        if not parser["Components.enabled"]["ServoVertical"]:
+            return None
+
     servoData = parser[f"Servo.handling.specs.{plane}"]
 
-    servoPin = servoData.get("ServoPin")
-    minAngle = servoData.get("MinAngle", -90)
-    maxAngle = servoData("MaxAngle", 90)
+    servoPin = servoData.getint("ServoPin")
+    minAngle = servoData.getint("MinAngle", -90)
+    maxAngle = servoData.getint("MaxAngle", 90)
 
-    if not servoPin:
-        return None
-
-    servoPin = int(servoPin)
+    servoPin = servoPin
     servoPin = convert_from_board_number_to_bcm_number(servoPin)
 
     servo = ServoHandling(
         servoPin,
         plane,
-        int(minAngle),
-        int(maxAngle)
+        minAngle,
+        maxAngle
     )
 
     return servo
 
 
 def setup_car(parser):
+    if not parser["Components.enabled"]["CarHandling"]:
+        return None
+
     carHandlingPins = parser["Car.handling.pins"]
 
     # define GPIO pins
-    rightForward = carHandlingPins.get("RightForward")  # IN2
-    rightBackward = carHandlingPins.get("RightBackward")  # IN1
-    leftForward = carHandlingPins.get("LeftForward")  # IN4
-    leftBackward = carHandlingPins.get("LeftBackward")  # IN3
-    enA = carHandlingPins.get("EnA")
-    enB = carHandlingPins.get("EnB")
+    rightForward = carHandlingPins.getint("RightForward")  # IN2
+    rightBackward = carHandlingPins.getint("RightBackward")  # IN1
+    leftForward = carHandlingPins.getint("LeftForward")  # IN4
+    leftBackward = carHandlingPins.getint("LeftBackward")  # IN3
+    enA = carHandlingPins.getint("EnA")
+    enB = carHandlingPins.getint("EnB")
 
-    allPins = [
+    # define car handling
+    car = CarHandling(
         rightForward,
         rightBackward,
         leftForward,
         leftBackward,
         enA,
         enB
-    ]
-
-    if None in allPins:
-        return None
-
-    allPins = [int(pin) for pin in allPins]
-
-    # define car handling
-    car = CarHandling(
-        allPins[0],
-        allPins[1],
-        allPins[2],
-        allPins[3],
-        allPins[4],
-        allPins[5]
     )
 
     return car
@@ -120,8 +113,6 @@ def setup_car(parser):
 # set up parser to read input values
 parser = ConfigParser()
 parser.read("config.ini")
-
-car = setup_car(parser)
 
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
@@ -132,6 +123,8 @@ try:
 except (X11ForwardingError, NoControllerDetected) as e:
     print_startup_error(e)
     exit()
+
+car = setup_car(parser)
 
 arduinoCommunicator = setup_arduino_communicator(parser)
 
