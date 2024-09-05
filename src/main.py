@@ -114,7 +114,7 @@ def setup_car(parser):
 # set up parser to read input values
 parser = ConfigParser()
 parser.read("config.ini")
-
+print(parser.sections())
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
 
