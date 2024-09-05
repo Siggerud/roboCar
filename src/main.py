@@ -9,6 +9,7 @@ from roboCarHelper import print_startup_error, convert_from_board_number_to_bcm_
 import RPi.GPIO as GPIO
 from threading import Event
 from configparser import ConfigParser
+import os
 
 def setup_camera(parser, cameraHelper):
     if not parser["Components.enabled"]["Camera"]:
@@ -84,7 +85,6 @@ def setup_servo(parser, plane):
 
 
 def setup_car(parser):
-    print(parser.sections())
     if not parser["Components.enabled"].getboolean("CarHandling"):
         return None
 
@@ -113,8 +113,8 @@ def setup_car(parser):
 
 # set up parser to read input values
 parser = ConfigParser()
-parser.read("config.ini")
-print(parser.read("config.ini"))
+parser.read(os.path.join(os.path.dirname(__file__), 'config.ini'))
+
 # set GPIO layout
 GPIO.setmode(GPIO.BOARD)
 
