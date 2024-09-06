@@ -6,6 +6,7 @@ from ServoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected
 from roboCarHelper import print_startup_error, convert_from_board_number_to_bcm_number
+import RPi.GPIO as GPIO
 from time import sleep
 from configparser import ConfigParser
 import os
@@ -99,10 +100,10 @@ def setup_car(parser):
 
     # define car handling
     car = CarHandling(
-        leftBackward,
-        leftForward,
-        rightBackward,
         rightForward,
+        rightBackward,
+        leftForward,
+        leftBackward,
         enA,
         enB
     )
