@@ -44,7 +44,7 @@ class CarControl:
             self._servoEnabled = True
 
     def activate_camera(self):
-        process = Process(target=self._start_camera, args=(self.shared_dict, self.shared_flag))
+        process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))
         self._processes.append(process)
         process.start()
 
