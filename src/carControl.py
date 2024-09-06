@@ -67,7 +67,7 @@ class CarControl:
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
-        self._car.setup_gpio()
+        self._car.setup()
 
         while not flag.value:
             for event in self._xboxControl.get_controller_events():
