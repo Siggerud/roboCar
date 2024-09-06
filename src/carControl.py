@@ -62,11 +62,11 @@ class CarControl:
     def _get_camera_ready(self):
         if self._car:
             self._camera.set_car_enabled()
-            self._cameraHelper.add_car(self._car)
+            #self._cameraHelper.add_car(self._car)
 
         if self._servoEnabled:
             self._camera.set_servo_enabled()
-            self._cameraHelper.add_servo(self._servos[0]) #TODO: pick servo from a dict or something similar
+            #self._cameraHelper.add_servo(self._servos[0]) #TODO: pick servo from a dict or something similar
 
     def _activate_camera(self):
         process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))
