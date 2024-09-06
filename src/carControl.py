@@ -79,11 +79,11 @@ class CarControl:
         process.start()
 
     def _activate_car_handling(self):
-        process = Process(target=self._start_car_handling, args=(self.shared_array, self.shared_flag))
+        process = Process(target=self._start_car_handling, args=(self.shared_flag,))
         self._processes.append(process)
         process.start()
 
-    def _start_car_handling(self, shared_array, flag):
+    def _start_car_handling(self, flag):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
@@ -103,7 +103,7 @@ class CarControl:
                     continue
 
                 if self._cameraHelper:
-                    self._cameraHelper.update_control_values_for_video_feed(shared_array)
+                    self._cameraHelper.update_control_values_for_video_feed(self.shared_array)
 
         if self._car:
             self._car.cleanup()
