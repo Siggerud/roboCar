@@ -152,13 +152,8 @@ if camera:
     carController.add_camera(camera)
     carController.add_camera_helper(cameraHelper)
 
-# activate distance warning, camera and car controlling
-if camera:
-    carController.activate_camera()
-if arduinoCommunicator:
-    carController.activate_arduino_communication()
-
-carController.activate_car_handling()
+# start car
+carController.start()
 
 flag = carController.shared_flag
 
