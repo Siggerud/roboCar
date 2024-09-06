@@ -107,7 +107,7 @@ class CarControl:
 
         while not flag.value:
             # start the communicator
-            self._arduinoCommunicator.start(flag)
+            self._arduinoCommunicator.start()
             sleep(0.01)  # sleep too not use too much CPU resources
 
         # cleanup when flag is set to true
