@@ -29,7 +29,7 @@ class ArduinoCommunicator:
 
         self._lastReadTime = None
 
-    def _setup(self):
+    def setup(self):
         GPIO.setmode(GPIO.BOARD)
 
         if self._photocellLightsActive:
