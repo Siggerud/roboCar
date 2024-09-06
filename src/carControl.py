@@ -46,14 +46,14 @@ class CarControl:
 
     def start(self):
         if self._camera:
-            self._get_camera_ready()
+            self._get_camera_ready() # this needs to be first method called
 
             self._activate_camera()
 
-        self._activate_car_handling()
-
         if self._arduinoCommunicator:
             self._activate_arduino_communication()
+
+        self._activate_car_handling()
 
     def cleanup(self):
         # close all threads
@@ -62,19 +62,38 @@ class CarControl:
 
     def _get_camera_ready(self):
         arrayInput = []
+        arrayDict = {}
+        counter = 0
         if self._car:
             self._camera.set_car_enabled()
+
+            arrayDict["speed"] = counter
             arrayInput.append(0.0)
+            counter += 1
+
+            arrayDict["turn"] = counter
             arrayInput.append(0.0)
+            counter += 1
 
         if self._servoEnabled:
             self._camera.set_servo_enabled()
             arrayInput.append(0.0)
 
+            arrayDict["servo"] = counter
+            arrayInput.append(0.0)
+            counter += 1
+
+        arrayDict["HUD"] = counter
         arrayInput.append(0.0)
-        arrayInput.append(1.0)
+        counter += 1
+
+        arrayDict["Zoom"] = counter
+        arrayInput.append(0.0)
 
         self.shared_array = Array('d', arrayInput)
+
+        self._camera.add_array_dict(arrayDict)
+        self._cameraHelper.add_array_dict(arrayDict)
 
     def _activate_camera(self):
         process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))

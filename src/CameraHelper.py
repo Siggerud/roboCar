@@ -34,6 +34,8 @@ class CameraHelper:
             "Right": 2
         }
 
+        self._arrayDict = None
+
     def handle_xbox_input(self, button, pressValue):
         if button == self._zoomButton:
             self._set_zoom_value(pressValue)
@@ -64,17 +66,20 @@ class CameraHelper:
     def update_control_values_for_video_feed(self, shared_array):
         #TODO: add option for multiple servos
         if self._servo:
-            shared_array[0] = self._servo.get_current_servo_angle()
+            shared_array[self._arrayDict["servo"]] = self._servo.get_current_servo_angle()
 
         if self._car:
-            shared_array[1] = self._car.get_current_speed()
-            shared_array[2] = self._turnValue_to_number[self._car.get_current_turn_value()]
+            shared_array[self._arrayDict["speed"]] = self._car.get_current_speed()
+            shared_array[self._arrayDict["turn"]] = self._turnValue_to_number[self._car.get_current_turn_value()]
 
-        shared_array[3] = float(self._hudActive)
-        shared_array[4] = self._zoomValue
+        shared_array[self._arrayDict["HUD"]] = float(self._hudActive)
+        shared_array[self._arrayDict["Zoom"]] = self._zoomValue
 
     def camera_buttons(self):
         return self._controlsDictCamera
+
+    def add_array_dict(self, arrayDict):
+        self._arrayDict = arrayDict
 
     def _set_hud_on_or_off(self):
         self._hudActive = not self._hudActive

@@ -34,6 +34,8 @@ class Camera:
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
+        self._arrayDict = None
+
         self._number_to_turnValue = {
             0: "-",
             1: "Left",
@@ -84,6 +86,9 @@ class Camera:
 
     def set_servo_enabled(self):
         self._servoEnabled = True
+
+    def add_array_dict(self, arrayDict):
+        self._arrayDict = arrayDict
 
     def _set_text_positions(self):
         spacingVertical = 30
