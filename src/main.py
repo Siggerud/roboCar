@@ -90,19 +90,19 @@ def setup_car(parser):
     carHandlingPins = parser["Car.handling.pins"]
 
     # define GPIO pins
-    rightForward = carHandlingPins.getint("RightForward")  # IN2
-    rightBackward = carHandlingPins.getint("RightBackward")  # IN1
-    leftForward = carHandlingPins.getint("LeftForward")  # IN4
-    leftBackward = carHandlingPins.getint("LeftBackward")  # IN3
+    rightForward = carHandlingPins.getint("RightForward")
+    rightBackward = carHandlingPins.getint("RightBackward")
+    leftForward = carHandlingPins.getint("LeftForward")
+    leftBackward = carHandlingPins.getint("LeftBackward")
     enA = carHandlingPins.getint("EnA")
     enB = carHandlingPins.getint("EnB")
 
     # define car handling
     car = CarHandling(
-        rightForward,
-        rightBackward,
-        leftForward,
         leftBackward,
+        leftForward,
+        rightBackward,
+        rightForward,
         enA,
         enB
     )
