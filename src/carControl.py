@@ -45,12 +45,12 @@ class CarControl:
             self._servoEnabled = True
 
     def start(self):
-        self._activate_car_handling()
-
         if self._camera:
             self._get_camera_ready()
 
             self._activate_camera()
+
+        self._activate_car_handling()
 
         if self._arduinoCommunicator:
             self._activate_arduino_communication()
