@@ -3,6 +3,7 @@ import serial
 from time import sleep, time
 from Honker import Honker
 from PhotocellManager import PhotocellManager
+import RPi.GPIO as GPIO
 
 class ArduinoCommunicator:
     def __init__(self, port, baudrate, waitTime = 0.1):
@@ -27,6 +28,15 @@ class ArduinoCommunicator:
         self._encodingType = 'utf-8'
 
         self._lastReadTime = None
+
+    def _setup(self):
+        GPIO.setmode(GPIO.BOARD)
+
+        if self._photocellLightsActive:
+            self._photocellLightsManager.setup()
+
+        if self._frontSensorActive or self._backSensorActive:
+            self._honker.setup()
 
     def activate_distance_sensors(self, buzzerPin, front=True, back=True):
         self._frontSensorActive = front
@@ -60,6 +70,13 @@ class ArduinoCommunicator:
         # run objects that need to be updated continuously
         self._run_arduino_connected_objects_continuously()
 
+    def cleanup(self):
+        self._serialObj.close()
+
+        if self._photocellLightsManager:
+            self._photocellLightsManager.cleanup()
+        GPIO.cleanup()
+
     def _run_arduino_connected_objects_continuously(self):
         if self._frontSensorActive or self._backSensorActive:
             self._honker.alert_if_too_close()
@@ -74,12 +91,6 @@ class ArduinoCommunicator:
 
         if self._photocellLightsActive:
             self._photocellLightsManager.adjust_lights(self._photocellReading)
-
-    def cleanup(self):
-        self._serialObj.close()
-
-        if self._photocellLightsManager:
-            self._photocellLightsManager.cleanup()
 
     def _send_command_and_read_response(self, command):
         # send command to arduino

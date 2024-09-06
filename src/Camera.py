@@ -5,19 +5,13 @@ from picamera2 import Picamera2
 from time import time
 
 class Camera:
-    def __init__(self, resolution, cameraHelper, rotation=True):
+    def __init__(self, resolution, rotation=True):
         self._dispW, self._dispH = resolution
         self._centerX = int(self._dispW / 2)
         self._centerY = int(self._dispH / 2)
-        self._cameraHelper = cameraHelper
         self._rotation = rotation
 
-        self._picam2 = Picamera2()
-        self._picam2.preview_configuration.main.size = resolution
-        self._picam2.preview_configuration.main.format = "RGB888"
-        self._picam2.preview_configuration.align()
-        self._picam2.configure("preview")
-        self._picam2.start()
+        self._picam2 = None
 
         # text on video properties
         self._colour = (0, 255, 0)
@@ -37,7 +31,21 @@ class Camera:
         self._weightNewFps = 0.1
         self._fpsPos = (10, 30)
 
-    def show_camera_feed(self):
+        self._number_to_turnValue = {
+            0: "-",
+            1: "Left",
+            2: "Right"
+        }
+
+    def setup(self):
+        self._picam2 = Picamera2()
+        self._picam2.preview_configuration.main.size = (self._dispW, self._dispH)
+        self._picam2.preview_configuration.main.format = "RGB888"
+        self._picam2.preview_configuration.align()
+        self._picam2.configure("preview")
+        self._picam2.start()
+
+    def show_camera_feed(self, shared_array):
         tStart = time() # start timer for calculating fps
 
         # get raw image
@@ -48,7 +56,7 @@ class Camera:
             im = self._rotate_image(im)
 
         # read control values from external classes
-        self._read_control_values_for_video_feed()
+        self._read_control_values_for_video_feed(shared_array)
 
         # resize image when zooming
         if self._zoomValue != 1.0:
@@ -131,12 +139,15 @@ class Camera:
     def _get_fps(self):
         return str(int(self._fps)) + " FPS"
 
-    def _read_control_values_for_video_feed(self):
-        self._angleText = self._cameraHelper.get_angle_text()
-        self._speedText = self._cameraHelper.get_speed_text()
-        self._turnText = self._cameraHelper.get_turn_text()
-        self._zoomValue = self._cameraHelper.get_zoom_value()
-        self._hudActive = self._cameraHelper.get_hud_value()
+    def _read_control_values_for_video_feed(self, shared_array):
+        self._angleText = "Angle: " + str(int(shared_array[0]))
+        self._speedText = "Speed: " + str(int(shared_array[1])) + "%"
+        self._turnText = "Turn: " + self._get_turn_value(shared_array[2])
+        self._hudActive = shared_array[3]
+        self._zoomValue = shared_array[4]
+
+    def _get_turn_value(self, number):
+        return self._number_to_turnValue[number]
 
     def _get_origin(self, count):
         return self._textPositions[count]
