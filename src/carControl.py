@@ -77,7 +77,6 @@ class CarControl:
 
         if self._servoEnabled:
             self._camera.set_servo_enabled()
-            arrayInput.append(0.0)
 
             arrayDict["servo"] = counter
             arrayInput.append(0.0)
