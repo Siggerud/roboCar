@@ -61,12 +61,19 @@ class CarControl:
             process.join()
 
     def _get_camera_ready(self):
+        self._set_shared_array_and_array_dict()
+
+        if self._car:
+            self._camera.set_car_enabled()
+
+        if self._servoEnabled:
+            self._camera.set_servo_enabled()
+
+    def _set_shared_array_and_array_dict(self):
         arrayInput = []
         arrayDict = {}
         counter = 0
         if self._car:
-            self._camera.set_car_enabled()
-
             arrayDict["speed"] = counter
             arrayInput.append(0.0)
             counter += 1
@@ -76,8 +83,6 @@ class CarControl:
             counter += 1
 
         if self._servoEnabled:
-            self._camera.set_servo_enabled()
-
             arrayDict["servo"] = counter
             arrayInput.append(0.0)
             counter += 1
@@ -94,22 +99,23 @@ class CarControl:
         self._camera.add_array_dict(arrayDict)
         self._cameraHelper.add_array_dict(arrayDict)
 
+
     def _activate_camera(self):
         process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))
         self._processes.append(process)
         process.start()
 
     def _activate_arduino_communication(self):
-        process = Process(target=self._listen_for_arduino_communication, args=(self.shared_flag,))
+        process = Process(target=self._start_listening_for_arduino_communication, args=(self.shared_flag,))
         self._processes.append(process)
         process.start()
 
     def _activate_car_handling(self):
-        process = Process(target=self._start_car_handling, args=(self.shared_array, self.shared_flag))
+        process = Process(target=self._start_listening_for_xbox_commands, args=(self.shared_array, self.shared_flag))
         self._processes.append(process)
         process.start()
 
-    def _start_car_handling(self, shared_array, flag):
+    def _start_listening_for_xbox_commands(self, shared_array, flag):
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
@@ -148,7 +154,7 @@ class CarControl:
 
         self._camera.cleanup()
 
-    def _listen_for_arduino_communication(self, flag):
+    def _start_listening_for_arduino_communication(self, flag):
         self._arduinoCommunicator.setup()
 
         while not flag.value:

@@ -154,9 +154,12 @@ class Camera:
         return str(int(self._fps)) + " FPS"
 
     def _read_control_values_for_video_feed(self, shared_array):
-        self._angleText = "Angle: " + str(int(shared_array[self._arrayDict["servo"]]))
-        self._speedText = "Speed: " + str(int(shared_array[self._arrayDict["speed"]])) + "%"
-        self._turnText = "Turn: " + self._get_turn_value(shared_array[self._arrayDict["turn"]])
+        if self._carEnabled:
+            self._speedText = "Speed: " + str(int(shared_array[self._arrayDict["speed"]])) + "%"
+            self._turnText = "Turn: " + self._get_turn_value(shared_array[self._arrayDict["turn"]])
+        if self._servoEnabled:
+            self._angleText = "Angle: " + str(int(shared_array[self._arrayDict["servo"]]))
+
         self._hudActive = shared_array[self._arrayDict["HUD"]]
         self._zoomValue = shared_array[self._arrayDict["Zoom"]]
 
