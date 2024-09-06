@@ -23,7 +23,8 @@ class CarControl:
         self._buttonToObjectDict = {
         }
 
-        self.shared_array = Array('d', (0.0, 0.0, 0.0, 0.0, 1.0))
+        #self.shared_array = Array('d', (0.0, 0.0, 0.0, 0.0, 1.0))
+        self.shared_array = None
         self.shared_flag = Value('b', False)
 
     def add_arduino_communicator(self, arduinoCommunicator):
@@ -60,11 +61,20 @@ class CarControl:
             process.join()
 
     def _get_camera_ready(self):
+        arrayInput = []
         if self._car:
             self._camera.set_car_enabled()
+            arrayInput.append(0.0)
+            arrayInput.append(0.0)
 
         if self._servoEnabled:
             self._camera.set_servo_enabled()
+            arrayInput.append(0.0)
+
+        arrayInput.append(0.0)
+        arrayInput.append(1.0)
+
+        self.shared_array = Array('d', arrayInput)
 
     def _activate_camera(self):
         process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))
