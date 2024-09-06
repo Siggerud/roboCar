@@ -47,10 +47,26 @@ class CarControl:
         self._activate_car_handling()
 
         if self._camera:
+            self._get_camera_ready()
+
             self._activate_camera()
 
         if self._arduinoCommunicator:
             self._activate_arduino_communication()
+
+    def cleanup(self):
+        # close all threads
+        for process in self._processes:
+            process.join()
+
+    def _get_camera_ready(self):
+        if self._car:
+            self._camera.set_car_enabled()
+            self._cameraHelper.add_car(self._car)
+
+        if self._servoEnabled:
+            self._camera.set_servo_enabled()
+            self._cameraHelper.add_servo(self._servos[0]) #TODO: pick servo from a dict or something similar
 
     def _activate_camera(self):
         process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))
@@ -66,11 +82,6 @@ class CarControl:
         process = Process(target=self._start_car_handling, args=(self.shared_flag,))
         self._processes.append(process)
         process.start()
-
-    def cleanup(self):
-        # close all threads
-        for process in self._processes:
-            process.join()
 
     def _start_car_handling(self, flag):
         self._print_button_explanation()

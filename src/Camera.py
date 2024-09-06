@@ -26,6 +26,9 @@ class Camera:
         self._zoomValue = 1.0
         self._hudActive = True
 
+        self._carEnabled = False
+        self._servoEnabled = False
+
         self._fps = 0
         self._weightPrevFps = 0.9
         self._weightNewFps = 0.1
@@ -75,6 +78,12 @@ class Camera:
     def cleanup(self):
         cv2.destroyAllWindows()
         self._picam2.close()
+
+    def set_car_enabled(self):
+        self._carEnabled = True
+
+    def set_servo_enabled(self):
+        self._servoEnabled = True
 
     def _set_text_positions(self):
         spacingVertical = 30
