@@ -43,17 +43,26 @@ class CarControl:
         if not self._servoEnabled:
             self._servoEnabled = True
 
-    def activate_camera(self):
+    def start(self):
+        self._activate_car_handling()
+
+        if self._camera:
+            self._activate_camera()
+
+        if self._arduinoCommunicator:
+            self._activate_arduino_communication()
+
+    def _activate_camera(self):
         process = Process(target=self._start_camera, args=(self.shared_array, self.shared_flag))
         self._processes.append(process)
         process.start()
 
-    def activate_arduino_communication(self):
+    def _activate_arduino_communication(self):
         process = Process(target=self._listen_for_arduino_communication, args=(self.shared_flag,))
         self._processes.append(process)
         process.start()
 
-    def activate_car_handling(self):
+    def _activate_car_handling(self):
         process = Process(target=self._start_car_handling, args=(self.shared_flag,))
         self._processes.append(process)
         process.start()
