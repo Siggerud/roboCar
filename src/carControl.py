@@ -88,7 +88,7 @@ class CarControl:
         counter += 1
 
         arrayDict["Zoom"] = counter
-        arrayInput.append(0.0)
+        arrayInput.append(1.0)
 
         self.shared_array = Array('d', arrayInput)
 
