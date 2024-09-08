@@ -3,7 +3,7 @@ from roboCarHelper import map_value_to_new_scale
 from itertools import chain
 
 class CarHandling:
-	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB):
+	def __init__(self, leftBackward, leftForward, rightBackward, rightForward, enA, enB, pwmMinTT, pwmMaxTT):
 		self._leftBackward = leftBackward
 		self._leftForward = leftForward
 		self._rightBackward = rightBackward
@@ -11,8 +11,8 @@ class CarHandling:
 		self._enA = enA
 		self._enB = enB
 
-		self._pwmMinTT = 20 # this needs to be set to the value where the motors start "biting"
-		self._pwmMaxTT = 60
+		self._pwmMinTT = pwmMinTT
+		self._pwmMaxTT = pwmMaxTT
 
 		self._speed = 0
 

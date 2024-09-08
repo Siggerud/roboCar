@@ -96,6 +96,8 @@ def setup_car(parser):
     leftBackward = carHandlingPins.getint("LeftBackward")
     enA = carHandlingPins.getint("EnA")
     enB = carHandlingPins.getint("EnB")
+    minPwmTT = carHandlingPins.getint("MinimumMotorPWM")
+    maxPwmTT = carHandlingPins.getint("MaximumMotorPWM")
 
     # define car handling
     car = CarHandling(
@@ -104,7 +106,9 @@ def setup_car(parser):
         rightBackward,
         rightForward,
         enA,
-        enB
+        enB,
+        minPwmTT,
+        maxPwmTT
     )
 
     return car
