@@ -43,6 +43,7 @@ class Camera:
         }
 
     def setup(self):
+        #TODO: call methods instead of changing variables
         self._picam2 = Picamera2()
         self._picam2.preview_configuration.main.size = (self._dispW, self._dispH)
         self._picam2.preview_configuration.main.format = "RGB888"

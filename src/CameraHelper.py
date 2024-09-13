@@ -48,23 +48,7 @@ class CameraHelper:
     def add_servo(self, servo):
         self._servo = servo
 
-    def get_angle_text(self):
-        return self._angleText
-
-    def get_speed_text(self):
-        return self._speedText
-
-    def get_turn_text(self):
-        return self._turnText
-
-    def get_zoom_value(self):
-        return self._zoomValue
-
-    def get_hud_value(self):
-        return self._hudActive
-
     def update_control_values_for_video_feed(self, shared_array):
-        #TODO: add option for multiple servos
         if self._servo:
             shared_array[self._arrayDict["servo"]] = self._servo.get_current_servo_angle()
 
@@ -75,8 +59,14 @@ class CameraHelper:
         shared_array[self._arrayDict["HUD"]] = float(self._hudActive)
         shared_array[self._arrayDict["Zoom"]] = self._zoomValue
 
-    def camera_buttons(self):
+    def get_camera_buttons(self):
         return self._controlsDictCamera
+
+    def get_HUD_active(self):
+        return self._hudActive
+
+    def get_zoom_value(self):
+        return self._zoomValue
 
     def add_array_dict(self, arrayDict):
         self._arrayDict = arrayDict
@@ -92,11 +82,13 @@ class CameraHelper:
 
         if stickValue != self._lastStickValue:
             self._lastStickValue = stickValue
-            #with lock:
-            self._zoomValue = map_value_to_new_scale(stickValue, self._minZoomValue, self._maxZoomValue, 2,
-                                                     self._zoomButtonMinValue, self._zoomButtonMaxValue)
-
-
+            self._zoomValue = map_value_to_new_scale(stickValue,
+                                                     self._minZoomValue,
+                                                     self._maxZoomValue,
+                                                     2,
+                                                     self._zoomButtonMinValue,
+                                                     self._zoomButtonMaxValue
+                                                     )
     def _check_if_button_press_within_valid_range(self, buttonPressValue):
         if buttonPressValue >= self._zoomButtonMaxValue and buttonPressValue <= self._zoomButtonMinValue:
             return True

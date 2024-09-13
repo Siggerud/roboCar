@@ -23,7 +23,6 @@ class CarControl:
         self._buttonToObjectDict = {
         }
 
-        #self.shared_array = Array('d', (0.0, 0.0, 0.0, 0.0, 1.0))
         self.shared_array = None
         self.shared_flag = Value('b', False)
 
@@ -119,7 +118,12 @@ class CarControl:
         self._print_button_explanation()
         self._map_all_objects_to_buttons()
 
-        self._car.setup()
+        if self._car:
+            self._car.setup()
+
+        if self._servoEnabled:
+            for servo in self._servos:
+                servo.setup()
 
         while not flag.value:
             for event in self._xboxControl.get_controller_events():
@@ -171,34 +175,34 @@ class CarControl:
         print("Controller layout: ")
         if self._car:
             print("Car controls:")
-            print("Turn left: " + self._car.car_buttons()["Left"])
-            print("Turn right: " + self._car.car_buttons()["Right"])
-            print("Drive forward: " + self._car.car_buttons()["Gas"])
-            print("Reverse: " + self._car.car_buttons()["Reverse"])
+            print("Turn left: " + self._car.get_car_buttons()["Left"])
+            print("Turn right: " + self._car.get_car_buttons()["Right"])
+            print("Drive forward: " + self._car.get_car_buttons()["Gas"])
+            print("Reverse: " + self._car.get_car_buttons()["Reverse"])
             print()
         if self._servoEnabled:
             print("Servo controls:")
             for servo in self._servos:
-                print("Turn servo" + servo.get_plane() + ": " + servo.servo_buttons()["Servo"])
+                print("Turn servo" + servo.get_plane() + ": " + servo.get_servo_buttons()["Servo"])
             print()
         if self._camera:
             print("Camera controls")
-            print("Zoom camera: " + self._cameraHelper.camera_buttons()["Zoom"])
-            print("Turn HUD on or off: " + self._cameraHelper.camera_buttons()["HUD"])
+            print("Zoom camera: " + self._cameraHelper.get_camera_buttons()["Zoom"])
+            print("Turn HUD on or off: " + self._cameraHelper.get_camera_buttons()["HUD"])
             print()
 
         print(f"Double tap {self._xboxControl.get_exit_button()} to exit")
 
     def _map_all_objects_to_buttons(self):
         if self._car:
-            self._add_object_to_buttons(self._car.car_buttons(), self._car)
+            self._add_object_to_buttons(self._car.get_car_buttons(), self._car)
 
         if self._servoEnabled:
             for servo in self._servos:
-                self._add_object_to_buttons(servo.servo_buttons(), servo)
+                self._add_object_to_buttons(servo.get_servo_buttons(), servo)
 
         if self._cameraHelper:
-            self._add_object_to_buttons(self._cameraHelper.camera_buttons(), self._cameraHelper)
+            self._add_object_to_buttons(self._cameraHelper.get_camera_buttons(), self._cameraHelper)
 
     def _add_object_to_buttons(self, buttonDict, roboObject):
         for button in list(buttonDict.values()):

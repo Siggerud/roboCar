@@ -1,4 +1,4 @@
-from roboCarHelper import map_value_to_new_scale
+from src.roboCarHelper import map_value_to_new_scale
 import pigpio
 
 class ServoHandling:
@@ -12,9 +12,6 @@ class ServoHandling:
         self._plane = plane
         self._minAngle = minAngle
         self._maxAngle = maxAngle
-
-        ServoHandling.pigpioPwm.set_mode(servoPin, pigpio.OUTPUT)
-        ServoHandling.pigpioPwm.set_PWM_frequency(servoPin, 50)
 
         self._lastServoStickValue = 0
         self._servoValueChanged = False
@@ -43,12 +40,16 @@ class ServoHandling:
 
         self._moveServoButton = self._controlsDictServo["Servo"]
 
+    def setup(self):
+        ServoHandling.pigpioPwm.set_mode(self._servoPin, pigpio.OUTPUT)
+        ServoHandling.pigpioPwm.set_PWM_frequency(self._servoPin, 50) # 50 hz is typical for servos
+
     def handle_xbox_input(self, button, pressValue):
         if button == self._moveServoButton:
             self._prepare_for_servo_movement(pressValue)
             self._move_servo()
 
-    def servo_buttons(self):
+    def get_servo_buttons(self):
         return self._controlsDictServo
 
     def get_plane(self):
@@ -88,4 +89,3 @@ class ServoHandling:
 
     def cleanup(self):
         ServoHandling.pigpioPwm.set_PWM_dutycycle(self._servoPin, 0)
-        ServoHandling.pigpioPwm.set_PWM_frequency(self._servoPin, 0)

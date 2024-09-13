@@ -16,9 +16,9 @@ import RPi.GPIO as GPIO
 @patch("RPi.GPIO.setup")
 class TestHonker(unittest.TestCase):
     buzzerPin = 1
+
     def get_honker_object(self):
         return Honker(self.buzzerPin)
-
 
     def test_init_calls(self, mock_setup):
         honker = self.get_honker_object()
