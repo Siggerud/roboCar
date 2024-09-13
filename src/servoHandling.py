@@ -1,4 +1,4 @@
-from src.roboCarHelper import map_value_to_new_scale
+from roboCarHelper import map_value_to_new_scale
 import pigpio
 
 class ServoHandling:
