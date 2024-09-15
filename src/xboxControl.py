@@ -7,6 +7,8 @@ class XboxControl:
     def __init__(self):
         self._controller = self._set_controller()
 
+        self._hatNum = 0
+
         self._joyHatMotionToButtons = {
             -1: "D-PAD left",
             1: "D-PAD right",
@@ -45,15 +47,16 @@ class XboxControl:
     def get_button_and_press_value_from_event(self, event):
         button = None
         buttonPressValue = None
-        print(event)
+
         eventType = event.type
         if eventType == pygame.JOYHATMOTION:
-            button = self._get_dpad_button(self._controller.get_hat(0)[0])
+            button = self._get_dpad_button(self._controller.get_hat(self._hatNum)[0])
             buttonPressValue = self._dpad_button_states[button]
         elif eventType == pygame.JOYAXISMOTION:
             axis = event.axis
             button = self._joyAxisMotionToButtons[axis]
-            buttonPressValue = self._controller.get_axis(axis)
+            #buttonPressValue = self._controller.get_axis(axis)
+            buttonPressValue = event.value
         elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
             button = self._get_pushed_button()
             buttonPressValue = self._pushButtonsStates[button]
