@@ -79,7 +79,7 @@ class XboxControl:
                         self._exitButtonLastPush = time()
                 else:
                     self._exitButtonLastPush = time()
-
+        print(self._exitButtonLastPush)
         return False
 
     def get_exit_button(self):
@@ -101,15 +101,6 @@ class XboxControl:
         return button
 
     def _get_pushed_button(self, event):
-        """
-        for num in list(self._pushButtons.keys()):
-            button = self._pushButtons[num]
-
-            # if buttonstates have changed, we have found the button
-            if self._controller.get_button(num) != self._pushButtonsStates[button]:
-                # update button state
-                self._pushButtonsStates[button] = self._controller.get_button(num)
-        """
         buttonNum = event.button
         button = self._pushButtons[buttonNum]
         self._pushButtonsStates[button] = self._eventTypeToButtonStates[event.type]
