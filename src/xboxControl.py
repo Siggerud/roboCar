@@ -37,6 +37,10 @@ class XboxControl:
         }
 
         self._pushButtonsStates = self._create_button_state_dict(self._pushButtons)
+        self._eventTypeToButtonStates = {
+            pygame.JOYBUTTONUP: 0,
+            pygame.JOYBUTTONDOWN: 1
+        }
 
         self._exitButton = "Start"
         self._exitButtonLastPush = None # keeps track of last time exit button was pushed
@@ -57,7 +61,7 @@ class XboxControl:
             button = self._joyAxisMotionToButtons[axis]
             buttonPressValue = event.value
         elif eventType == pygame.JOYBUTTONDOWN or eventType == pygame.JOYBUTTONUP:
-            button = self._get_pushed_button()
+            button = self._get_pushed_button(event)
             buttonPressValue = self._pushButtonsStates[button]
 
         return button, buttonPressValue
@@ -96,7 +100,8 @@ class XboxControl:
 
         return button
 
-    def _get_pushed_button(self):
+    def _get_pushed_button(self, event):
+        """
         for num in list(self._pushButtons.keys()):
             button = self._pushButtons[num]
 
@@ -104,8 +109,12 @@ class XboxControl:
             if self._controller.get_button(num) != self._pushButtonsStates[button]:
                 # update button state
                 self._pushButtonsStates[button] = self._controller.get_button(num)
+        """
+        buttonNum = event.button
+        button = self._pushButtons[buttonNum]
+        self._pushButtonsStates[button] = self._eventTypeToButtonStates[event.type]
 
-                return button
+        return button
 
     def _create_button_state_dict(self, otherDict):
         buttonStateDict = {}
