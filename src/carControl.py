@@ -148,6 +148,8 @@ class CarControl:
             for servo in self._servos:
                 servo.cleanup()
 
+        self._xboxControl.cleanup()
+
         print("Exiting car handling")
 
     def _start_camera(self, shared_array, flag):
