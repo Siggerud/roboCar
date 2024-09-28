@@ -45,10 +45,13 @@ class Camera:
     def setup(self):
         #TODO: call methods instead of changing variables
         self._picam2 = Picamera2()
-        self._picam2.preview_configuration.main.size = (self._dispW, self._dispH)
-        self._picam2.preview_configuration.main.format = "RGB888"
-        self._picam2.preview_configuration.align()
-        self._picam2.configure("preview")
+        #self._picam2.preview_configuration.main.size =
+        config = self._picam2.create_preview_configuration(
+            {"size": (self._dispW, self._dispH), "format": "RGB888"}
+        )
+        #self._picam2.preview_configuration.main.format = "RGB888"
+        #self._picam2.preview_configuration.align()
+        self._picam2.configure(config)
         self._picam2.start()
 
     def show_camera_feed(self, shared_array):
