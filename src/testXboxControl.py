@@ -83,7 +83,7 @@ class TestXboxControl(unittest.TestCase):
     @patch("xboxControl.time", autospec=True)
     def test_check_for_exit_button_returns_true(self, mock_time):
         eventButtonDown = Event(pygame.JOYBUTTONDOWN, {'joy': 0, 'instance_id': 0, 'button': 11})
-        eventButtonUp = Event(pygame.JOYBUTTONDOWN, {'joy': 0, 'instance_id': 0, 'button': 3})
+        eventButtonUp = Event(pygame.JOYBUTTONUP, {'joy': 0, 'instance_id': 0, 'button': 11})
 
         xboxControl = self.get_xbox_control()
 
@@ -99,21 +99,33 @@ class TestXboxControl(unittest.TestCase):
         self.assertFalse(exitCheck)
 
         # simulate the second pushing and releasing of exit button
+        # when the timegap between the button pushes is within a certain timeframe it should return True
         mock_time.return_value = 1.4  # set second button push to occur 0.4 second after first button push
         button, pressValue = xboxControl.get_button_and_press_value_from_event(eventButtonDown)
-        xboxControl.check_for_exit_event(button)
+        exitCheck = xboxControl.check_for_exit_event(button)
         self.assertTrue(exitCheck)
 
-        """
-    @patch.object("pygame.event", "type")
-    def test_check_for_exit_event_exits(self, mock_eventType):
-        mock_eventType.return_value = pygame.JOYBUTTONDOWN
-        xboxControl = XboxControl()
+    @patch("xboxControl.time", autospec=True)
+    def test_check_for_exit_button_returns_false(self, mock_time):
+        eventButtonDown = Event(pygame.JOYBUTTONDOWN, {'joy': 0, 'instance_id': 0, 'button': 11})
+        eventButtonUp = Event(pygame.JOYBUTTONUP, {'joy': 0, 'instance_id': 0, 'button': 11})
 
-        button = "start"
-        xboxControl.get_button_and_press_value_from_event()
-        xboxControl.check_for_exit_event(button)
+        xboxControl = self.get_xbox_control()
 
-        self.assertTrue(result)
-    """
+        # simulate the first pushing and releasing of exit button
+        mock_time.return_value = 1 # set first button push to occur at second 1
 
+        button, pressValue = xboxControl.get_button_and_press_value_from_event(eventButtonDown)
+        exitCheck = xboxControl.check_for_exit_event(button)
+        self.assertFalse(exitCheck)
+
+        button, pressValue = xboxControl.get_button_and_press_value_from_event(eventButtonUp)
+        exitCheck = xboxControl.check_for_exit_event(button)
+        self.assertFalse(exitCheck)
+
+        # simulate the second pushing and releasing of exit button
+        # when the timegap between the button pushed is too long, the method should return False
+        mock_time.return_value = 1.6  # set second button push to occur 0.6 seconds after first button push
+        button, pressValue = xboxControl.get_button_and_press_value_from_event(eventButtonDown)
+        exitCheck = xboxControl.check_for_exit_event(button)
+        self.assertFalse(exitCheck)

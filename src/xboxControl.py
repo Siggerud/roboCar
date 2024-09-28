@@ -51,7 +51,7 @@ class XboxControl:
     def get_button_and_press_value_from_event(self, event):
         button = None
         buttonPressValue = None
-        print(event)
+
         eventType = event.type
         if eventType == pygame.JOYHATMOTION:
             button = self._get_dpad_button(self._controller.get_hat(self._hatNum)[0])
@@ -79,7 +79,7 @@ class XboxControl:
                         self._exitButtonLastPush = time()
                 else:
                     self._exitButtonLastPush = time()
-        print(self._exitButtonLastPush)
+
         return False
 
     def get_exit_button(self):
