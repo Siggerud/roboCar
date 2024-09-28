@@ -47,7 +47,7 @@ class Camera:
         self._picam2 = Picamera2()
         config = self._picam2.create_preview_configuration(
             {"size": (self._dispW, self._dispH), "format": "RGB888"},
-            transform=Transform(hflip=True)
+            transform=Transform(vflip=True)
         )
         self._picam2.configure(config)
         self._picam2.start()
