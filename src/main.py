@@ -1,6 +1,6 @@
 from CarHandling import CarHandling
 from ArduinoCommunicator import ArduinoCommunicator, InvalidPortError
-from Camera import Camera
+from camera import Camera
 from CameraHelper import CameraHelper
 from servoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError

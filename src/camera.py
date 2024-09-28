@@ -2,6 +2,7 @@ import cv2
 import os
 os.environ["LIBCAMERA_LOG_LEVELS"] = "3" #disable info and warning logging
 from picamera2 import Picamera2
+from libcamera import Transform
 from time import time
 
 class Camera:
@@ -43,14 +44,11 @@ class Camera:
         }
 
     def setup(self):
-        #TODO: call methods instead of changing variables
         self._picam2 = Picamera2()
-        #self._picam2.preview_configuration.main.size =
         config = self._picam2.create_preview_configuration(
-            {"size": (self._dispW, self._dispH), "format": "RGB888"}
+            {"size": (self._dispW, self._dispH), "format": "RGB888"},
+            transform=Transform(hflip=True)
         )
-        #self._picam2.preview_configuration.main.format = "RGB888"
-        #self._picam2.preview_configuration.align()
         self._picam2.configure(config)
         self._picam2.start()
 
@@ -61,8 +59,8 @@ class Camera:
         im = self._picam2.capture_array()
 
         # rotate/flip image
-        if self._rotation:
-            im = self._rotate_image(im)
+        #if self._rotation:
+        #    im = self._rotate_image(im)
 
         # read control values from external classes
         self._read_control_values_for_video_feed(shared_array)
