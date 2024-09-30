@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock, ANY, call
 from multiprocessing import Array
+import numpy as np
+import numpy.testing as npt
 
 # mock the import of picam2
 MockPicam2 = MagicMock()
@@ -111,7 +113,7 @@ class TestCamera(unittest.TestCase):
             mock_time.side_effect = [0.01, 0.02, 0.005, 0.01, 1, 2]
 
             # simulate showing camera feed with HUD turned on
-            array = Array('d', (50.0, 40.0, 30.0, 20.0, 1.0))
+            array = Array('d', (50.0, 1.0, 30.0, 20.0, 1.0))
 
             # call show_camera_feed three times to get the effects of the weightings in the fps equation
             cam.show_camera_feed(array)
@@ -154,7 +156,7 @@ class TestCamera(unittest.TestCase):
             mock_time.side_effect = [1, 2]
 
             # simulate showing camera feed with HUD turned on
-            array = Array('d', (50.0, 40.0, 30.0, 20.0, 1.0))
+            array = Array('d', (50.0, 1.0, 30.0, 20.0, 1.0))
             cam.show_camera_feed(array)
 
             horizontalCoord = 10
@@ -193,7 +195,7 @@ class TestCamera(unittest.TestCase):
             mock_time.side_effect = [1, 2]
 
             # simulate showing camera feed with HUD turned on
-            array = Array('d', (50.0, 40.0, 30.0, 20.0, 1.0))
+            array = Array('d', (50.0, 1.0, 30.0, 20.0, 1.0))
             cam.show_camera_feed(array)
 
             horizontalCoord = 10
@@ -211,5 +213,50 @@ class TestCamera(unittest.TestCase):
 
             mock_cv2.putText.assert_has_calls(calls, any_order=False)
 
-        def test_zoom(self):
-            pass
+        @patch("camera.Picamera2")
+        @patch("camera.time")
+        @patch("camera.cv2")
+        def test_zoom(self, mock_cv2, mock_time, mock_picam):
+            mockPiCamInstance = mock_picam.return_value
+
+            displayWidth = 1080
+            displayHeight = 720
+
+            # setup camera
+            cam = Camera((displayWidth, displayHeight), True)
+            cam.setup()
+
+            # add array dictionary
+            arrayDict = {"servo": 0, "HUD": 1, "Zoom": 2, "speed": 3, "turn": 4}
+            cam.add_array_dict(arrayDict)
+
+            # set each time call to return a higher value to avoid a zero division error in the fps equation
+            # I think this is because the test run so fast that looptime will be almost equal to 0
+            mock_time.side_effect = [1, 2]
+
+            # create random RGB image of size (1080, 720)
+            image_array = np.random.randint(0, 256, size=(displayHeight, displayWidth, 3), dtype=np.uint8)
+
+            # mock the image that the camera captures. This will be the input for the zoom function
+            mockPiCamInstance.capture_array.return_value = image_array
+
+            # the zoomed image should be sliced from the center points and halfway to the edges on a 2x zoom
+            zoomedImage = image_array[180:540, 270:810]
+
+            # simulate showing camera feed with zoom value equal to 2.0
+            array = Array('d', (50.0, 0.0, 2.0, 20.0, 1.0))
+            cam.show_camera_feed(array)
+
+            # since there is some issues with array equality checking with the assert_called_with method, we unpack
+            # the arguments called in the method and check them separately later
+            calledArgs, calledKwargs = mock_cv2.resize.call_args
+
+            # check that resize() was called
+            mock_cv2.resize.assert_called()
+
+            # check that the called arguments were as expected
+            npt.assert_array_equal(calledArgs[0], zoomedImage)
+            self.assertEqual((displayWidth, displayHeight), calledArgs[1])
+
+
+
