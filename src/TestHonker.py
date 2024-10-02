@@ -10,116 +10,74 @@ modules = {
 patcher = patch.dict("sys.modules", modules)
 patcher.start()
 
-from Honker import Honker
+from honker import Honker
 import RPi.GPIO as GPIO
 
 @patch("RPi.GPIO.setup")
 class TestHonker(unittest.TestCase):
     buzzerPin = 1
 
-    def get_honker_object(self):
-        return Honker(self.buzzerPin)
+    def test_setup(self, mock_gpioSetup):
+        honker = Honker(self.buzzerPin)
+        honker.setup()
 
-    def test_init_calls(self, mock_setup):
-        honker = self.get_honker_object()
-
-        mock_setup.assert_called_with(self.buzzerPin, GPIO.OUT, initial=False)
+        # assert that the GPIO.setup method is called with expected parameters
+        mock_gpioSetup.assert_called_once_with(self.buzzerPin, GPIO.OUT, initial=False)
 
     @patch("RPi.GPIO.output")
-    def test_alert_if_too_close(self, mock_output, mock_setup):
-        honker = self.get_honker_object()
-        honker._withinAlarmDistance = False
+    def test_honker_does_not_honk_when_outside_treshold(self, mock_gpioOutput, mock_gpioSetup):
+        honker = Honker(self.buzzerPin)
 
-        # call method
+        honker.setup()
+
+        # set treshold to be 15 cm
+        honker.set_distance_treshold(15)
+
+        distances = [16, 21, None]
+        honker.prepare_for_honking(distances)
         honker.alert_if_too_close()
 
-        mock_output.assert_called_with(self.buzzerPin, False)
+        # assert that the buzzer is not turned on
+        mock_gpioOutput.assert_called_once_with(self.buzzerPin, False)
 
-        # change variables for different result
-        honker._withinAlarmDistance = True
-        honker._honkCurrentlyOn = True
+    @patch("RPi.GPIO.output")
+    def test_honker_does_honk_when_inside_treshold(self, mock_gpioOutput, mock_gpioSetup):
+        honker = Honker(self.buzzerPin)
 
-        # call method
+        honker.setup()
+
+        # set treshold to be 15 cm
+        honker.set_distance_treshold(15)
+
+        distances = [None, 21, 14]
+        honker.prepare_for_honking(distances)
         honker.alert_if_too_close()
 
-        mock_output.assert_called_with(self.buzzerPin, True)
+        # assert that the buzzer is not turned on
+        mock_gpioOutput.assert_called_once_with(self.buzzerPin, True)
 
-        # change variable for different result
-        honker._honkCurrentlyOn = False
+    @patch("RPi.GPIO.output")
+    @patch("honker.time")
+    def test_honker_beeps(self, mock_time, mock_gpioOutput, mock_gpioSetup):
+        # mock the outputs of the time function
+        mock_time.side_effect = [0, 1]
 
-        # call method
+        honker = Honker(self.buzzerPin)
+
+        honker.setup()
+
+        # set treshold to be 15 cm
+        honker.set_distance_treshold(15)
+
+        distances = [None, 21, 14]
+        honker.prepare_for_honking(distances)
+
+        # run the prepare_for_honking function twice to check if it turns off buzzer after a while
+        honker.alert_if_too_close()
         honker.alert_if_too_close()
 
-        mock_output.assert_called_with(self.buzzerPin, False)
-
-    @patch.object(Honker, "_check_if_any_response_is_below_threshold", autospec=True)
-    def test_set_honk_on_or_off(self, mock_checking, mock_setup):
-        honker = self.get_honker_object()
-
-        mock_checking.return_value = True
-
-        # call method
-        honker._set_honk_on_or_off([])
-
-        assert(honker._withinAlarmDistance)
-        mock_checking.assert_called_once()
-
-        mock_checking.return_value = False
-
-        honker._set_honk_on_or_off([])
-
-        assert(not honker._withinAlarmDistance)
-        mock_checking.assert_called()
-
-    @patch("Honker.map_value_to_new_scale", autospec=True)
-    @patch("Honker.time", autospec=True)
-    def test_set_honk_timing(self, mock_time, mock_mapping, mock_setup):
-        honker = self.get_honker_object()
-        honker._withinAlarmDistance = False
-
-        # call method
-        honker._set_honk_timing()
-
-        # assert that the mapping method is not called
-        mock_mapping.assert_not_called()
-
-        # set withinAlarmDistance to true to run more of the method
-        honker._withinAlarmDistance = True
-        honker._honkCurrentlyOn = True
-
-        mock_time.return_value = 15
-        mock_mapping.return_value = 10
-        honker._lastHonkChangeTime = 7
-
-        # call method
-        honker._set_honk_timing()
-
-        assert(honker._honkCurrentlyOn)
-        assert(honker._lastHonkChangeTime == 7)
-
-        # simulate more time having passed
-        mock_time.return_value = 20
-
-        # call method
-        honker._set_honk_timing()
-
-        assert(not honker._honkCurrentlyOn)
-        assert(honker._lastHonkChangeTime == 20)
-
-    def test_check_if_any_response_is_below_treshold(self, mock_setup):
-        honker = self.get_honker_object()
-
-        # check that it returns true when one value is below treshold
-        sensorValues = [19, 302, None, 9.9, 18]
-        result = honker._check_if_any_response_is_below_threshold(sensorValues)
-
-        assert result
-
-        # check that it returns false when noe values are below treshold
-        sensorValues = [10.1, 10, None, 22]
-        result = honker._check_if_any_response_is_below_threshold(sensorValues)
-
-        assert(not result)
+        # assert that buzzer will turn off after a given time
+        mock_gpioOutput.assert_called_with(self.buzzerPin, False)
 
 if __name__ == '__main__':
     unittest.main()

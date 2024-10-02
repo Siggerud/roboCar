@@ -1,7 +1,7 @@
 from os import path
 import serial
 from time import sleep, time
-from Honker import Honker
+from honker import Honker
 from PhotocellManager import PhotocellManager
 import RPi.GPIO as GPIO
 

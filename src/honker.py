@@ -11,10 +11,11 @@ class Honker:
         self._currentLowestDistance = None
 
         self._honkCurrentlyOn = False
-        self._lastHonkChangeTime = time()
+        self._lastHonkChangeTime = None
 
         self._lowEndTimeBetweenEachHonk = 0.4
         self._highEndTimeBetweenEachHonk = 0.01
+        self._currentTimeBetweenEachHonk = None
 
     def setup(self):
         GPIO.setup(self._buzzerPin, GPIO.OUT, initial=self._withinAlarmDistance)
@@ -27,9 +28,12 @@ class Honker:
         if not self._withinAlarmDistance:
             honk = False
         else:
-            honk = self._honkCurrentlyOn
+            honk = self._check_if_it_is_time_for_honking()
 
         GPIO.output(self._buzzerPin, honk)
+
+    def set_distance_treshold(self, treshold):
+        self._distanceTreshold = treshold
 
     def _set_honk_on_or_off(self, sensors):
         if self._check_if_any_response_is_below_threshold(sensors):
@@ -37,23 +41,29 @@ class Honker:
         else:
             self._withinAlarmDistance = False
 
+    def _check_if_it_is_time_for_honking(self):
+        # if time passed is longer than the wait time between the trigger
+        # to change, then change
+        if not self._lastHonkChangeTime:
+            self._honkCurrentlyOn = True
+            self._lastHonkChangeTime = time()
+        elif (time() - self._lastHonkChangeTime) > self._currentTimeBetweenEachHonk:
+            self._honkCurrentlyOn = not self._honkCurrentlyOn
+            self._lastHonkChangeTime = time()  # update time of last change
+
+        return self._honkCurrentlyOn
+
     def _set_honk_timing(self):
         if self._withinAlarmDistance:
             # time between each honk is determined by the distance to the obstacle
-            timeBetweenEachHonk = map_value_to_new_scale(
+            self._currentTimeBetweenEachHonk = map_value_to_new_scale(
                 self._currentLowestDistance,
                 self._lowEndTimeBetweenEachHonk,
                 self._highEndTimeBetweenEachHonk,
-                1,
+                2,
                 self._distanceTreshold,
                 0
             )
-
-            # if time passed is longer than the wait time between the trigger
-            # to change, then change
-            if (time() - self._lastHonkChangeTime) > timeBetweenEachHonk:
-                self._honkCurrentlyOn = not self._honkCurrentlyOn
-                self._lastHonkChangeTime = time()  # update time of last change
 
     def _check_if_any_response_is_below_threshold(self, sensorValues):
         sensorValues = [sensor for sensor in sensorValues if sensor] # remove None values
