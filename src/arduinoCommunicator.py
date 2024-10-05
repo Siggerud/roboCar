@@ -2,7 +2,7 @@ from os import path
 import serial
 from time import sleep, time
 from honker import Honker
-from PhotocellManager import PhotocellManager
+from photocellManager import PhotocellManager
 import RPi.GPIO as GPIO
 
 class ArduinoCommunicator:

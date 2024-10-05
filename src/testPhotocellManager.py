@@ -10,7 +10,7 @@ modules = {
 patcher = patch.dict("sys.modules", modules)
 patcher.start()
 
-from PhotocellManager import PhotocellManager
+from photocellManager import PhotocellManager
 import RPi.GPIO as GPIO
 
 @patch("RPi.GPIO.setup")

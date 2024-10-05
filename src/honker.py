@@ -13,8 +13,8 @@ class Honker:
         self._honkCurrentlyOn = False
         self._lastHonkChangeTime = None
 
-        self._lowEndTimeBetweenEachHonk = 0.4
-        self._highEndTimeBetweenEachHonk = 0.01
+        self._longBeepTime = 0.4
+        self._shortBeepTime = 0.01
         self._currentTimeBetweenEachHonk = None
 
     def setup(self):
@@ -34,6 +34,12 @@ class Honker:
 
     def set_distance_treshold(self, treshold):
         self._distanceTreshold = treshold
+
+    def set_long_beep_time(self, highBeepTime):
+        self._longBeepTime = highBeepTime
+
+    def set_short_beep_time(self, shortBeepTime):
+        self._shortBeepTime = shortBeepTime
 
     def _set_honk_on_or_off(self, sensors):
         if self._check_if_any_response_is_below_threshold(sensors):
@@ -58,8 +64,8 @@ class Honker:
             # time between each honk is determined by the distance to the obstacle
             self._currentTimeBetweenEachHonk = map_value_to_new_scale(
                 self._currentLowestDistance,
-                self._lowEndTimeBetweenEachHonk,
-                self._highEndTimeBetweenEachHonk,
+                self._longBeepTime,
+                self._shortBeepTime,
                 2,
                 self._distanceTreshold,
                 0
