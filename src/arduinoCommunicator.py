@@ -1,5 +1,5 @@
 from os import path
-import serial
+from serial import Serial
 from time import sleep, time
 from honker import Honker
 from photocellManager import PhotocellManager
@@ -10,7 +10,7 @@ class ArduinoCommunicator:
         if not self._port_exists(port):
             raise InvalidPortError(f"Port {port} not found. Check connection.")
 
-        self._serialObj = serial.Serial(port, baudrate)
+        self._serialObj = Serial(port, baudrate)
         sleep(3)  # give the serial object some time to start communication
 
         self._waitTime = waitTime
@@ -51,7 +51,7 @@ class ArduinoCommunicator:
     def start(self):
         # if it's been more than the specified wait time since last reading, then
         # do a new reading
-        if not self._lastReadTime or (time() - self._lastReadTime) < self._waitTime:
+        if not self._lastReadTime or (time() - self._lastReadTime) > self._waitTime:
 
             if self._frontSensorActive:
                 self._frontSensorReading = self._send_command_and_read_response("front")
