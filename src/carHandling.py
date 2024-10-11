@@ -163,7 +163,7 @@ class CarHandling:
 
 			self._goForward = False
 			self._goReverse = False
-		#TODO: only change if speed has changed
+		
 		self._change_duty_cycle([self._pwmA, self._pwmB], speed)
 		self._speed = speed
 

@@ -1,7 +1,7 @@
-from CarHandling import CarHandling
+from carHandling import CarHandling
 from arduinoCommunicator import ArduinoCommunicator, InvalidPortError
 from camera import Camera
-from CameraHelper import CameraHelper
+from cameraHelper import CameraHelper
 from servoHandling import ServoHandling
 from carControl import CarControl, X11ForwardingError
 from xboxControl import NoControllerDetected

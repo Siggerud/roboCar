@@ -41,7 +41,6 @@ def convert_from_board_number_to_bcm_number(boardNumber):
         38: 20,
         40: 21}
 
-    # TODO: throw an exception if boardNumber is not in dict keys
     bcmNumber = gpioNumbering[boardNumber]
 
     return bcmNumber

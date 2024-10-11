@@ -10,7 +10,7 @@ modules = {
 patcher = patch.dict("sys.modules", modules)
 patcher.start()
 
-from CarHandling import CarHandling
+from carHandling import CarHandling
 import RPi.GPIO as GPIO
 
 class TestCarHandling(unittest.TestCase):

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock, Mock
-from CameraHelper import CameraHelper
+from cameraHelper import CameraHelper
 from multiprocessing import Array
 
 # mock the import of pigpio and GPIO
@@ -15,7 +15,7 @@ patcher = patch.dict("sys.modules", modules)
 patcher.start()
 
 from servoHandling import ServoHandling
-from CarHandling import CarHandling
+from carHandling import CarHandling
 
 class TestCameraHelper(unittest.TestCase):
     @patch("RPi.GPIO.setup")

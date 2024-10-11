@@ -1,5 +1,5 @@
 # Robocar
-![Alt text](Images/robocar.jpg)
+![Alt text](Images/robocar2.jpg)
 The robocar with Xbox controller
 #Todo: add updated picture
 <br />
@@ -227,10 +227,10 @@ Breadboard <br />
 6x M3 40 mm spacers <br />
 12x M3 10 mm spacers <br />
 4 metal brackets for motors <br />
-#TODO: write down number of screws
-#TODO: write down number of nuts
-#TODO: write down number of female to female wires
-#TODO: write down number of male to female wires
+M3 screws
+M3 nuts
+female to female wires
+male to female wires
 
 
 
