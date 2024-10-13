@@ -22,7 +22,7 @@ phototransistor.
 ## Prerequisites
 
 ### Pairing you XBox controller
-Pair your xBox One controller to your raspberry pi according to this [tutorial](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+Pair your xBox One controller to your raspberry pi according to this [tutorial](https://pimylifeup.com/xbox-controllers-raspberry-pi/).
 
 ### Setting up remote connection
 1. Enable your VNC connection by first opening the configuration settings
