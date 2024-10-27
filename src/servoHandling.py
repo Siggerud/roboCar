@@ -70,7 +70,6 @@ class ServoHandling:
     def _move_servo(self):
         if self._servoValueChanged:
             ServoHandling.pigpioPwm.set_servo_pulsewidth(self._servoPin, self._servoPwmValue)
-            print(self._servoPwmValue)
 
     def _get_servo_button_corresponding_to_axis(self, plane):
         if plane == "horizontal":
